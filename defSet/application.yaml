@@ -1,0 +1,16 @@
+# 基础设置
+base:
+  # 获取天气的城市
+  city: 北京
+
+# 服务器配置
+server:
+  # 启动地址（仅用于控制台输出）
+  host: "http://localhost"
+  # 启动端口号
+  port: 50831
+
+# jwt配置
+jwt:
+  # JWT 秘钥（随机生成，非必要请勿修改！）
+  secret: ""
