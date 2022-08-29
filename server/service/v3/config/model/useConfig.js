@@ -115,14 +115,19 @@ const groupConfig = {
     {
       key: 'system.group',
       type: 'keyFormCard',
+      // 标题表达式
+      title: `{{form.key === 'default' ? '默认配置' : '群：' + form.key}}`,
+      desc: '默认配置对所有群聊生效',
       // 允许添加新的配置
       allowAdd: true,
       allowDel: true,
       // 新增按钮文本（默认“新增”）
       addBtnText: '新增群配置',
-      // 标题表达式
-      title: `{{form.key === 'default' ? '默认配置' : '群：' + form.key}}`,
-      desc: '默认配置对所有群聊生效',
+      promptProps: {
+        content: '请输入群号：',
+        placeholder: '请输入群号',
+        okText: '添加',
+      },
       schemas: [
         {
           field: 'groupCD',
