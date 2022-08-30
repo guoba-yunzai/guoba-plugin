@@ -32,4 +32,14 @@ export default class IConfigService extends Service {
   async setConfigData(key, data) {
     throw Constant.ERROR_501
   }
+
+  /**
+   * 删除卡片表单
+   * @param formKey
+   * @param cardKey
+   * @return {Promise<void>}
+   */
+  async removeCardForm(formKey, cardKey) {
+    throw Constant.ERROR_501
+  }
 }

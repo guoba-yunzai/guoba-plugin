@@ -14,6 +14,7 @@ export default class ConfigController extends RestController {
     this.get('/tabs', this.tabs)
     this.get('/data', this.getData)
     this.post('/data', this.setData)
+    this.delete('/card-Form', this.removeCardForm)
   }
 
   async tabs() {
@@ -32,4 +33,11 @@ export default class ConfigController extends RestController {
     await this.configService.setConfigData(key, data)
     return Result.ok('保存成功~')
   }
+
+  async removeCardForm(req) {
+    let {formKey, cardKey} = req.body
+    await this.configService.removeCardForm(formKey, cardKey)
+    return Result.ok('删除成功~')
+  }
+
 }

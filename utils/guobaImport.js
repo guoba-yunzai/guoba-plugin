@@ -1,9 +1,10 @@
 /*
 * 更改此文件需要重启
 */
+import os from 'os'
+import path from 'path'
 import lodash from 'lodash'
 import {_paths} from './common.js'
-import path from 'path'
 
 let instanceVersion = ''
 
@@ -28,12 +29,17 @@ const pathPrefix = [
   },
 ]
 
-export async function GI(u) {
+export async function GI(u, relative) {
   let url = u
   if (/^cfg$/.test(u)) {
     url = '@/utils/cfg.js'
   }
-  url = replacePrefix(url)
+  // . 开头的路径，是相对路径
+  if (/^\./.test(u) && relative) {
+    url = path.join(relative, u)
+  } else {
+    url = replacePrefix(url)
+  }
   if (url) {
     // console.log('[GI]', url)
     return await import(url + '?' + instanceVersion)
@@ -41,12 +47,20 @@ export async function GI(u) {
   throw '[GI] url is null'
 }
 
-export async function GID(u) {
-  let file = await GI(u)
+export async function GID(u, relative) {
+  let file = await GI(u, relative)
   if (file && file.default) {
     return file.default
   }
   throw '[GID] file no default export'
+}
+
+export function createImport(metaUrl) {
+  metaUrl = path.dirname(metaUrl)
+  return {
+    GI: (u) => GI(u, metaUrl),
+    GID: (u) => GID(u, metaUrl),
+  }
 }
 
 function replacePrefix(url) {
@@ -55,7 +69,11 @@ function replacePrefix(url) {
   }
   for (const prefix of pathPrefix) {
     if (prefix.reg.test(url)) {
-      url = 'file://' + url.replace(prefix.reg, prefix.real + '/')
+      url = url.replace(prefix.reg, prefix.real + '/')
+      // 判断是否是windows系统
+      if (os.platform() === 'win32') {
+        url = 'file:///' + url
+      }
       break
     }
   }

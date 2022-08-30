@@ -2,6 +2,7 @@ import fs from 'fs'
 import YAML from 'yaml'
 import lodash from 'lodash'
 import chokidar from 'chokidar'
+
 const Constant = await Guoba.GID('#/constant/Constant.js')
 
 export default class YamlReader {
@@ -90,6 +91,14 @@ export default class YamlReader {
       }
       return k
     })
+  }
+
+  // 彻底删除某个key
+  deleteKey(keyPath) {
+    let keys = keyPath.split('.')
+    keys = this.mapParentKeys(keys)
+    this.document.deleteIn(keys)
+    this.save()
   }
 
   save() {

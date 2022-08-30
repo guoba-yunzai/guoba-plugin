@@ -1,14 +1,14 @@
 import path from 'path'
-import {isV3, isDev} from './utils/adapter.js'
+import {isDev, isV3} from './utils/adapter.js'
 import {_paths, _version, loadClasses} from './utils/common.js'
-import {GI, GID, incrVersion} from './utils/guobaImport.js'
+import {createImport, GI, GID, incrVersion} from './utils/guobaImport.js'
 import {createHotLoad} from './utils/hotLoad.js'
 
 let isInit = true
 
 const apps = {}
 
-global.Guoba = {GI, GID}
+global.Guoba = {GI, GID, createImport}
 
 if (isV3) {
   let appsPath = path.join(_paths.pluginRoot, 'apps')

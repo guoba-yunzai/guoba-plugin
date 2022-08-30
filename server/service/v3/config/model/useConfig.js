@@ -1,3 +1,28 @@
+// 添加群号 prompt
+const addGroupPromptProps = {
+  content: '请输入群号：',
+  placeholder: '请输入群号',
+  okText: '添加',
+  rules: [
+    {required: true, message: '群号得填上才行哦~'},
+    {pattern: '^\\d+$', message: '群号应该是纯数字的吧'},
+    {min: 5, message: '真的有这么短的群号吗？'},
+    {max: 10, message: '太…太长了……'},
+  ],
+}
+// 添加QQ号 prompt
+const addUserPromptProps = {
+  content: '请输入QQ号：',
+  placeholder: '请输入QQ号',
+  okText: '添加',
+  rules: [
+    {required: true, message: 'QQ号得填上才行哦~'},
+    {pattern: '^\\d+$', message: 'QQ号应该是纯数字的吧'},
+    {min: 5, message: '真的有这么短的QQ号吗？'},
+    {max: 10, message: '太…太长了……'},
+  ],
+}
+
 // 基础配置
 const baseConfig = {
   key: 'base',
@@ -123,11 +148,7 @@ const groupConfig = {
       allowDel: true,
       // 新增按钮文本（默认“新增”）
       addBtnText: '新增群配置',
-      promptProps: {
-        content: '请输入群号：',
-        placeholder: '请输入群号',
-        okText: '添加',
-      },
+      promptProps: addGroupPromptProps,
       schemas: [
         {
           field: 'groupCD',
@@ -163,8 +184,8 @@ const groupConfig = {
           component: 'GTags',
           bottomHelpMessage: '开启“只关注At”后，发送以别名开头的消息也会响应，支持多个别名',
           componentProps: {
-            allowCreate: true,
-            allowRemove: true,
+            allowAdd: true,
+            allowDel: true,
           },
         },
         {
@@ -205,8 +226,8 @@ const groupConfig = {
           component: 'GTags',
           bottomHelpMessage: '配置后只有配置的功能才可以使用',
           componentProps: {
-            allowCreate: true,
-            allowRemove: true,
+            allowAdd: true,
+            allowDel: true,
           },
         },
         {
@@ -215,8 +236,8 @@ const groupConfig = {
           component: 'GTags',
           bottomHelpMessage: '配置后配置的功能将不可以使用',
           componentProps: {
-            allowCreate: true,
-            allowRemove: true,
+            allowAdd: true,
+            allowDel: true,
           },
         },
       ],
@@ -280,6 +301,8 @@ const genshinConfig = {
       type: 'arrayFormCard',
       allowAdd: true,
       allowDel: true,
+      addBtnText: '添加Cookie',
+      lengthMin: 1,
       schemas: [],
     },
     {
@@ -288,21 +311,28 @@ const genshinConfig = {
       desc: '十连次数、概率等相关配置',
       type: 'keyFormCard',
       allowAdd: true,
-      addBtnText: '新增单独群配置',
+      allowDel: true,
+      addBtnText: '新增群单独配置',
+      promptProps: addGroupPromptProps,
       schemas: [
         {
           field: 'count',
           label: '每日抽卡数',
           bottomHelpMessage: '设置每天可以抽多少次',
           component: 'InputNumber',
-          componentProps: {min:1},
+          componentProps: {
+            min: 1,
+            placeholder: '请输入每日抽卡数',
+          },
         },
         {
           field: 'delMsg',
           label: '自动撤回',
           bottomHelpMessage: '自动撤回未出货的抽卡消息，0-120 秒，0 = 不撤回',
           component: 'InputNumber',
-          componentProps: {},
+          componentProps: {
+            placeholder: '请输入自动撤回时间',
+          },
         },
         {
           field: 'LimitSeparate',
@@ -375,28 +405,43 @@ const otherConfig = {
         {
           field: 'whiteGroup',
           label: '白名单群',
-          bottomHelpMessage: '白名单群，可以设置多个，用英文逗号分隔',
-          component: 'Select',
+          bottomHelpMessage: '白名单群，可以设置多个，用英文逗号分隔（后续版本将支持选择）',
+          component: 'GTags',
           componentProps: {
             placeholder: '请输入白名单群',
+            allowAdd: true,
+            allowDel: true,
+            showPrompt: true,
+            promptProps: addGroupPromptProps,
+            valueFormatter: ((value) => Number.parseInt(value)).toString(),
           },
         },
         {
           field: 'blackGroup',
           label: '黑名单群',
           bottomHelpMessage: '黑名单群，可以设置多个，用英文逗号分隔',
-          component: 'Select',
+          component: 'GTags',
           componentProps: {
             placeholder: '请输入黑名单群',
+            allowAdd: true,
+            allowDel: true,
+            showPrompt: true,
+            promptProps: addGroupPromptProps,
+            valueFormatter: ((value) => Number.parseInt(value)).toString(),
           },
         },
         {
           field: 'blackQQ',
           label: '黑名单QQ',
           bottomHelpMessage: '黑名单QQ，可以设置多个，用英文逗号分隔',
-          component: 'Select',
+          component: 'GTags',
           componentProps: {
             placeholder: '请输入黑名单QQ',
+            allowAdd: true,
+            allowDel: true,
+            showPrompt: true,
+            promptProps: addUserPromptProps,
+            valueFormatter: ((value) => Number.parseInt(value)).toString(),
           },
         },
       ],

@@ -1,32 +1,23 @@
-const Constant = await Guoba.GID('#/constant/Constant.js')
-const IConfigService = await Guoba.GID('#/service/interface/IConfigService.js')
-const {getConfigReader} = await Guoba.GI('#/service/v3/config/utils/ConfigUtils.js')
+// 创建可使用相对路径的import方法
+const {GI, GID} = Guoba.createImport(import.meta.url)
+// 引入模块
+const Constant = await GID('#/constant/Constant.js')
+const IConfigService = await GID('#/service/interface/IConfigService.js')
+const {getConfigReader} = await GI('./utils/ConfigUtils.js')
+const {configTabs, configFile} = await GI('./model/useConfig.js')
 
 export default class ConfigServiceImpl extends IConfigService {
 
-  configTabs = null
-  configFile = null
-
   constructor(app) {
     super(app)
-    this.loadConfig()
-  }
-
-  async loadConfig() {
-    let {
-      configTabs,
-      configFile,
-    } = (await import('./model/useConfig.js?' + Date.now()))
-    this.configTabs = configTabs
-    this.configFile = configFile
   }
 
   async getConfigTabs() {
-    return this.configTabs
+    return configTabs
   }
 
   async getConfigData(key) {
-    let jsonData = getConfigReader(key, this.configFile).jsonData
+    let jsonData = getConfigReader(key, configFile).jsonData
     if (Array.isArray(jsonData)) {
       return jsonData
     }
@@ -43,6 +34,10 @@ export default class ConfigServiceImpl extends IConfigService {
   }
 
   async setConfigData(key, data) {
-    getConfigReader(key, this.configFile).setData(data)
+    getConfigReader(key, configFile).setData(data)
+  }
+
+  async removeCardForm(formKey, cardKey) {
+    getConfigReader(cardKey, configFile).deleteKey(formKey)
   }
 }
