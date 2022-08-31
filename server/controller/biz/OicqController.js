@@ -1,3 +1,4 @@
+const Pager = await Guoba.GID('@/components/Pager.js')
 const Result = await Guoba.GID('#/components/Result.js')
 const RestController = await Guoba.GID('#/components/RestController.js')
 const {autowired} = await Guoba.GI('#/loader/injection.js')
@@ -16,7 +17,7 @@ export class OicqController extends RestController {
     this.get('/pick/group', this.pickGroup)
 
     // avatarUrl: `https://q1.qlogo.cn/g?b=qq&s=${0}&nk=${qq}`,
-    this.get('/friend/list', () => Result.ok(this.oicqService.getFriendList()))
+    this.get('/friend/list', this.queryFriendList)
     this.get('/friend/count', () => Result.ok(this.oicqService.getFriendCount()))
   }
 
@@ -38,6 +39,45 @@ export class OicqController extends RestController {
     }
     let group = this.oicqService.pickGroup(groupId)
     return Result.ok(group)
+  }
+
+  async queryFriendList(req) {
+    let {pageNo, pageSize, user_id, qq, name} = req.query
+    pageNo = !pageNo ? 1 : Number.parseInt(pageNo)
+    pageSize = !pageSize ? 10 : Number.parseInt(pageSize)
+
+    let friendList = Bot.getFriendList()
+    let list = []
+    let filter = (_) => true
+    // 根据 qq 模糊查询
+    if (qq || name) {
+      filter = (item) => {
+        let flag = true
+        if (qq) {
+          flag = String(item.user_id).includes(qq)
+        }
+        if (name && flag) {
+          flag = String(item.nickname).includes(name)
+        }
+        return flag
+      }
+    }
+    // 根据user_id过滤
+    let userId = user_id ? user_id.split(',').map(u => Number.parseInt(u)) : null
+    if (userId && userId.length > 0) {
+      pageNo = 1
+      pageSize = userId.length
+      filter = (item) => userId.includes(item.user_id)
+    }
+
+    for (let [, item] of friendList) {
+      if (filter(item)) {
+        list.push(item)
+      }
+    }
+
+    let page = new Pager(list, pageNo, pageSize)
+    return Result.ok(page.toJSON())
   }
 
 }
