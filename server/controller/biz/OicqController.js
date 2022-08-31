@@ -42,7 +42,7 @@ export class OicqController extends RestController {
   }
 
   async queryFriendList(req) {
-    let {pageNo, pageSize, user_id, qq, name} = req.query
+    let {pageNo, pageSize, user_id, query_qq, query_name} = req.query
     pageNo = !pageNo ? 1 : Number.parseInt(pageNo)
     pageSize = !pageSize ? 10 : Number.parseInt(pageSize)
 
@@ -50,14 +50,14 @@ export class OicqController extends RestController {
     let list = []
     let filter = (_) => true
     // 根据 qq 模糊查询
-    if (qq || name) {
+    if (query_qq || query_name) {
       filter = (item) => {
         let flag = true
-        if (qq) {
-          flag = String(item.user_id).includes(qq)
+        if (query_qq) {
+          flag = String(item.user_id).includes(query_qq)
         }
-        if (name && flag) {
-          flag = String(item.nickname).includes(name)
+        if (query_name && flag) {
+          flag = String(item.nickname).includes(query_name)
         }
         return flag
       }

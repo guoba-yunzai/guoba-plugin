@@ -24,12 +24,13 @@ export function createServer({isInit}) {
   // 服务
   useService(app)
   // 启动服务监听
-  const port = cfg.get('server.port')
-  const server = app.listen(port, () => {
+  let {host, port} = cfg.get('server')
+  let server = app.listen(port, () => {
     if (isInit) {
       logger.mark(`--------------------------`)
       logger.mark(`锅巴服务启动成功~ 耗时:${Date.now() - begin}ms`)
-      logger.mark(`http://127.0.0.1:${port}`)
+      host = /^http/.test(host) ? host : `http://${host}`
+      logger.mark(`${host}:${port}`)
       logger.mark(`--------------------------`)
     }
   })
