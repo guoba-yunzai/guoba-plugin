@@ -121,8 +121,8 @@ export default class IPluginService extends Service {
 const parseConfig = {
   plugins: {
     identifyReg: /##\s*插件包.*/,
-    beginReg: /\|\s*-{3,}\s*\|\s*-{3,}\s*\|\s*-{3,}\s*\|/,
-    itemReg: /\|(.*)\|(.*)\|(.*)\|/,
+    beginReg: /(\|\s*-{3,}\s*){5}\|/,
+    itemReg: /\|(.*)\|(.*)\|(.*)\|(.*)\|(.*)\|/,
     linkReg: /\[(.*)]\((.*)\)/,
   },
 }
@@ -148,8 +148,8 @@ async function parsePluginsIndex() {
             continue
           }
           if (parseItem.itemReg.test(line)) {
-            // 解析三列
-            let [, col1, col2, col3] = line.match(parseItem.itemReg)
+            // 解析5列
+            let [, col1, col2, col3, col4, col5] = line.match(parseItem.itemReg)
             // 解析插件标题和插件链接
             let title = col1.trim(), link = null
             if (parseItem.linkReg.test(title)) {
@@ -173,25 +173,22 @@ async function parsePluginsIndex() {
               author = authorMatch[1]
               authorLink = authorMatch[2]
             }
-            // 判断是否是v3版本的插件
-            let v2Reg = /[（(][Vv]2[）)]/
-            let v3Reg = /[（(][Vv]3[）)]/
-            let deletedReg = /^~~(.+)~~$/
-            let isV3 = v3Reg.test(title)
-            title = title.replace(v2Reg, '')
-            title = title.replace(v3Reg, '')
+            // 判断云崽版本兼容情况
+            let supportReg = /[✔√]/
+            let isV2 = supportReg.test(col3)
+            let isV3 = supportReg.test(col4)
+            // 判断是否是已删除的插件
             title = title ? title.trim() : '未知'
+            let deletedReg = /^~~(.+)~~$/
             let isDeleted = deletedReg.test(title)
             title = title.replace(deletedReg, '$1')
             result.push({
-              isV3,
-              title,
-              isDeleted,
+              isV2, isV3, title, isDeleted,
               name: name ? name.trim() : '',
               link: link ? link.trim() : '',
               author: author ? author.trim() : '佚名',
               authorLink: authorLink ? authorLink.trim() : '',
-              description: col3 ? col3.trim() : '',
+              description: col5 ? col5.trim() : null,
             })
           } else {
             // 如果匹配失败，则认为是结束
