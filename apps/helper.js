@@ -37,28 +37,3 @@ export class GuobaHelp extends plugin {
   }
 
 }
-
-export class GuobaUpdate extends plugin {
-
-  constructor(e) {
-    super({
-      name: '锅巴更新',
-      dsc: '锅巴更新、升级',
-      event: 'message',
-      priority: 100,
-      rule: [
-        {
-          reg: '^#锅巴(更新|升级|update)$',
-          fnc: 'doUpdate',
-        },
-      ],
-    })
-  }
-
-  async doUpdate() {
-    // 自动更新配置文件地址
-    // https://gitee.com/guoba-yunzai/resources/raw/master/yaml/version.yaml
-    await this.reply(`更新功能暂时还没有哦`)
-  }
-
-}
