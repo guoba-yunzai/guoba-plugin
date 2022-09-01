@@ -115,3 +115,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 /.idea/
+
+# Guoba Ingored
+/lib/test.js
+/config/*
+/server/static/_app.guoba.preload.js
