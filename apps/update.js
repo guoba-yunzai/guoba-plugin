@@ -2,9 +2,8 @@ import YAML from 'yaml'
 import fetch from 'node-fetch'
 import {exec} from 'child_process'
 import {_paths} from '../utils/paths.js'
-import {_version} from '../utils/common.js'
-import cfg from '../../../lib/config/config.js'
-import common from '../../../lib/common/common.js'
+import {_version, sendToMaster} from '../utils/common.js'
+import {compare} from '../lib/compareVersions.js'
 
 const _STATUS = {
   FAIL: 'FAIL',
@@ -99,7 +98,7 @@ export class GuobaUpdate extends plugin {
       // needRestart 的意思是需要重启云崽
       // false即不需要重启云崽，可直接重载锅巴服务
       // true即需要重启云崽，此时重载锅巴服务可能会出错，故不重载锅巴服务
-      if(!remote.needRestart) {
+      if (!remote.needRestart) {
         Guoba && Guoba.reload && Guoba.reload()
       }
       let restartMsg = '本次更新' + (remote.needRestart ? '需要重启才能生效' : '无需重启即可生效')
@@ -119,12 +118,20 @@ export class GuobaUpdate extends plugin {
     if (!remotes || !remotes[0]) {
       return {status: _STATUS.FAIL, message: '获取远程版本信息失败'}
     }
-    let tellMaster = (msg) => tell ? common.relpyPrivate(cfg.masterQQ[0], msg) : ''
     let remote = remotes[0]
-    if (remote.version === _version) {
+    // 判断远程版本是否小于等于本地版本
+    if (compare(remote.version, _version, '<=')) {
       return {status: _STATUS.NO_UPDATE, remote}
     }
-    tellMaster(`[Guoba] 发现新版本：${remote.version}，请发送“#锅巴更新”进行更新`)
+    tell && sendToMaster(`[Guoba] 发现新版本：${remote.version}，请发送“#锅巴更新”进行更新`)
+    // 判断是否需要重启，不仅要判断当前远程版本，还要判断最近一次需要重启的远程版本是否大于本地版本
+    for (let item of remotes) {
+      if (!item.needRestart) continue
+      if (compare(item.version, _version, '>')) {
+        remote.needRestart = true
+        break
+      }
+    }
     return {status: _STATUS.HAS_UPDATE, remote}
   }
 
@@ -177,25 +184,6 @@ export class GuobaUpdate extends plugin {
           return
         }
         resolve({status: _STATUS.SUCCESS})
-        // e.reply('更新成功，尝试重新启动Yunzai以应用更新...')
-        // timer && clearTimeout(timer)
-        // redis.set('zolay:restart-msg', JSON.stringify({
-        //   msg: '重启成功，新版成就查漏Plugin已经生效~',
-        //   qq: e.user_id,
-        // }), {EX: 30})
-        // timer = setTimeout(function () {
-        //   let command = 'npm run restart'
-        //   exec(command, function (error, stdout, stderr) {
-        //     if (error) {
-        //       if (/Yunzai not found/.test(error)) {
-        //         e.reply('自动重启失败，请手动重启以应用插件。请使用 npm run start 命令启动Yunzai-Bot')
-        //       } else {
-        //         e.reply('重启失败！\nError code: ' + error.code + '\n' + error.stack + '\n 请稍后重试。')
-        //       }
-        //       return true
-        //     }
-        //   })
-        // }, 1000)
       })
     })
   }

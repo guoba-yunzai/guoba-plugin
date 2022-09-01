@@ -3,6 +3,8 @@ import path from 'path'
 import lodash from 'lodash'
 import {pluginPackage} from './package.js'
 import {_paths} from './paths.js'
+import common from '../../../lib/common/common.js'
+import BotCfg from '../../../lib/config/config.js'
 
 export const _version = pluginPackage.version
 
@@ -94,4 +96,18 @@ export function toPairsMap(arg) {
     obj[key] = value
   }
   return obj
+}
+
+/**
+ * 给主人发送消息
+ * @param msg 消息内容
+ * @param all 是否发送给所有主人，默认false
+ * @param idx 不发送给所有主人时，指定发送给第几个主人，默认发送给第一个主人
+ */
+export async function sendToMaster(msg, all = false, idx = 0) {
+  let masterQQ = BotCfg.masterQQ
+  let sendTo = all ? masterQQ : [masterQQ[idx]]
+  for (let qq of sendTo) {
+    await common.relpyPrivate(qq, msg)
+  }
 }

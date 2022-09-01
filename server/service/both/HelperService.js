@@ -31,6 +31,10 @@ export default class HelperService extends Service {
       return Result.error('请求失败', response.status)
     }
     for (const [key, value] of response.headers.entries()) {
+      // 去掉压缩头
+      if (key.toLowerCase() === 'content-encoding') {
+        continue
+      }
       res.setHeader(key, value)
     }
     let buffer = await response.arrayBuffer()
