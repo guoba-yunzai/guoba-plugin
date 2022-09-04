@@ -82,6 +82,15 @@ const baseConfig = {
             placeholder: '请输入ffprobe路径',
           },
         },
+        {
+          field: 'chromium_path',
+          label: 'chromium路径',
+          bottomHelpMessage: 'chromium其他路径，默认无需填写，需要时可填写chromium的可执行文件绝对路径',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入chromium路径',
+          },
+        },
       ],
     },
     {
@@ -270,6 +279,16 @@ const genshinConfig = {
           component: 'Input',
           bottomHelpMessage: '默认cookie帮助文档链接地址',
           componentProps: {},
+        },
+        {
+          field: 'isAutoSign',
+          label: '开启自动签到',
+          component: 'Switch',
+          bottomHelpMessage: '是否开启米游社原神自动签到',
+          componentProps: {
+            checkedValue: 1,
+            unCheckedValue: 0,
+          },
         },
         {
           field: 'signTime',
