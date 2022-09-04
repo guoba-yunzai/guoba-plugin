@@ -1,0 +1,1 @@
+import{cU as e,k as o,S as n,cV as a}from"./index.js";function s(s,t={}){const{size:i="small",delay:r=100,timeout:l=3e4,loading:m=!1,retry:c=!0}=t;return e({loader:s,loadingComponent:m?o(n,{spinning:!0,size:i},null):void 0,timeout:l,delay:r,onError:c?(e,o,n,a)=>{e.message.match(/fetch/)&&a<=3?o():n()}:a})}export{s as c};
