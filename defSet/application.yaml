@@ -10,6 +10,8 @@ server:
   host: "http://localhost"
   # 启动端口号
   port: 50831
+  # 是否需要拼接端口号
+  splicePort: true
 
 # jwt配置
 jwt:

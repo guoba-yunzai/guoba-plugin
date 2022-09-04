@@ -24,13 +24,18 @@ export function createServer({isInit}) {
   // 服务
   useService(app)
   // 启动服务监听
-  let {host, port} = cfg.get('server')
+  let {host, port, splicePort} = cfg.get('server')
   let server = app.listen(port, () => {
     if (isInit) {
       logger.mark(`--------------------------`)
       logger.mark(`锅巴服务启动成功~ 耗时:${Date.now() - begin}ms`)
       host = /^http/.test(host) ? host : `http://${host}`
-      logger.mark(`${host}:${port}`)
+      let joinPort = ''
+      if (splicePort) {
+        // noinspection EqualityComparisonWithCoercionJS
+        joinPort = port == 80 ? '' : `:${port}`
+      }
+      logger.mark(`${host}${joinPort}`)
       logger.mark(`--------------------------`)
     }
   })

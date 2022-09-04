@@ -66,6 +66,12 @@ export function supportGuoba() {
             placeholder: '请输入监听端口号',
           },
         },
+        {
+          field: 'server.splicePort',
+          label: '拼接端口号',
+          bottomHelpMessage: '是否需要在服务器地址后拼接端口号',
+          component: 'Switch',
+        },
       ],
       // 获取配置数据方法（用于前端填充显示数据）
       getConfigData() {

@@ -32,9 +32,9 @@ export class LoginService extends Service {
     let {redisKey, code} = this.getQuickLoginRedisKey(null)
     let token = this.signToken(username)
     redis.set(redisKey, token, {EX: 180})
-    let {host, port} = cfg.get('server')
+    let {host, port, splicePort} = cfg.get('server')
     // noinspection EqualityComparisonWithCoercionJS
-    if (port != 80) {
+    if (splicePort && port != 80) {
       host += `:${port}`
     }
     host += `/#/ml/${code}`
