@@ -27,6 +27,10 @@ export class GuobaUpdate extends plugin {
       priority: 100,
       rule: [
         {
+          reg: '^#锅巴版本$',
+          fnc: 'getVersion',
+        },
+        {
           reg: '^#锅巴(更新|升级|update)$',
           fnc: 'doUpdate',
           permission: 'master',
@@ -45,6 +49,10 @@ export class GuobaUpdate extends plugin {
       isChecked = true
       setTimeout(this.doCheckUpdate.bind(this, true), 1500)
     }
+  }
+
+  async getVersion() {
+    return this.reply(`[Guoba] 当前版本：${_version}`)
   }
 
   async doUpdate() {

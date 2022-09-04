@@ -15,6 +15,7 @@ export class GuobaHelp extends plugin {
         {
           reg: '^#锅巴(帮助|菜单|说明|功能|指令|命令|使用说明|help)$',
           fnc: 'getHelp',
+          permission: 'master',
         },
         {
           reg: '^#锅巴重启$',
@@ -32,7 +33,11 @@ export class GuobaHelp extends plugin {
   }
 
   async getHelp() {
-    await this.reply(`帮助暂时还没有哦`)
+    let msg = [
+      '锅巴帮助：\n' +
+      'https://docs.qq.com/doc/DWnJUcHdnTXhOSnlY'
+    ]
+    return this.e.reply(msg)
   }
 
   async restart() {
