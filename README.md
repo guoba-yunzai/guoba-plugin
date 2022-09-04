@@ -66,6 +66,9 @@ npm install jsonwebtoken
 
 # 其他
 
+- 最后求个个star或者[爱发电](https://afdian.net/a/zolay-poi)
+  你的支持是维护本项目的动力~
+
 * Yunzai-Bot
     - [gitee](https://gitee.com/Le-niao/Yunzai-Bot)
     - [github](https://github.com/Le-niao/Yunzai-Bot)
