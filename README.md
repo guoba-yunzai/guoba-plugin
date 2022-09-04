@@ -45,6 +45,20 @@ npm install jsonwebtoken
 
 一般会自动更新，如需手动更新，请发送`#锅巴更新`指令
 
+# 功能预览
+
+- 主界面
+![001](./resources/images/readme/001.png)
+
+- 查看插件README
+![002](./resources/images/readme/002.png)
+
+- 基础配置
+![003](./resources/images/readme/003.png)
+
+- 群组配置
+![004](./resources/images/readme/004.png)
+
 # 免责声明
 
 1. 功能仅限内部交流与小范围使用，严禁将Guoba-Plugin用于任何商业用途或盈利
