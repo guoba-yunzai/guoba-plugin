@@ -113,6 +113,7 @@ export default class RestController extends Controller {
         if (result instanceof Result) {
           res.status(result.httpStatus)
           res.json(result.toJSON())
+        } else if (result === Constant.VOID) {
         } else {
           res.send(result)
         }

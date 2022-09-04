@@ -25,6 +25,10 @@ class GuobaConfig {
     let isInit = false
     if (!fs.existsSync(this.config.path)) {
       isInit = true
+      let configDir = path.dirname(this.config.path);
+      if (!fs.existsSync(configDir)) {
+        fs.mkdirSync(configDir);
+      }
       fs.copyFileSync(this.defSet.path, this.config.path)
     }
     try {

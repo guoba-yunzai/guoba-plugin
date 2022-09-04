@@ -65,7 +65,7 @@ export class GuobaUpdate extends plugin {
 
   async doUpdateTask() {
     logger.mark(`[Guoba] 开始执行自动更新任务……`)
-    let {status, remote, message} = await this.doAutoUpdate()
+    let {status, remote, message} = await this.doAutoUpdate(true)
     if (status === _STATUS.NO_UPDATE) {
       logger.mark(`[Guoba] 自动更新任务执行完毕，没有发现新版本`)
     } else if (status === _STATUS.SUCCESS) {
@@ -75,17 +75,21 @@ export class GuobaUpdate extends plugin {
       } else {
         logger.mark(`[Guoba] 自动更新任务执行完毕，无需重启即可生效`)
       }
-      return this.reply(msg)
+      return sendToMaster(msg)
     } else {
       logger.mark(`[Guoba] 自动更新任务执行完毕，更新失败:`, {status, message})
     }
   }
 
-  async doAutoUpdate() {
+  async doAutoUpdate(isTask = false) {
     let response = await this.doCheckUpdate()
     let {status, remote} = response
     if (status === _STATUS.NO_UPDATE) {
       return response
+    }
+    // 需要重启的，自动更新模式下不进行git pull
+    if (remote.needRestart && isTask) {
+      return { status: _STATUS.SUCCESS, message: '检查更新发现新版本，但是需要重启，本次不进行自动升级，请手动' }
     }
     // 不是最新版本，执行git pull更新
     response = await this.doGitPull()

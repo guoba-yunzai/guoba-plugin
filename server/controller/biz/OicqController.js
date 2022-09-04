@@ -56,8 +56,9 @@ export class OicqController extends RestController {
         if (query_qq) {
           flag = String(item.user_id).includes(query_qq)
         }
+        // 根据昵称或备注模糊筛选
         if (query_name && flag) {
-          flag = String(item.nickname).includes(query_name)
+          flag = String(item.nickname).includes(query_name) || String(item.remark).includes(query_name)
         }
         return flag
       }

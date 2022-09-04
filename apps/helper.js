@@ -1,3 +1,8 @@
+import path from 'path'
+import {segment} from 'oicq'
+import {_paths, sendToMaster} from '../utils/common.js'
+import cfg from '../utils/cfg.js'
+
 export class GuobaHelp extends plugin {
 
   constructor(e) {
@@ -21,6 +26,9 @@ export class GuobaHelp extends plugin {
   }
 
   async init() {
+    // 引导用户进行配置
+    this.firstGuide()
+
   }
 
   async getHelp() {
@@ -34,6 +42,17 @@ export class GuobaHelp extends plugin {
     } else {
       return this.e.reply('奇怪，服务似乎并没有启动……')
     }
+  }
+
+  // 首次安装锅巴时的引导
+  async firstGuide() {
+    if (!cfg.get('base.guide')) {
+      return
+    }
+    cfg.set('base.guide', false)
+    sendToMaster([
+      segment.image(path.join(_paths.pluginResources, 'images/help.jpg'))
+    ])
   }
 
 }

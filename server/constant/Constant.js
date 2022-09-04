@@ -13,4 +13,6 @@ export default {
 
   // 配置文件数字key
   CONFIG_INTEGER_KEY: 'INTEGER__',
+
+  VOID: Symbol(),
 }

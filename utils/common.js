@@ -12,6 +12,8 @@ export {
   _paths,
 }
 
+export const GuobaSupportMap = new Map()
+
 /**
  * 引入 class 资源
  * @param rootPath

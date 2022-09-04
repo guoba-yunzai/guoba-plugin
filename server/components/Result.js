@@ -65,9 +65,13 @@ export default class Result {
     return new Result(501, null, '该功能在当前版本中尚未实现', 501)
   }
 
+  get isOk(){
+    return this.code === 0
+  }
+
   toJSON() {
     return {
-      ok: this.code === 0,
+      ok: this.isOk,
       code: this.code,
       result: this.result,
       message: this.message,

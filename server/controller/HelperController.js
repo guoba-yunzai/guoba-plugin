@@ -20,7 +20,7 @@ export default class HelperController extends RestController {
     this.all('/transit', this.transitRequest)
     // 获取天气信息（缓存6小时）
     this.get('/city_weather', this.getCityWeather, [
-      new RedisDecorator('city_weather', {EX: 60 * 60 * 6}),
+      new RedisDecorator('city_weather:${config.getCity()}', {EX: 60 * 60 * 6, getCity: this.getCity}),
     ])
   }
 
@@ -28,9 +28,13 @@ export default class HelperController extends RestController {
     return this.helperService.transitRequest(req, res)
   }
 
+  getCity() {
+    return cfg.get('base.city')
+  }
+
   async getCityWeather() {
     try {
-      let city = cfg.get('base.city')
+      let city = this.getCity()
       return Result.ok(await this.helperService.getWeather(city))
     } catch (e) {
       console.error(e)

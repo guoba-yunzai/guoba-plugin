@@ -2,6 +2,7 @@
 base:
   # 获取天气的城市
   city: 北京
+  guide: true
 
 # 服务器配置
 server:

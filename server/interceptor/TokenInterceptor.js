@@ -14,6 +14,7 @@ const include = [
 const exclude = [
   new RegExp('^/api/login'),
   new RegExp('^/api/helper/transit'),
+  new RegExp('^/api/plugin/s/.+/icon'),
 ]
 
 /**
