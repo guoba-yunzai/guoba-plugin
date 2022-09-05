@@ -1,8 +1,6 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-
-import os from 'os'
-
+import { getWebAddress } from '../utils/common.js';
 const cfg = await Guoba.GID('cfg')
 const {useStatic} = await Guoba.GI('#/loader/loadStatic.js')
 const {usePreload} = await Guoba.GI('#/loader/loadPreload.js')
@@ -26,51 +24,16 @@ export function createServer({isInit}) {
   // 服务
   useService(app)
   // 启动服务监听
-  let {host, port, splicePort} = cfg.get('server')
+  let {port} = cfg.get('server')
   let server = app.listen(port, () => {
     if (isInit) {
-      logger.mark(`--------------------------`)
+      logger.mark(`--------- @_@ ---------`)
       logger.mark(`锅巴服务启动成功~ 耗时:${Date.now() - begin}ms`)
-
-      const wlan = os.networkInterfaces()
-      let msg=[]
-      
-      for (let nw in wlan) {
-        let objArr = wlan[nw];
-        objArr.forEach((obj,idx,arr)=>{
-          if((nw!="lo"&&nw!="docker0")&&obj.netmask!="ffff:ffff:ffff:ffff::"){
-              //console.log(`${obj.family}`);
-            if(obj.family=="IPv6"){
-              if (splicePort && port != 80) {
-                  msg=`${host}`+`[${obj.address}]:${port}`
-                  logger.mark(`${msg}`)
-                  return
-              }
-              msg=`${host}`+`[${obj.address}]`
-              logger.mark(`${msg}`)
-              return
-            }
-            if (splicePort && port != 80) {
-                  msg=`${host}`+`${obj.address}:${port}`
-                  logger.mark(`${msg}`)
-                  return
-              }
-              msg=`${host}`+`${obj.address}`
-              logger.mark(`${msg}`)
-              return
-          }
-        });
+      let hosts = getWebAddress(true)
+      for (let host of hosts) {
+        logger.mark(host)
       }
-
-      // host = /^http/.test(host) ? host : `http://${host}`
-      // let joinPort = ''
-      // if (splicePort) {
-      //   // noinspection EqualityComparisonWithCoercionJS
-      //   joinPort = port == 80 ? '' : `:${port}`
-      // }
-
-      
-      logger.mark(`--------------------------`)
+      logger.mark(`-----------------------`)
     }
   })
   return {app, server}

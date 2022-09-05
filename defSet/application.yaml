@@ -7,7 +7,8 @@ base:
 # 服务器配置
 server:
   # 启动地址（仅用于控制台输出）
-  host: "http://"
+  # auto 为自动获取IP地址
+  host: auto
   # 启动端口号
   port: 50831
   # 是否需要拼接端口号

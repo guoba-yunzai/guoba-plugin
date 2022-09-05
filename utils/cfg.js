@@ -1,7 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
-import {_paths, randomString} from './common.js'
+import {_paths} from './paths.js'
+import {randomString} from './common.js'
 import YamlReader from '../components/YamlReader.js'
 
 /** 配置文件 */
@@ -32,7 +33,7 @@ class GuobaConfig {
       fs.copyFileSync(this.defSet.path, this.config.path)
     }
     try {
-      this.defSet.reader = new YamlReader(this.defSet.path, true)
+      this.defSet.reader = new YamlReader(this.defSet.path, false)
       this.config.reader = new YamlReader(this.config.path, true)
     } catch (error) {
       logger.error(`[Guoba] 配置文件格式错误! `, error)
