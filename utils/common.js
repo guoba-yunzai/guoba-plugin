@@ -1,6 +1,8 @@
+import os from 'os'
 import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
+import cfg from './cfg.js'
 import {pluginPackage} from './package.js'
 import {_paths} from './paths.js'
 import common from '../../../lib/common/common.js'
@@ -112,4 +114,56 @@ export async function sendToMaster(msg, all = false, idx = 0) {
   for (let qq of sendTo) {
     await common.relpyPrivate(qq, msg)
   }
+}
+
+/**
+ * 获取web地址
+ * @param allIp 是否展示全部IP
+ */
+export function getWebAddress(allIp = false) {
+  let {host, port, splicePort} = cfg.get('server');
+  port = splicePort ? Number.parseInt(port) : null;
+  port = port === 80 ? null : port;
+  let hosts = [];
+  if (host === 'auto') {
+    let ips = getLocalIps(port);
+    if (ips.length === 0) {
+      ips.push(`localhost${port ? ':' + port : ''}`);
+    }
+    if (allIp) {
+      hosts = ips.map(ip => `http://${ip}`);
+    } else {
+      hosts.push(`http://${ips[0]}`);
+    }
+  } else {
+    host = /^http/.test(host) ? host : 'http://' + host;
+    hosts.push(`${host}${port ? ':' + port : ''}`);
+  }
+  return hosts
+}
+
+/**
+ * 获取本地ip地址
+ * 感谢 @吃吃吃个柚子皮
+ * https://gitee.com/guoba-yunzai/guoba-plugin/pulls/2
+ * @param port 要拼接的端口号
+ * @return {*[]}
+ */
+export function getLocalIps(port ) {
+  let networks = os.networkInterfaces()
+  let ips = []
+  // noinspection EqualityComparisonWithCoercionJS
+  port = port ? `:${port}` : ''
+  for (let [name, wlans] of Object.entries(networks)) {
+    for (let wlan of wlans) {
+      if ((name !== 'lo' && name !== 'docker0') && wlan.netmask !== 'ffff:ffff:ffff:ffff::') {
+        if (wlan.family === 'IPv6') {
+          ips.push(`[${wlan.address}]${port}`)
+        } else {
+          ips.push(`${wlan.address}${port}`)
+        }
+      }
+    }
+  }
+  return ips
 }
