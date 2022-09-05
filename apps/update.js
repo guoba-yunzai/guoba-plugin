@@ -118,7 +118,7 @@ export class GuobaUpdate extends plugin {
       message += remote.updateLogs.map((log, index) => `${index + 1}. ${log}`).join('\n')
       return {status: _STATUS.SUCCESS, remote, message}
     }
-    return response
+    return {...response, remote}
   }
 
   /**
