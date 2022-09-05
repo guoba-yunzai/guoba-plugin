@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import os from 'os'
 
 const cfg = await Guoba.GID('cfg')
 const Service = await Guoba.GID('#/components/Service.js')
@@ -33,12 +34,42 @@ export class LoginService extends Service {
     let token = this.signToken(username)
     redis.set(redisKey, token, {EX: 180})
     let {host, port, splicePort} = cfg.get('server')
-    // noinspection EqualityComparisonWithCoercionJS
-    if (splicePort && port != 80) {
-      host += `:${port}`
+    
+    const wlan = os.networkInterfaces()
+    let msg=[]
+    
+    for (let nw in wlan) {
+      let objArr = wlan[nw];
+      objArr.forEach((obj,idx,arr)=>{
+        if((nw!="lo"&&nw!="docker0")&&obj.netmask!="ffff:ffff:ffff:ffff::"){
+            console.log(`${obj.family}`);
+          if(obj.family=="IPv6"){
+            if (splicePort && port != 80) {
+                msg+=`${host}`+`[${obj.address}]:${port}/#/ml/${code}`+'\n'
+                return
+            }
+            msg=`${host}`+`[${obj.address}]/#/ml/${code}`+'\n'
+            return
+          }
+          if (splicePort && port != 80) {
+                msg+=`${host}`+`${obj.address}:${port}/#/ml/${code}`+'\n'
+                return
+            }
+            msg=`${host}`+`${obj.address}/#/ml/${code}`+'\n'
+            return
+        }
+      });
     }
-    host += `/#/ml/${code}`
-    return host
+    msg=msg.substring(0,msg.lastIndexOf('\n'))
+    
+    return msg
+
+    //// noinspection EqualityComparisonWithCoercionJS
+    //if (splicePort && port != 80) {
+    //  host += `:${port}`
+    //}
+    //host += `/#/ml/${code}`
+    //return host
   }
 
   async getQuickLogin(code) {
