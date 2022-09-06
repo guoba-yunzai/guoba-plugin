@@ -13,6 +13,8 @@ server:
   port: 50831
   # 是否需要拼接端口号
   splicePort: true
+  # 当host为auto时，是否在使用"#锅巴登录"时显示所有IP地址
+  showAllIp: false
 
 # jwt配置
 jwt:

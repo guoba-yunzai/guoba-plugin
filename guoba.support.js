@@ -46,7 +46,7 @@ export function supportGuoba() {
         {
           field: 'server.host',
           label: '服务器地址',
-          bottomHelpMessage: '仅用于发送的消息中',
+          bottomHelpMessage: 'auto 为自动获取本机IP地址，仅用于“#锅巴登录”和控制台中',
           component: 'Input',
           required: true,
           componentProps: {
@@ -70,6 +70,12 @@ export function supportGuoba() {
           field: 'server.splicePort',
           label: '拼接端口号',
           bottomHelpMessage: '是否需要在服务器地址后拼接端口号',
+          component: 'Switch',
+        },
+        {
+          field: 'server.showAllIp',
+          label: '显示所有IP',
+          bottomHelpMessage: '当host为auto时，是否在使用"#锅巴登录"时显示所有IP地址',
           component: 'Switch',
         },
       ],
