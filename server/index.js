@@ -27,7 +27,7 @@ export function createServer({isInit}) {
   let {port} = cfg.get('server')
   let server = app.listen(port, () => {
     if (isInit) {
-      logger.mark(`--------- @_@ ---------`)
+      logger.mark(`--------- >_< ---------`)
       logger.mark(`锅巴服务启动成功~ 耗时:${Date.now() - begin}ms`)
       let hosts = getWebAddress(true)
       for (let host of hosts) {
