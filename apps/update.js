@@ -97,7 +97,7 @@ export class GuobaUpdate extends plugin {
     }
     // 需要重启的，自动更新模式下不进行git pull
     if (remote.needRestart && isTask) {
-      return { status: _STATUS.SUCCESS, message: '检查更新发现新版本，但是需要重启，本次不进行自动升级，请手动' }
+      return { status: _STATUS.SUCCESS, remote, message: '检查更新发现新版本，但是需要重启，本次不进行自动升级，请手动升级~' }
     }
     // 不是最新版本，执行git pull更新
     response = await this.doGitPull()
