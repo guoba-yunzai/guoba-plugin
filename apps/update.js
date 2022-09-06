@@ -31,7 +31,7 @@ export class GuobaUpdate extends plugin {
           fnc: 'getVersion',
         },
         {
-          reg: '^#锅巴(更新|升级|update)$',
+          reg: '^#锅巴(强制)?(更新|升级|update)$',
           fnc: 'doUpdate',
           permission: 'master',
         },
@@ -56,9 +56,17 @@ export class GuobaUpdate extends plugin {
   }
 
   async doUpdate() {
-    this.reply(`[Guoba] 正在检查更新，请稍候……`)
-    let {status, message} = await this.doAutoUpdate()
-    if (status === _STATUS.NO_UPDATE) {
+    let isForce = this.e.msg.includes('强制')
+    let response
+    if (!isForce) {
+      this.reply(`[Guoba] 正在检查更新，请稍候……`)
+      response = await this.doAutoUpdate()
+    } else {
+      this.reply(`[Guoba] 正在检查强制更新，请稍候……`)
+      response = await this.doGitPull(true)
+    }
+    let {status, message} = response
+    if (status === _STATUS.NO_UPDATE || status === _STATUS.GIT_NO_UPDATE) {
       return this.reply(`[Guoba] 已经是最新版本啦`)
     } else if (status === _STATUS.SUCCESS) {
       return this.reply(`[Guoba] ${message}`)
@@ -195,7 +203,7 @@ export class GuobaUpdate extends plugin {
           resolve({status: _STATUS.GIT_NO_UPDATE})
           return
         }
-        resolve({status: _STATUS.SUCCESS})
+        resolve({status: _STATUS.SUCCESS, message: '更新成功' + (isForce ? '，由于是强制更新，本次更新需要重启才能生效' : '')});
       })
     })
   }
