@@ -32,8 +32,23 @@ export class LoginService extends Service {
     let {redisKey, code} = this.getQuickLoginRedisKey(null)
     let token = this.signToken(username)
     redis.set(redisKey, token, {EX: 180})
-    let hosts = getWebAddress(false)
-    return hosts[0] + `/#/ml/${code}`
+    //let hosts = getWebAddress(false)
+    //return hosts[0] + `/#/ml/${code}`
+
+    //星佬，帮改改代码格式呗 =v=
+
+    let hosts = getWebAddress(true)
+    //暂存字符串
+    let ips_Log = ""
+    //遍历
+    for (let host of hosts) {
+        //开始拼接
+        ips_Log+=host+ `/#/ml/${code}\n`
+    }
+    //去除末尾\n
+    ips_Log=ips_Log.substring(0,ips_Log.lastIndexOf('\n'))
+    //返回拼接好的IPv4,IPv6
+    return ips_Log
   }
 
   async getQuickLogin(code) {
