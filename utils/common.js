@@ -156,8 +156,14 @@ export function getLocalIps(port ) {
   port = port ? `:${port}` : ''
   for (let [name, wlans] of Object.entries(networks)) {
     for (let wlan of wlans) {
-      //更改过滤规则,填坑。(之前未测试Windows系统)
-      if ((wlan.netmask !== 'ffff:ffff:ffff:ffff::'&&wlan.netmask !== '00:00:00:00:00:00')&&(name !== 'docker0')) {
+      /**
+       * 更改过滤规则,填坑。(之前未测试Windows系统)
+       * 通过掩码过滤本地IPv6
+       * 通过MAC地址过滤Windows 本地回环地址（踩坑）
+       * 过滤lo回环网卡（Linux要过滤'lo'），去掉会导致Linxu"::1"过滤失败（踩坑）
+       * 如有虚拟网卡需自己加上过滤--技术有限
+       */
+      if ((wlan.netmask !== 'ffff:ffff:ffff:ffff::')&&(wlan.mac !== '00:00:00:00:00:00')&&(name !== 'docker0'&&name !== 'lo')) {
         if (wlan.family === 'IPv6') {
           ips.push(`[${wlan.address}]${port}`)
         } else {
