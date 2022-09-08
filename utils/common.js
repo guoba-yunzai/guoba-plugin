@@ -156,7 +156,8 @@ export function getLocalIps(port ) {
   port = port ? `:${port}` : ''
   for (let [name, wlans] of Object.entries(networks)) {
     for (let wlan of wlans) {
-      if ((name !== 'lo' && name !== 'docker0') && wlan.netmask !== 'ffff:ffff:ffff:ffff::') {
+      //更改过滤规则,填坑。(之前未测试Windows系统)
+      if ((wlan.netmask !== 'ffff:ffff:ffff:ffff::'&&wlan.netmask !== '00:00:00:00:00:00')&&(name !== 'docker0')) {
         if (wlan.family === 'IPv6') {
           ips.push(`[${wlan.address}]${port}`)
         } else {
