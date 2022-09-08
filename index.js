@@ -75,8 +75,20 @@ async function reload() {
     delete Guoba.app
     delete Guoba.server
     // 创建服务器
-    let {createServer} = await GI('#/index.js')
-    let {app, server} = createServer({isInit})
+    let newServer
+    try {
+      let {createServer} = await GI('#/index.js')
+      newServer = createServer({isInit})
+    } catch (error) {
+      if (error.stack.includes('Cannot find package')) {
+        packageTips(error)
+      } else {
+        logger.error(`[Guoba] 服务锅巴启动失败`)
+        logger.error(decodeURI(error.stack))
+      }
+      return
+    }
+    let {app, server} = newServer
     Guoba.app = app
     Guoba.server = server
     Guoba.reload = reload
@@ -85,4 +97,12 @@ async function reload() {
     }
     isInit = false
   }
+}
+
+function packageTips(error) {
+  logger.mark('---- 锅巴启动失败 ----')
+  let pack = error.stack.match(/'(.+?)'/g)[0].replace(/'/g, '')
+  logger.mark(`缺少依赖：${logger.red(pack)}`)
+  logger.mark(`请执行安装依赖命令：${logger.red('pnpm add ' + pack + ' -w')}`)
+  logger.mark('---------------------')
 }
