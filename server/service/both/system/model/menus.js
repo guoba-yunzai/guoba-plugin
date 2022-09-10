@@ -48,7 +48,7 @@ const miaoMenu = {
   component: '/guoba/plugins/extra-config/miao-plugin/index',
   meta: {
     title: '喵喵帮助',
-    icon: 'twemoji:growing-heart',
+    icon: 'twemoji:heart-with-ribbon',
   },
 }
 
