@@ -15,6 +15,7 @@ export {
 }
 
 export const GuobaSupportMap = new Map()
+export const PluginsMap = new Map()
 
 /**
  * 引入 class 资源

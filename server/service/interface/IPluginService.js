@@ -5,11 +5,13 @@ import fetch from 'node-fetch'
 
 const Service = await Guoba.GID('#/components/Service.js')
 const Constant = await Guoba.GID('#/constant/Constant.js')
-const {GuobaSupportMap} = await Guoba.GI('@/utils/common.js')
+const {GuobaSupportMap, PluginsMap} = await Guoba.GI('@/utils/common.js')
 
 export default class IPluginService extends Service {
   constructor(app) {
     super(app)
+    // 获取插件列表，填充GuobaSupportMap
+    this.loadPlugining = this.getPlugins()
   }
 
   /**
@@ -112,6 +114,7 @@ export default class IPluginService extends Service {
               logger.error(`[Guoba] 载入guoba.support.js失败：` + (e.message || e))
             }
           }
+          PluginsMap.set(plugin.name, plugin)
           plugins.push(plugin)
         }
       }

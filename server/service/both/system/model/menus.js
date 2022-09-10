@@ -1,3 +1,5 @@
+const {PluginsMap} = await Guoba.GI('@/utils/common.js')
+
 // 首页菜单
 const homeMenu = {
   path: '/home',
@@ -40,6 +42,16 @@ const pluginsMenu = {
   },
 }
 
+const miaoMenu = {
+  path: 'plugins/miao-plugin',
+  name: 'MiaoPlugin',
+  component: '/guoba/plugins/extra-config/miao-plugin/index',
+  meta: {
+    title: '喵喵帮助',
+    icon: 'twemoji:growing-heart',
+  },
+}
+
 const aboutMenu = {
   path: 'about',
   name: 'about',
@@ -50,10 +62,16 @@ const aboutMenu = {
   },
 }
 
-export const menus = [
-  homeMenu,
-  configMenu,
-  pluginsMenu,
-  accountMenu,
-  aboutMenu,
-]
+export function useMenus() {
+  let menus = []
+  menus.push(homeMenu)
+  menus.push(configMenu)
+  menus.push(pluginsMenu)
+  // 判断是否安装了喵喵插件
+  if (PluginsMap.get('miao-plugin')) {
+    menus.push(miaoMenu)
+  }
+  menus.push(accountMenu)
+  menus.push(aboutMenu)
+  return menus
+}

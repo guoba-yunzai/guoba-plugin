@@ -1,6 +1,6 @@
 const {GI, GID} = Guoba.createImport(import.meta.url)
 const Service = await GID('#/components/Service.js')
-const {menus} = await GI('./model/menus.js')
+const {useMenus} = await GI('./model/menus.js')
 
 export class SystemService extends Service {
 
@@ -9,6 +9,6 @@ export class SystemService extends Service {
   }
 
   async queryMenus() {
-    return menus
+    return useMenus()
   }
 }

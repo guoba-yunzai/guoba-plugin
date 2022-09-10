@@ -1,8 +1,9 @@
 import express from 'express'
-import bodyParser from 'body-parser'
-import { getWebAddress } from '../utils/common.js';
+import {getWebAddress} from '../utils/common.js'
+
 const cfg = await Guoba.GID('cfg')
 const {useStatic} = await Guoba.GI('#/loader/loadStatic.js')
+const {useHelper} = await Guoba.GI('#/loader/loadHelper.js')
 const {usePreload} = await Guoba.GI('#/loader/loadPreload.js')
 const {useInterceptor} = await Guoba.GI('#/loader/loadInterceptor.js')
 const {useController} = await Guoba.GI('#/loader/loadController.js')
@@ -15,14 +16,14 @@ export function createServer({isInit}) {
   useStatic(app)
   // 预加载
   usePreload(app)
-  // parse application/json
-  app.use(bodyParser.json())
+  // 辅助工具
+  useHelper(app)
   // 拦截器
   useInterceptor(app)
-  // 控制器
-  useController(app)
   // 服务
   useService(app)
+  // 控制器
+  useController(app)
   // 启动服务监听
   let {port} = cfg.get('server')
   let server = app.listen(port, () => {

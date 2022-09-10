@@ -26,6 +26,7 @@ export {apps}
 async function init() {
   // dev 模式下，监听文件变化，自动重启服务器
   if (isDev) {
+    let skip = true
     let staticPath = path.join(_paths.pluginRoot, 'server/static')
     createHotLoad(path.join(_paths.pluginRoot, 'server'), {
       wait: 100,
@@ -34,12 +35,13 @@ async function init() {
         if (type === 'immediate') {
           return true
         }
+        if (skip) return false
         if (p.startsWith(staticPath)) {
           return false
         }
         return /\.c?js$/.test(p)
       },
-      handler: () => reload(),
+      handler: () => reload().then(() => setTimeout(() => skip = false, 1000))
     })
   } else {
     reload()

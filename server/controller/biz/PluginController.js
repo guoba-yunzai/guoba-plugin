@@ -13,10 +13,15 @@ export default class PluginController extends RestController {
   }
 
   registerRouters() {
+    // 获取plugin列表
     this.get('/list', this.getPlugins)
+    // 获取plugin readme
     this.get('/readme', this.getPluginReadme)
+    // 获取plugin icon（直接显示图片）
     this.get('/s/:pluginName/icon', this.getPluginIcon)
+    // 获取plugin配置数据
     this.get('/s/:pluginName/config', this.getPluginConfig)
+    // 设置plugin配置数据
     this.put('/s/:pluginName/config', this.setPluginConfig)
   }
 
