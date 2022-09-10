@@ -85,10 +85,12 @@ export function supportGuoba() {
       },
       // 设置配置的方法（前端点确定后调用的方法）
       setConfigData(data, {Result}) {
+        let config = {}
         for (let [keyPath, value] of Object.entries(data)) {
-          cfg.config.reader.document.setIn(keyPath.split('.'), value)
+          lodash.set(config, keyPath, value)
         }
-        cfg.config.reader.save()
+        config = lodash.merge({}, cfg.merged, config)
+        cfg.config.reader.setData(config)
         return Result.ok({}, '保存成功~')
       },
     },
