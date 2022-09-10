@@ -32,6 +32,7 @@ git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Gu
 如果你是用普通的npm或者cnpm，那就需要安装以下依赖：
 
 ```bash
+npm install multer
 npm install body-parser
 npm install jsonwebtoken
 ```
