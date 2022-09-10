@@ -74,7 +74,11 @@ export default class MiaoPluginController extends RestController {
     let def = await import(`file://${helpPath}/help-cfg_default.js?version=${new Date().getTime()}`)
     let helpCfg = lodash.defaults(help.helpCfg, def.helpCfg)
     let helpList = help.helpList || def.helpList
-    return Result.ok({helpCfg, helpList})
+    // 如果未安装喵喵插件，是不会走到这一步的
+    let Version = (await import('../../../../miao-plugin/components/Version.js')).default
+    let miaoVersion = Version.version
+    let yunzaiVersion = Version.yunzai
+    return Result.ok({helpCfg, helpList, miaoVersion, yunzaiVersion})
   }
 
   async saveMiaoHelpCfg(req) {
