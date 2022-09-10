@@ -13,7 +13,7 @@ export class GuobaHelp extends plugin {
       priority: 100,
       rule: [
         {
-          reg: '^#锅巴(帮助|菜单|说明|功能|指令|命令|使用说明|help)$',
+          reg: '^#?锅巴(帮助|菜单|说明|功能|指令|命令|使用说明|help)$',
           fnc: 'getHelp',
           permission: 'master',
         },
@@ -35,7 +35,7 @@ export class GuobaHelp extends plugin {
   async getHelp() {
     let msg = [
       '锅巴帮助：\n' +
-      'https://docs.qq.com/doc/DWnJUcHdnTXhOSnlY'
+      'https://gitee.com/guoba-yunzai/guoba-plugin/wikis/Home'
     ]
     return this.e.reply(msg)
   }

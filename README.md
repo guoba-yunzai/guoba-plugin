@@ -60,6 +60,9 @@ npm install jsonwebtoken
 - 群组配置
 ![004](./resources/images/readme/004.png)
 
+- 编辑喵喵帮助
+![005](./resources/images/readme/005.png)
+
 # 免责声明
 
 1. 功能仅限内部交流与小范围使用，严禁将Guoba-Plugin用于任何商业用途或盈利

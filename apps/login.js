@@ -12,7 +12,7 @@ export class GuobaLogin extends plugin {
       priority: 100,
       rule: [
         {
-          reg: '^#锅巴登录$',
+          reg: '^#?锅巴登录$',
           fnc: 'login',
         },
       ],
