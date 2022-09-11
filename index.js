@@ -16,7 +16,7 @@ if (isV3) {
   await loadClasses(appsPath, plugin, apps)
   await init()
 
-  logger.mark(`[Guoba] ${_version}初始化完成~`)
+  logger.mark(`[Guoba] 欢迎使用锅巴插件，当前版本：${_version}`)
 } else {
   logger.error(`[Guoba] 锅巴插件不支持Yunzai2.x版本哦。`)
 }

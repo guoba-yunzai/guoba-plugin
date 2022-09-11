@@ -135,7 +135,7 @@ export default class MiaoPluginController extends RestController {
   initBackup() {
     let {backupList} = this.getBackupCfg()
     if (backupList.length === 0) {
-      this.doAddBackup('原版喵喵帮助', true)
+      this.doAddBackup('初始备份', true)
     }
   }
 
