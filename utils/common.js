@@ -122,23 +122,23 @@ export async function sendToMaster(msg, all = false, idx = 0) {
  * @param allIp 是否展示全部IP
  */
 export function getWebAddress(allIp = false) {
-  let {host, port, splicePort} = cfg.get('server');
-  port = splicePort ? Number.parseInt(port) : null;
-  port = port === 80 ? null : port;
-  let hosts = [];
+  let {host, port, splicePort} = cfg.get('server')
+  port = splicePort ? Number.parseInt(port) : null
+  port = port === 80 ? null : port
+  let hosts = []
   if (host === 'auto') {
-    let ips = getLocalIps(port);
+    let ips = getLocalIps(port)
     if (ips.length === 0) {
-      ips.push(`localhost${port ? ':' + port : ''}`);
+      ips.push(`localhost${port ? ':' + port : ''}`)
     }
     if (allIp) {
-      hosts = ips.map(ip => `http://${ip}`);
+      hosts = ips.map(ip => `http://${ip}`)
     } else {
-      hosts.push(`http://${ips[0]}`);
+      hosts.push(`http://${ips[0]}`)
     }
   } else {
-    host = /^http/.test(host) ? host : 'http://' + host;
-    hosts.push(`${host}${port ? ':' + port : ''}`);
+    host = /^http/.test(host) ? host : 'http://' + host
+    hosts.push(`${host}${port ? ':' + port : ''}`)
   }
   return hosts
 }
@@ -150,7 +150,7 @@ export function getWebAddress(allIp = false) {
  * @param port 要拼接的端口号
  * @return {*[]}
  */
-export function getLocalIps(port ) {
+export function getLocalIps(port) {
   let networks = os.networkInterfaces()
   let ips = []
   // noinspection EqualityComparisonWithCoercionJS
@@ -164,7 +164,7 @@ export function getLocalIps(port ) {
        * 过滤lo回环网卡（Linux要过滤'lo'），去掉会导致Linxu"::1"过滤失败（踩坑）
        * 如有虚拟网卡需自己加上过滤--技术有限
        */
-      if ((wlan.netmask !== 'ffff:ffff:ffff:ffff::')&&(wlan.mac !== '00:00:00:00:00:00')&&(name !== 'docker0'&&name !== 'lo')) {
+      if ((wlan.netmask !== 'ffff:ffff:ffff:ffff::') && (wlan.mac !== '00:00:00:00:00:00') && (name !== 'docker0' && name !== 'lo')) {
         if (wlan.family === 'IPv6') {
           ips.push(`[${wlan.address}]${port}`)
         } else {
@@ -174,4 +174,8 @@ export function getLocalIps(port ) {
     }
   }
   return ips
+}
+
+export function sleep(ms = 1000) {
+  return new Promise(resolve => setTimeout(resolve, ms))
 }

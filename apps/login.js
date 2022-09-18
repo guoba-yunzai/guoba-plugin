@@ -22,10 +22,15 @@ export class GuobaLogin extends plugin {
   async login() {
     if (!this.e.isMaster) return false
     if (this.e.isGroup) {
-      this.e.reply("请私聊使用锅巴~")
+      this.e.reply('请私聊使用锅巴~')
       return true
     }
-    let host = this.loginService.setQuickLogin(this.e.user_id)
+    let host
+    try {
+      host = this.loginService.setQuickLogin(this.e.user_id)
+    } catch {
+      return this.reply('锅巴服务启动失败，可能是端口号占用，或者依赖没有安装完整，请发送“#锅巴帮助”获取相关帮助信息。')
+    }
     return this.reply([
       `欢迎回来主人~ 这是您的登录地址：\n`,
       host,

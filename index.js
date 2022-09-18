@@ -41,7 +41,7 @@ async function init() {
         }
         return /\.c?js$/.test(p)
       },
-      handler: () => reload().then(() => setTimeout(() => skip = false, 1000))
+      handler: () => reload().then(() => setTimeout(() => skip = false, 1000)),
     })
   } else {
     reload()
@@ -80,13 +80,17 @@ async function reload() {
     let newServer
     try {
       let {createServer} = await GI('#/index.js')
-      newServer = createServer({isInit})
+      newServer = await createServer({isInit})
     } catch (error) {
-      if (error.stack.includes('Cannot find package')) {
+      if (error?.stack && error.stack.includes('Cannot find package')) {
         packageTips(error)
       } else {
-        logger.error(`[Guoba] 服务锅巴启动失败`)
-        logger.error(decodeURI(error.stack))
+        if (error.stack) {
+          logger.error(`[Guoba] 服务锅巴启动失败`)
+          logger.error(decodeURI(error.stack))
+        } else {
+          logger.error(error)
+        }
       }
       return
     }
