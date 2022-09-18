@@ -1,1 +1,1 @@
-import{y as o,q as s,be as a}from"./index.js";function e(e){let t;o((()=>{e(),s((()=>{t=!0}))})),a((()=>{t&&e()}))}export{e as o};
+import{y as o,q as s,bd as a}from"./index.js";function t(t){let e;o((()=>{t(),s((()=>{e=!0}))})),a((()=>{e&&t()}))}export{t as o};
