@@ -122,25 +122,39 @@ export async function sendToMaster(msg, all = false, idx = 0) {
  * @param allIp 是否展示全部IP
  */
 export function getWebAddress(allIp = false) {
-  let {host, port, splicePort} = cfg.get('server')
+  let host = cfg.getServerHost()
+  let {port, splicePort} = cfg.get('server')
   port = splicePort ? Number.parseInt(port) : null
   port = port === 80 ? null : port
   let hosts = []
   if (host === 'auto') {
-    let ips = getLocalIps(port)
-    if (ips.length === 0) {
-      ips.push(`localhost${port ? ':' + port : ''}`)
-    }
-    if (allIp) {
-      hosts = ips.map(ip => `http://${ip}`)
-    } else {
-      hosts.push(`http://${ips[0]}`)
-    }
+    hosts.push(...getAutoIps(port, allIp))
   } else {
-    host = /^http/.test(host) ? host : 'http://' + host
-    hosts.push(`${host}${port ? ':' + port : ''}`)
+    if (!Array.isArray(host)) {
+      host = [host]
+    }
+    for (let item of host) {
+      if (item === 'auto') {
+        hosts.push(...getAutoIps(port, allIp))
+      } else {
+        item = /^http/.test(item) ? item : 'http://' + item
+        hosts.push(`${item}${port ? ':' + port : ''}`)
+      }
+    }
   }
   return hosts
+}
+
+function getAutoIps(port, allIp) {
+  let ips = getLocalIps(port)
+  if (ips.length === 0) {
+    ips.push(`localhost${port ? ':' + port : ''}`)
+  }
+  if (allIp) {
+    return ips.map(ip => `http://${ip}`)
+  } else {
+    return [`http://${ips[0]}`]
+  }
 }
 
 /**
