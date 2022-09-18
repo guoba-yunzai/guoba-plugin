@@ -1,3 +1,5 @@
+import loader from '../../../../../../../lib/plugins/loader.js'
+
 // 添加群号 prompt
 const addGroupPromptProps = {
   content: '请输入群号：',
@@ -91,6 +93,15 @@ const baseConfig = {
             placeholder: '请输入chromium路径',
           },
         },
+        {
+          field: 'proxyAddress',
+          label: '代理地址',
+          bottomHelpMessage: '米游社接口代理地址，国际服用',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入米游社代理地址',
+          },
+        },
       ],
     },
     {
@@ -142,116 +153,131 @@ const baseConfig = {
   ],
 }
 
-const groupConfig = {
-  key: 'group',
-  title: '群组配置',
-  cards: [
-    {
-      key: 'system.group',
-      type: 'keyFormCard',
-      // 标题表达式
-      title: `{{form.key === 'default' ? '默认配置' : '群：' + form.key}}`,
-      desc: '默认配置对所有群聊生效',
-      // 允许添加新的配置
-      allowAdd: true,
-      allowDel: true,
-      // 新增按钮文本（默认“新增”）
-      addBtnText: '新增群配置',
-      promptProps: addGroupPromptProps,
-      schemas: [
-        {
-          field: 'groupCD',
-          label: '整体冷却时间',
-          component: 'InputNumber',
-          bottomHelpMessage: '群聊中所有指令操作冷却时间，单位毫秒,0 则无限制',
-          componentProps: {
-            placeholder: '请输入指令冷却时间',
+const groupConfig = () => {
+  let funOptions = []
+  for (let item of loader.priority) {
+    if (item.hasOwnProperty('name') && item.name) {
+      if (!funOptions.find(i => i.value === item.name)) {
+        funOptions.push({value: item.name})
+      }
+    }
+  }
+  let funComponent = funOptions.length === 0 ? 'GTags' : 'Select'
+  return {
+    key: 'group',
+    title: '群组配置',
+    cards: [
+      {
+        key: 'system.group',
+        type: 'keyFormCard',
+        // 标题表达式
+        title: `{{form.key === 'default' ? '默认配置' : '群：' + form.key}}`,
+        desc: '默认配置对所有群聊生效',
+        // 允许添加新的配置
+        allowAdd: true,
+        allowDel: true,
+        // 新增按钮文本（默认“新增”）
+        addBtnText: '新增群配置',
+        promptProps: addGroupPromptProps,
+        schemas: [
+          {
+            field: 'groupCD',
+            label: '整体冷却时间',
+            component: 'InputNumber',
+            bottomHelpMessage: '群聊中所有指令操作冷却时间，单位毫秒,0 则无限制',
+            componentProps: {
+              placeholder: '请输入指令冷却时间',
+            },
           },
-        },
-        {
-          field: 'singleCD',
-          label: '个人冷却时间',
-          component: 'InputNumber',
-          bottomHelpMessage: '群聊中个人操作冷却时间，单位毫秒',
-          componentProps: {
-            placeholder: '请输入指令冷却时间',
+          {
+            field: 'singleCD',
+            label: '个人冷却时间',
+            component: 'InputNumber',
+            bottomHelpMessage: '群聊中个人操作冷却时间，单位毫秒',
+            componentProps: {
+              placeholder: '请输入指令冷却时间',
+            },
           },
-        },
-        {
-          field: 'onlyReplyAt',
-          label: '只关注At',
-          component: 'Switch',
-          bottomHelpMessage: '是否只仅关注主动@机器人的消息',
-          componentProps: {
-            checkedValue: 1,
-            unCheckedValue: 0,
+          {
+            field: 'onlyReplyAt',
+            label: '只关注At',
+            component: 'Switch',
+            bottomHelpMessage: '是否只仅关注主动@机器人的消息',
+            componentProps: {
+              checkedValue: 1,
+              unCheckedValue: 0,
+            },
           },
-        },
-        {
-          field: 'botAlias',
-          label: '机器人别名',
-          component: 'GTags',
-          bottomHelpMessage: '开启“只关注At”后，发送以别名开头的消息也会响应，支持多个别名',
-          componentProps: {
-            allowAdd: true,
-            allowDel: true,
+          {
+            field: 'botAlias',
+            label: '机器人别名',
+            component: 'GTags',
+            bottomHelpMessage: '开启“只关注At”后，发送以别名开头的消息也会响应，支持多个别名',
+            componentProps: {
+              allowAdd: true,
+              allowDel: true,
+            },
           },
-        },
-        {
-          field: 'imgAddLimit',
-          label: '添加表情权限',
-          component: 'RadioGroup',
-          bottomHelpMessage: '添加表情是否限制权限',
-          componentProps: {
-            options: [
-              {label: '所有群员都可以添加', value: 0},
-              {label: '群主和管理员才能添加', value: 1},
-              {label: '只有主人才能添加', value: 2},
-            ],
+          {
+            field: 'imgAddLimit',
+            label: '添加表情权限',
+            component: 'RadioGroup',
+            bottomHelpMessage: '添加表情是否限制权限',
+            componentProps: {
+              options: [
+                {label: '所有群员都可以添加', value: 0},
+                {label: '群主和管理员才能添加', value: 1},
+                {label: '只有主人才能添加', value: 2},
+              ],
+            },
           },
-        },
-        {
-          field: 'imgMaxSize',
-          label: '添加表情大小限制',
-          component: 'InputNumber',
-          bottomHelpMessage: '添加表情图片大小限制，单位：MB',
-          componentProps: {
-            placeholder: '请输入添加表情图片大小限制',
+          {
+            field: 'imgMaxSize',
+            label: '添加表情大小限制',
+            component: 'InputNumber',
+            bottomHelpMessage: '添加表情图片大小限制，单位：MB',
+            componentProps: {
+              placeholder: '请输入添加表情图片大小限制',
+            },
           },
-        },
-        {
-          field: 'addPrivate',
-          label: '私聊添加',
-          component: 'Switch',
-          bottomHelpMessage: '是否允许私聊添加',
-          componentProps: {
-            checkedValue: 1,
-            unCheckedValue: 0,
+          {
+            field: 'addPrivate',
+            label: '私聊添加',
+            component: 'Switch',
+            bottomHelpMessage: '是否允许私聊添加',
+            componentProps: {
+              checkedValue: 1,
+              unCheckedValue: 0,
+            },
           },
-        },
-        {
-          field: 'enable',
-          label: '功能白名单',
-          component: 'GTags',
-          bottomHelpMessage: '配置后只有配置的功能才可以使用',
-          componentProps: {
-            allowAdd: true,
-            allowDel: true,
+          {
+            field: 'enable',
+            label: '功能白名单',
+            component: funComponent,
+            bottomHelpMessage: '配置后只有配置的功能才可以使用',
+            componentProps: {
+              allowAdd: true,
+              allowDel: true,
+              mode: 'multiple',
+              options: funOptions,
+            },
           },
-        },
-        {
-          field: 'disable',
-          label: '功能黑名单',
-          component: 'GTags',
-          bottomHelpMessage: '配置后配置的功能将不可以使用',
-          componentProps: {
-            allowAdd: true,
-            allowDel: true,
+          {
+            field: 'disable',
+            label: '功能黑名单',
+            component: funComponent,
+            bottomHelpMessage: '配置后配置的功能将不可以使用',
+            componentProps: {
+              allowAdd: true,
+              allowDel: true,
+              mode: 'multiple',
+              options: funOptions,
+            },
           },
-        },
-      ],
-    },
-  ],
+        ],
+      },
+    ],
+  }
 }
 
 const genshinConfig = {
@@ -293,7 +319,7 @@ const genshinConfig = {
         {
           field: 'signTime',
           label: '签到定时任务',
-          component: 'Input',
+          component: 'EasyCron',
           bottomHelpMessage: '米游社原神签到定时任务，Cron表达式，默认00:02开始执行，每10s签到一个',
           componentProps: {},
         },
@@ -422,6 +448,16 @@ const otherConfig = {
           },
         },
         {
+          field: 'disableAdopt',
+          label: '私聊通行字符串',
+          bottomHelpMessage: '禁用私聊后，允许响应的字符串',
+          component: 'GTags',
+          componentProps: {
+            allowAdd: true,
+            allowDel: true,
+          },
+        },
+        {
           field: 'whiteGroup',
           label: '白名单群',
           bottomHelpMessage: '白名单群，可以设置多个，用英文逗号分隔（后续版本将支持选择）',
@@ -468,12 +504,14 @@ const otherConfig = {
   ],
 }
 
-export const configTabs = [
-  baseConfig,
-  groupConfig,
-  genshinConfig,
-  otherConfig,
-]
+export function getConfigTabs() {
+  let tabs = []
+  tabs.push(baseConfig)
+  tabs.push(groupConfig())
+  tabs.push(genshinConfig)
+  tabs.push(otherConfig)
+  return tabs
+}
 
 export const configFile = {
   'system.bot': '/config/config/bot.yaml',

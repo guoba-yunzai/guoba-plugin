@@ -4,7 +4,7 @@ const {GI, GID} = Guoba.createImport(import.meta.url)
 const Constant = await GID('#/constant/Constant.js')
 const IConfigService = await GID('#/service/interface/IConfigService.js')
 const {getConfigReader} = await GI('./utils/ConfigUtils.js')
-const {configTabs, configFile} = await GI('./model/useConfig.js')
+const {getConfigTabs, configFile} = await GI('./model/useConfig.js')
 
 export default class ConfigServiceImpl extends IConfigService {
 
@@ -13,7 +13,7 @@ export default class ConfigServiceImpl extends IConfigService {
   }
 
   async getConfigTabs() {
-    return configTabs
+    return getConfigTabs()
   }
 
   async getConfigData(key) {
