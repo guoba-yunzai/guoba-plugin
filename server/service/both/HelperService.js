@@ -45,7 +45,12 @@ export default class HelperService extends Service {
   /** 获取天气 */
   async getWeather(city) {
     let url = `http://wthrcdn.etouch.cn/weather_mini?city=${city}`
-    let response = await fetch(url)
+    let response
+    try {
+      response = await fetch(url)
+    } catch (e) {
+      throw new GuobaError('天气接口查询失败，请稍后再试')
+    }
     let res = await response.json()
     let {status, data} = res
     if (status === 1000) {
@@ -53,7 +58,7 @@ export default class HelperService extends Service {
     } else if (status === 1002) {
       throw new GuobaError(`城市：${city} 数据不存在`)
     } else {
-      console.error(res)
+      logger.warn('获取天气数据失败', res)
       throw new GuobaError('获取天气数据失败，请稍后再试')
     }
   }

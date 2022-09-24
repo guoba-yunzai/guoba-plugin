@@ -42,8 +42,8 @@ export default class HelperController extends RestController {
       let city = this.getCity()
       return Result.ok(await this.helperService.getWeather(city))
     } catch (e) {
-      console.error(e)
-      return Result.error(e.message || e)
+      let msg = e.message || e
+      return Result.ok({}, msg);
     }
   }
 
