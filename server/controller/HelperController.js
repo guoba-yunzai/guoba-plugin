@@ -40,10 +40,13 @@ export default class HelperController extends RestController {
   async getCityWeather() {
     try {
       let city = this.getCity()
-      return Result.ok(await this.helperService.getWeather(city))
+      return Result.ok({
+        weather: await this.helperService.getWeather(city),
+      })
     } catch (e) {
+      logger.error(e)
       let msg = e.message || e
-      return Result.ok({}, msg);
+      return Result.error(msg)
     }
   }
 

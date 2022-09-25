@@ -1,4 +1,6 @@
+import path from 'path'
 import fetch from 'node-fetch'
+import {_paths, readJson} from '../../../utils/common.js'
 
 const Result = await Guoba.GID('#/components/Result.js')
 const Service = await Guoba.GID('#/components/Service.js')
@@ -42,8 +44,44 @@ export default class HelperService extends Service {
     return buffer
   }
 
-  /** 获取天气 */
+  /** 获取天气（中国天气网） */
   async getWeather(city) {
+    let cityCode
+    if (/^\d{9}$/.test(city)) {
+      cityCode = city
+    } else {
+      let cityJsonPath = path.join(_paths.pluginResources, 'json/city.json')
+      let cityMap = readJson(cityJsonPath)
+      cityCode = cityMap[city]
+      if (!cityCode) {
+        return `城市${city}不存在或不支持`
+      }
+    }
+    let url = `http://www.weather.com.cn/data/cityinfo/${cityCode}.html`
+    let response
+    try {
+      response = await fetch(url)
+    } catch (e) {
+      logger.error(e)
+      throw new GuobaError('天气接口查询失败，请稍后再试')
+    }
+    if (response.status !== 200) {
+      throw new GuobaError('天气接口查询失败：' + response.status)
+    }
+    let res = await response.json()
+    // noinspection SpellCheckingInspection
+    let {weatherinfo: weatherInfo} = res
+    if (weatherInfo) {
+      let {city, temp1, temp2, weather} = weatherInfo
+      return `${city}今日${weather}，最低温${temp1}，最高温${temp2}`
+    } else {
+      logger.warn('获取天气数据失败', res)
+      throw new GuobaError('获取天气数据失败，请稍后再试')
+    }
+  }
+
+  /** 获取天气 */
+  async getWeather_old(city) {
     let url = `http://wthrcdn.etouch.cn/weather_mini?city=${city}`
     let response
     try {
