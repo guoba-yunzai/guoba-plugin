@@ -2,11 +2,13 @@ import os from 'os'
 import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
+import fetch from 'node-fetch'
 import cfg from './cfg.js'
 import {pluginPackage} from './package.js'
 import {_paths} from './paths.js'
 import common from '../../../lib/common/common.js'
 import BotCfg from '../../../lib/config/config.js'
+import Constant from '../server/constant/Constant.js'
 
 export const _version = pluginPackage.version
 
@@ -118,6 +120,31 @@ export async function sendToMaster(msg, all = false, idx = 0) {
 }
 
 /**
+ * 获取所有web地址，包括内网、外网
+ */
+export async function getAllWebAddress() {
+  let host = cfg.getServerHost()
+  let {port, splicePort} = cfg.get('server')
+  port = splicePort ? Number.parseInt(port) : null
+  port = port === 80 ? null : port
+  let custom = []
+  let local = getAutoIps(port, true)
+  let remote = await getRemoteIps(port)
+  if (host) {
+    if (!Array.isArray(host)) {
+      host = [host]
+    }
+    for (let h of host) {
+      if (h && h !== 'auto') {
+        h = /^http/.test(h) ? h : 'http://' + h
+        custom.push(`${h}${port ? ':' + port : ''}`)
+      }
+    }
+  }
+  return {custom, local, remote}
+}
+
+/**
  * 获取web地址
  * @param allIp 是否展示全部IP
  */
@@ -190,6 +217,96 @@ export function getLocalIps(port) {
   return ips
 }
 
+/**
+ * 获取外网ip地址
+ * @author @吃吃吃个柚子皮
+ */
+export async function getRemoteIps(port) {
+  let redisKey = Constant.REDIS_PREFIX + 'remote-ips:2'
+  let cacheData = await redis.get(redisKey)
+  if (cacheData) {
+    return JSON.parse(cacheData)
+  }
+  port = port ? `:${port}` : ''
+  let ips = []
+  //API是免费，但不能商用。(废话)
+  let apis = [
+    // 返回IPv4地址
+    'http://v4.ip.zxinc.org/info.php?type=json',
+    // 返回IPv6地址（已失效）
+    // 'http://v6.ip.zxinc.org/info.php?type=json'
+  ]
+  for (let api of apis) {
+    let response = await fetch(api)
+    if (response.status === 200) {
+      let {code, data} = await response.json()
+      if (code === 0) {
+        ips.push(`http://${data.myip}${port}`)
+      }
+    }
+  }
+  // 缓存避免过多请求，
+  // 服务器上的外网IP一般不会变，如果经常变的话就推荐使用DDNS，
+  // 而家用PC一般也用不到外网IP，仍然推荐使用DDNS内网穿透。
+  redis.set(redisKey, JSON.stringify(ips), {EX: 3600 * 24})
+  return ips
+}
+
 export function sleep(ms = 1000) {
   return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+/**
+ * 读取JSON文件
+ * @param filePath
+ */
+export function readJson(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, 'utf8'))
+}
+
+/**
+ *
+ * 制作转发消息
+ * @param e
+ * @param msg 消息体
+ * @param dec 描述
+ * @returns {Promise<boolean|*>}
+ */
+export async function makeForwardMsg(e, msg = [], dec = '') {
+  let nickname = Bot.nickname
+  if (e.isGroup) {
+    let info = await Bot.getGroupMemberInfo(e.group_id, Bot.uin)
+    nickname = info.card || info.nickname
+  }
+  let userInfo = {
+    user_id: Bot.uin,
+    nickname,
+  }
+
+  let forwardMsg = []
+  msg.forEach(v => {
+    forwardMsg.push({
+      ...userInfo,
+      message: v,
+    })
+  })
+
+  /** 制作转发内容 */
+  if (e.isGroup) {
+    forwardMsg = await e.group.makeForwardMsg(forwardMsg)
+  } else if (e.friend) {
+    forwardMsg = await e.friend.makeForwardMsg(forwardMsg)
+  } else {
+    return false
+  }
+
+  if (dec) {
+    /** 处理描述 */
+    forwardMsg.data = forwardMsg.data
+      .replace(/\n/g, '')
+      .replace(/<title color="#777777" size="26">(.+?)<\/title>/g, '___')
+      .replace(/___+/, `<title color="#777777" size="26">${dec}</title>`)
+  }
+
+  return forwardMsg
 }

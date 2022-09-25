@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 const cfg = await Guoba.GID('cfg')
 const Service = await Guoba.GID('#/components/Service.js')
 const Constant = await Guoba.GID('#/constant/Constant.js')
-const {randomString, getWebAddress} = await Guoba.GI('@/utils/common.js')
+const {randomString, getAllWebAddress} = await Guoba.GI('@/utils/common.js')
 const GuobaError = await Guoba.GID('@/components/GuobaError.js')
 
 export class LoginService extends Service {
@@ -28,13 +28,15 @@ export class LoginService extends Service {
     }
   }
 
-  setQuickLogin(username) {
+  async setQuickLogin(username) {
     let {redisKey, code} = this.getQuickLoginRedisKey(null)
     let token = this.signToken(username)
     redis.set(redisKey, token, {EX: 180})
-    let showAllIp = cfg.get('server.showAllIp')
-    let hosts = getWebAddress(showAllIp)
-    return hosts.map(h => `${h}/#/ml/${code}`).join('\n')
+    let webAddress = await getAllWebAddress()
+    for (let [key, address] of Object.entries(webAddress)) {
+      webAddress[key] = address.map(h => `${h}/#/ml/${code}`)
+    }
+    return webAddress
   }
 
   async getQuickLogin(code) {

@@ -72,12 +72,12 @@ export function supportGuoba() {
           bottomHelpMessage: '是否需要在服务器地址后拼接端口号',
           component: 'Switch',
         },
-        {
-          field: 'server.showAllIp',
-          label: '显示所有IP',
-          bottomHelpMessage: '当host为auto时，是否在使用"#锅巴登录"时显示所有IP地址',
-          component: 'Switch',
-        },
+        // {
+        //   field: 'server.showAllIp',
+        //   label: '显示所有IP',
+        //   bottomHelpMessage: '当host为auto时，是否在使用"#锅巴登录"时显示所有IP地址',
+        //   component: 'Switch',
+        // },
       ],
       // 获取配置数据方法（用于前端填充显示数据）
       getConfigData() {
