@@ -17,7 +17,10 @@ export class PermissionController extends RestController {
 
   // 获取用户权限
   async getPermCode(req) {
-    return Result.ok(['sa'])
+    return Result.ok({
+      permCode: ['sa'],
+      liteToken: this.systemService.getLiteToken(),
+    })
   }
 
   async getMenuList() {

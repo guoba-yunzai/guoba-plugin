@@ -3,11 +3,18 @@ import jwt from 'jsonwebtoken'
 const cfg = await Guoba.GID('cfg')
 const Result = await Guoba.GID('#/components/Result.js')
 const Constant = await Guoba.GID('#/constant/Constant.js')
+const {autowired} = await Guoba.GI('#/loader/injection.js')
 const Interceptor = await Guoba.GID('#/components/Interceptor.js')
+
+// 弱令牌（只能用来访问静态资源等）
+const liteInclude = [
+  new RegExp('^/api/plugin/miao/help/theme/.+'),
+]
 
 // 需要拦截的路径
 const include = [
   new RegExp('^/api/.*'),
+  ...liteInclude,
 ]
 
 // 不需要拦截的路径
@@ -23,6 +30,9 @@ const exclude = [
  * @param app
  */
 export default class TokenInterceptor extends Interceptor {
+
+  systemService = autowired('systemService')
+
   constructor(app) {
     super(app)
     this.secret = cfg.get('jwt.secret')
@@ -34,16 +44,28 @@ export default class TokenInterceptor extends Interceptor {
     } else if (exclude.find(reg => reg.test(req.path))) {
       next()
     } else {
-      let token = req.headers[Constant.TOKEN_KEY]
+      // 从query里获取token
+      let token = req.query?.token
+      if (!token) {
+        token = req.headers[Constant.TOKEN_KEY]
+      }
       if (token) {
-        let redisKey = Constant.REDIS_PREFIX + 'access-token:' + token
-        let redisToken = await redis.get(redisKey)
-        if (redisToken) {
-          try {
-            jwt.verify(redisToken, this.secret)
+        // 判断是否是弱令牌
+        if (token.length === 8 && token === this.systemService.getLiteToken()) {
+          if (liteInclude.find(reg => reg.test(req.path))) {
             next()
             return
-          } catch {
+          }
+        } else {
+          let redisKey = Constant.REDIS_PREFIX + 'access-token:' + token
+          let redisToken = await redis.get(redisKey)
+          if (redisToken) {
+            try {
+              jwt.verify(redisToken, this.secret)
+              next()
+              return
+            } catch {
+            }
           }
         }
       }

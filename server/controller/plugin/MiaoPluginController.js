@@ -89,7 +89,9 @@ export default class MiaoPluginController extends RestController {
     fs.writeFileSync(cfgPath, content, 'utf-8')
     let [iconFile, mainFile] = req.files
     fs.renameSync(iconFile.path, iconPath)
-    fs.renameSync(mainFile.path, mainImgPath)
+    if (mainFile) {
+      fs.renameSync(mainFile.path, mainImgPath)
+    }
     return Result.ok()
   }
 
