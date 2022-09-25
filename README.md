@@ -28,11 +28,10 @@ git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Gu
 
 2. 安装依赖
 
-如果你是使用`pnpm`安装的云崽，那就只需要在云崽根目录执行下`pnpm install`即可
-
-如果你是用普通的npm或者cnpm，那就需要安装以下依赖：
+使用`npm`或`cnpm`或`pnpm`安装以下依赖：
 
 ```bash
+npm install express
 npm install multer
 npm install body-parser
 npm install jsonwebtoken
