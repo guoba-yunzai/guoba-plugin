@@ -28,7 +28,17 @@ git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Gu
 
 2. 安装依赖
 
-使用`npm`或`cnpm`或`pnpm`安装以下依赖：
+如果你是使用`pnpm`安装的云崽，那么只需要在云崽根目录下运行此命令即可：
+
+```bash
+pnpm install --no-lockfile --filter=guoba-plugin
+```
+
+> 注：请务必直接复制提供的命令，否则可能会导致依赖丢失的情况，请自行重新安装。<br>
+> `--no-lockfile`：不读取也不更改`pnpm-lock.yaml`文件，可防止更新冲突。<br>
+> `--filter=guoba-plugin`：只安装`guoba-plugin`下的依赖，其他依赖不处理，防止丢失。
+
+如果是使用`npm`或`cnpm`等其他依赖安装工具，需要手动安装以下依赖：
 
 ```bash
 npm install express
