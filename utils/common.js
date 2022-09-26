@@ -222,34 +222,36 @@ export function getLocalIps(port) {
  * @author @吃吃吃个柚子皮
  */
 export async function getRemoteIps(port) {
-  let redisKey = Constant.REDIS_PREFIX + 'remote-ips:2'
+  let redisKey = Constant.REDIS_PREFIX + 'remote-ips:3'
   let cacheData = await redis.get(redisKey)
+  let ips
   if (cacheData) {
-    return JSON.parse(cacheData)
-  }
-  port = port ? `:${port}` : ''
-  let ips = []
-  //API是免费，但不能商用。(废话)
-  let apis = [
-    // 返回IPv4地址
-    'http://v4.ip.zxinc.org/info.php?type=json',
-    // 返回IPv6地址（已失效）
-    // 'http://v6.ip.zxinc.org/info.php?type=json'
-  ]
-  for (let api of apis) {
-    let response = await fetch(api)
-    if (response.status === 200) {
-      let {code, data} = await response.json()
-      if (code === 0) {
-        ips.push(`http://${data.myip}${port}`)
+    ips = JSON.parse(cacheData)
+  } else {
+    ips = []
+    //API是免费，但不能商用。(废话)
+    let apis = [
+      // 返回IPv4地址
+      'http://v4.ip.zxinc.org/info.php?type=json',
+      // 返回IPv6地址（已失效）
+      // 'http://v6.ip.zxinc.org/info.php?type=json'
+    ]
+    for (let api of apis) {
+      let response = await fetch(api)
+      if (response.status === 200) {
+        let {code, data} = await response.json()
+        if (code === 0) {
+          ips.push(data.myip)
+        }
       }
     }
+    // 缓存避免过多请求，防止接口提供商检测
+    // 服务器上的外网IP一般不会变，如果经常变的话就推荐使用DDNS，
+    // 而家用PC一般也用不到外网IP，仍然推荐使用DDNS内网穿透。
+    redis.set(redisKey, JSON.stringify(ips), {EX: 3600 * 24})
   }
-  // 缓存避免过多请求，
-  // 服务器上的外网IP一般不会变，如果经常变的话就推荐使用DDNS，
-  // 而家用PC一般也用不到外网IP，仍然推荐使用DDNS内网穿透。
-  redis.set(redisKey, JSON.stringify(ips), {EX: 3600 * 24})
-  return ips
+  port = port ? `:${port}` : ''
+  return ips.map(ip => `http://${ip}${port}`)
 }
 
 export function sleep(ms = 1000) {
