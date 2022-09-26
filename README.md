@@ -14,7 +14,7 @@
 - [x] 配置文件管理
 - [x] plugin插件管理
     - [x] plugin插件配置
-- [x] 编辑喵喵帮助 @realhuhu
+- [x] 编辑喵喵帮助 [@realhuhu](https://github.com/realhuhu)
 
 [TODO代办](https://gitee.com/guoba-yunzai/resources/blob/master/other/TODO.md)
 

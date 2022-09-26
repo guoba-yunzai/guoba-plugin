@@ -232,9 +232,22 @@ async function parsePluginsIndex() {
             // 解析插件作者和插件作者链接
             let author = col2, authorLink = null
             if (parseItem.linkReg.test(author)) {
-              let authorMatch = col2.match(parseItem.linkReg)
-              author = authorMatch[1]
-              authorLink = authorMatch[2]
+              // 作者可能有多个 multi
+              let multiReg = /\[([^\]]+)]\(([^)]+)\)/g
+              let authorList = col2.match(multiReg)
+              author = []
+              authorLink = []
+              for (let authorItem of authorList) {
+                let match = authorItem.match(parseItem.linkReg)
+                let temp = match[1] ? match[1].trim() : ''
+                if (temp) {
+                  author.push(temp)
+                  authorLink.push(match[2] ? match[2].trim() : '')
+                }
+              }
+              if (author.length === 0) {
+                author = '佚名'
+              }
             }
             // 判断云崽版本兼容情况
             let supportReg = /[✔√]/
@@ -249,8 +262,8 @@ async function parsePluginsIndex() {
               isV2, isV3, title, isDeleted,
               name: (name ? name.trim() : '').toLowerCase(),
               link: link ? link.trim() : '',
-              author: author ? author.trim() : '佚名',
-              authorLink: authorLink ? authorLink.trim() : '',
+              author: author,
+              authorLink: authorLink,
               description: col5 ? col5.trim() : null,
             })
           } else {
