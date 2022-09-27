@@ -31,7 +31,7 @@ function createProxy(instanceName) {
         }
         return prop
       }
-      throw new Error(`${instanceName} not found`)
+      throw new Error(`${instanceName} is not found`)
     },
   })
 }
