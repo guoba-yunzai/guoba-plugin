@@ -11,7 +11,7 @@ export class SystemService extends Service {
   }
 
   async queryMenus() {
-    return useMenus()
+    return await useMenus()
   }
 
   getLiteToken() {
