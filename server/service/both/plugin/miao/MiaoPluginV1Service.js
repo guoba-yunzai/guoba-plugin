@@ -76,6 +76,22 @@ export default class MiaoPluginV1Service extends IMiaoPluginService {
     }
   }
 
+  /**
+   * 获取皮肤main.png路径
+   * @return {*}
+   */
+  getThemeMainPath() {
+    return this.miaoPath.mainImgPath
+  }
+
+  /**
+   * 获取皮肤bg路径
+   * @return {*}
+   */
+  getThemeBgPath() {
+    return this.miaoPath.bgImgPath
+  }
+
   addBackup(remark, isInit = false) {
     let {backupPath, backupList, save} = this.getBackupCfg()
     let {getCfgPath, cfgPath, mainImgPath, iconPath} = this.miaoPath

@@ -69,11 +69,7 @@ export async function useMenus() {
   menus.push(pluginsMenu)
   // 判断是否安装了喵喵插件
   if (PluginsMap.get('miao-plugin')) {
-    // TODO 临时这么写 判断喵喵插件版本
-    let miaoVersion = (await import('../../../../../../miao-plugin/components/Version.js')).default
-    if (miaoVersion.version.startsWith('1')) {
-      menus.push(miaoMenu)
-    }
+    menus.push(miaoMenu)
   }
   menus.push(accountMenu)
   menus.push(aboutMenu)

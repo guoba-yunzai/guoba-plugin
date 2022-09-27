@@ -26,13 +26,9 @@ export default class MiaoPluginController extends RestController {
       /** @type {MiaoPluginV1Service} */
       this.miaoService = autowired('miaoPluginV1Service')
     } else {
-      // /** @type {MiaoPluginV2Service} */
-      // this.miaoService = autowired('miaoPluginV2Service')
-      setTimeout(() => logger.warn('[Guoba] 暂不支持喵喵插件2.0.0版本，正在努力适配中，敬请期待！'), 1000)
-      return
+      /** @type {MiaoPluginService} */
+      this.miaoService = autowired('miaoPluginService')
     }
-    // 初始化最初的备份
-    this.miaoService.initBackup()
     // 获取喵喵帮助 cfg
     this.get('/help', this.getMiaoHelpCfg)
     // 设置喵喵帮助 cfg
@@ -50,6 +46,8 @@ export default class MiaoPluginController extends RestController {
     this.post('/help/backup/restore', this.restoreBackup)
     // 删除备份
     this.delete('/help/backup/delete', this.deleteBackup)
+    // 初始化最初的备份
+    this.miaoService.initBackup()
   }
 
   async getMiaoHelpCfg() {
@@ -65,12 +63,12 @@ export default class MiaoPluginController extends RestController {
   }
 
   getHelpThemeBg(req, res) {
-    res.sendFile(this.miaoService.miaoPath.bgImgPath)
+    res.sendFile(this.miaoService.getThemeBgPath(req.query))
     return Constant.VOID
   }
 
   getHelpThemeMain(req, res) {
-    res.sendFile(this.miaoService.miaoPath.mainImgPath)
+    res.sendFile(this.miaoService.getThemeMainPath(req.query))
     return Constant.VOID
   }
 

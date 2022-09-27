@@ -34,6 +34,20 @@ export default class IMiaoPluginService extends Service {
     throw Constant.ERROR_501
   }
 
+  /**
+   * 获取皮肤main.png路径
+   */
+  getThemeMainPath() {
+    throw Constant.ERROR_501
+  }
+
+  /**
+   * 获取皮肤bg路径
+   */
+  getThemeBgPath() {
+    throw Constant.ERROR_501
+  }
+
   backupCfg = null
 
   /**
