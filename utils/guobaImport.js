@@ -29,6 +29,13 @@ const pathPrefix = [
   },
 ]
 
+/**
+ * 导入模块
+ * @param u
+ * @param [relative] 相对路径的起始绝对路径
+ * @returns {Promise<*>}
+ * @constructor
+ */
 export async function GI(u, relative) {
   let url = u
   if (/^cfg$/.test(u)) {
@@ -47,6 +54,13 @@ export async function GI(u, relative) {
   throw '[GI] url is null'
 }
 
+/**
+ * 引入默认导出
+ * @param u
+ * @param [relative] 相对路径的起始绝对路径
+ * @returns {Promise<*>}
+ * @constructor
+ */
 export async function GID(u, relative) {
   let file = await GI(u, relative)
   if (file && file.default) {
