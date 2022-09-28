@@ -46,6 +46,15 @@ npm install multer
 npm install body-parser
 npm install jsonwebtoken
 ```
+如果上面的都无效，可使用`cnpm`
+cnpm安装命令`npm install -g cnpm --registry=https://registry.npm.taobao.org`
+
+```bash
+cnpm i express
+cnpm i multer
+cnpm i body-parser
+cnpm i jsonwebtoken
+```
 
 3. 依赖安装完毕之后，直接运行即可，默认运行端口号是：50831
    > 可在 config/application.yaml 中修改
