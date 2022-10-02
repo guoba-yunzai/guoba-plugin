@@ -223,7 +223,8 @@ async function parsePluginsIndex() {
             // 解析插件真实名称（放在plugins目录下的目录名）
             let name = null
             if (link) {
-              name = (link.split('/').pop() || '').trim().replace(/\.git$/, '')
+              name = link.split('/').filter(i => i != null && i !== '').pop().trim()
+              name = name.replace(/\.git$/, '')
             }
             // // 如果不包含插件名称，则认为是无效的插件，直接跳过
             // if (!name) {
