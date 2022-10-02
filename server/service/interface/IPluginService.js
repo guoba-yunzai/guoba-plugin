@@ -137,6 +137,10 @@ export default class IPluginService extends Service {
       return JSON.parse(remotePlugins)
     }
     remotePlugins = (await parsePluginsIndex()).plugins
+    // 读取失败……
+    if (!remotePlugins) {
+      return []
+    }
     redis.set(redisKey, JSON.stringify(remotePlugins), {EX: 3600 * 12})
     return remotePlugins
   }
@@ -194,10 +198,43 @@ const parseConfig = {
  * 解析远程插件列表
  */
 async function parsePluginsIndex() {
-  let url = 'https://gitee.com/yhArcadia/Yunzai-Bot-plugins-index/raw/main/README.md'
-  let response = await fetch(url)
-  let lines = (await response.text()).split(/\n/)
-
+  let urls = [
+    // gitee 主地址
+    'https://gitee.com/yhArcadia/Yunzai-Bot-plugins-index/raw/main/README.md',
+    // github 备用地址
+    'https://raw.githubusercontent.com/yhArcadia/Yunzai-Bot-plugins-index/main/README.md',
+    // oss 备用地址（不定时同步）
+    'https://zolay.oss-cn-beijing.aliyuncs.com/github/yhArcadia/Yunzai-Bot-plugins-index/README.md',
+  ]
+  let response, text
+  for (let i = 0; i < urls.length; i++) {
+    let url = urls[i]
+    try {
+      response = await fetch(url)
+      if (!response.ok) {
+        throw new Error(response.statusText)
+      }
+      text = await response.text()
+      if (/The\scontent\smay\scontain\sviolation\sinformation/i.test(text)) {
+        throw new Error('内容违规')
+      }
+      if (i > 0) {
+        logger.info('[Guoba] 通过备用地址获取插件列表成功~')
+      }
+      break
+    } catch (e) {
+      // 获取失败
+      if (i === 0) {
+        logger.warn(`[Guoba] 远程插件列表获取失败（${e.message}），尝试使用第${i + 1}个备用地址获取……`)
+      } else if (i === url.length - 1) {
+        logger.error(`[Guoba] 远程插件列表获取失败，所有备用地址均已失效……`)
+        return {}
+      } else {
+        logger.warn(`[Guoba] 第${i}个备用地址获取失败（${e.message}），尝试使用第${i + 1}个备用地址获取……`)
+      }
+    }
+  }
+  let lines = text.split(/\n/)
   let parseState = {current: '', idx: 0}
   let parseResult = {}
   let parseEntries = Object.entries(parseConfig)
