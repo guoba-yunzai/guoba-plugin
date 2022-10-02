@@ -28,6 +28,7 @@ git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Gu
 
 2. 安装依赖
 
+#### Ⅰ. 采用 pnpm
 如果你是使用`pnpm`安装的云崽，那么只需要在云崽根目录下运行此命令即可：
 
 ```bash
@@ -38,6 +39,8 @@ pnpm install --no-lockfile --filter=guoba-plugin
 > `--no-lockfile`：不读取也不更改`pnpm-lock.yaml`文件，可防止更新冲突。<br>
 > `--filter=guoba-plugin`：只安装`guoba-plugin`下的依赖，其他依赖不处理，防止丢失。
 
+#### Ⅱ. 采用 npm 或 cnpm
+
 如果是使用`npm`或`cnpm`等其他依赖安装工具，需要手动安装以下依赖：
 
 ```bash
@@ -46,15 +49,10 @@ npm install multer
 npm install body-parser
 npm install jsonwebtoken
 ```
-如果上面的都无效，可使用`cnpm`
-cnpm安装命令`npm install -g cnpm --registry=https://registry.npm.taobao.org`
+如果以上命令执行失败，可尝试使用`cnpm`进行安装，只需将开头的`npm`替换成`cnpm`即可。
 
-```bash
-cnpm i express
-cnpm i multer
-cnpm i body-parser
-cnpm i jsonwebtoken
-```
+> 注：cnpm需要单独安装，已安装的可以忽略，安装命令如下：<br>
+> `npm install cnpm -g --registry=https://registry.npmmirror.com`
 
 3. 依赖安装完毕之后，直接运行即可，默认运行端口号是：50831
    > 可在 config/application.yaml 中修改
