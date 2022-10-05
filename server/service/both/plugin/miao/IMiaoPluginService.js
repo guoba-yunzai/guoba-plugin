@@ -42,6 +42,48 @@ export default class IMiaoPluginService extends Service {
   }
 
   /**
+   * 获取皮肤列表
+   */
+  getHelpThemeList() {
+    throw Constant.ERROR_501
+  }
+
+  /**
+   * 获取皮肤config配置
+   */
+  getHelpThemeConfig() {
+    throw Constant.ERROR_501
+  }
+
+  /**
+   * 保存皮肤config配置
+   */
+  saveHelpThemeConfig() {
+    throw Constant.ERROR_501
+  }
+
+  /**
+   * 新增皮肤
+   */
+  addHelpTheme() {
+    throw Constant.ERROR_501
+  }
+
+  /**
+   * 修改皮肤（仅底图）
+   */
+  editHelpTheme() {
+    throw Constant.ERROR_501
+  }
+
+  /**
+   * 删除皮肤
+   */
+  deleteHelpTheme() {
+    throw Constant.ERROR_501
+  }
+
+  /**
    * 获取皮肤bg路径
    */
   getThemeBgPath() {
