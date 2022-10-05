@@ -1,0 +1,1 @@
+function t(t){const e=t.split(","),n=e[0].match(/:(.*?);/)[1],o=window.atob(e[1]);let r=o.length;const a=new Uint8Array(r);for(;r--;)a[r]=o.charCodeAt(r);return new Blob([a],{type:n})}function e(t){return new Promise((e=>{let n=new FileReader;n.readAsDataURL(t),n.onload=function(t){e(t.target.result)}}))}export{e as b,t as d};
