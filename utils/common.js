@@ -139,7 +139,7 @@ export async function getAllWebAddress() {
     }
     for (let h of host) {
       if (h && h !== 'auto') {
-        custom.push(joinHttpPort(h, host))
+        custom.push(joinHttpPort(h, port))
       }
     }
   }
