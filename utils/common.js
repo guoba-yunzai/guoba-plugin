@@ -130,18 +130,26 @@ export async function getAllWebAddress() {
   let custom = []
   let local = getAutoIps(port, true)
   let remote = await getRemoteIps(port)
+  if (remote && remote.length > 0) {
+    remote = remote.map((i) => joinHttpPort(i, port))
+  }
   if (host) {
     if (!Array.isArray(host)) {
       host = [host]
     }
     for (let h of host) {
       if (h && h !== 'auto') {
-        h = /^http/.test(h) ? h : 'http://' + h
-        custom.push(`${h}${port ? ':' + port : ''}`)
+        custom.push(joinHttpPort(h, host))
       }
     }
   }
   return {custom, local, remote}
+}
+
+// 拼接端口号和http前缀
+function joinHttpPort(ip, port) {
+  ip = /^http/.test(ip) ? ip : 'http://' + ip
+  return `${ip}${port ? ':' + port : ''}`
 }
 
 /**
@@ -257,7 +265,7 @@ export async function getRemoteIps(port) {
   // 服务器上的外网IP一般不会变，如果经常变的话就推荐使用DDNS，
   // 而家用PC一般也用不到外网IP，仍然推荐使用DDNS内网穿透。
   if (ips.length > 0) {
-    redis.set(redisKey, JSON.stringify(ips), {EX: 3600 * 24});
+    redis.set(redisKey, JSON.stringify(ips), {EX: 3600 * 24})
   }
   port = port ? `:${port}` : ''
   return ips.map(ip => `http://${ip}${port}`)
