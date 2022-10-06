@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
 import {_paths} from '../../../../../utils/paths.js'
+import {moveFile} from "../../../../../utils/common.js";
 
 const {GID} = Guoba.createImport(import.meta.url)
 
@@ -107,7 +108,7 @@ export default class MiaoPluginService extends IMiaoPluginService {
     content += `export const helpList = ${helpList}`
     fs.writeFileSync(helpCfgPath, content, 'utf-8')
     let [iconFile] = files
-    fs.renameSync(iconFile.path, iconPath)
+    moveFile(iconFile.path, iconPath)
   }
 
   async getHelpThemeList() {
@@ -161,7 +162,7 @@ export default class MiaoPluginService extends IMiaoPluginService {
     }
     fs.mkdirSync(themePath)
     let mainImgPath = path.join(themePath, 'main.png')
-    fs.renameSync(mainPic.path, mainImgPath)
+    moveFile(mainPic.path, mainImgPath)
   }
 
   async editHelpTheme(params, files) {
@@ -172,7 +173,7 @@ export default class MiaoPluginService extends IMiaoPluginService {
       throw new GuobaError(`${themeName} 不存在！`)
     }
     let mainImgPath = path.join(themePath, 'main.png')
-    fs.renameSync(mainPic.path, mainImgPath)
+    moveFile(mainPic.path, mainImgPath)
   }
 
   async deleteHelpTheme(params) {

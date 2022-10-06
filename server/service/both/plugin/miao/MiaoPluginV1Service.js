@@ -3,6 +3,7 @@ import path from 'path'
 import lodash from 'lodash'
 import moment from 'moment'
 import {_paths} from '../../../../../utils/paths.js'
+import {moveFile} from "../../../../../utils/common.js";
 
 const {GID} = Guoba.createImport(import.meta.url)
 
@@ -70,9 +71,9 @@ export default class MiaoPluginV1Service extends IMiaoPluginService {
     content += `export const helpList = ${helpList}`
     fs.writeFileSync(cfgPath, content, 'utf-8')
     let [iconFile, mainFile] = files
-    fs.renameSync(iconFile.path, iconPath)
+    moveFile(iconFile.path, iconPath)
     if (mainFile) {
-      fs.renameSync(mainFile.path, mainImgPath)
+      moveFile(mainFile.path, mainImgPath)
     }
   }
 

@@ -312,3 +312,9 @@ export async function makeForwardMsg(e, msg = [], dec = '') {
 
   return forwardMsg
 }
+
+/** 此方法可以解决 docker 跨设备问题 */
+export function moveFile(src, dest) {
+  fs.copyFileSync(src, dest)
+  fs.unlinkSync(src)
+}
