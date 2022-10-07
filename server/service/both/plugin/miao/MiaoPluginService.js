@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
 import {_paths} from '../../../../../utils/paths.js'
-import {moveFile} from "../../../../../utils/common.js";
+import {moveFile} from '../../../../../utils/common.js'
 
 const {GID} = Guoba.createImport(import.meta.url)
 
@@ -49,9 +49,23 @@ export default class MiaoPluginService extends IMiaoPluginService {
       return this._miaoUtils
     }
     return this._miaoUtils = {
-      Data: (await import('../../../../../../miao-plugin/components/Data.js')).default,
-      Theme: (await import('../../../../../../miao-plugin/apps/help/theme.js')).default,
+      Data: (await this.importMiao(['../../../../../../miao-plugin/components/Data.js'])).default,
+      // Theme: (await this.importMiao([
+      //   '../../../../../../miao-plugin/apps/help/HelpTheme.js',
+      //   '../../../../../../miao-plugin/apps/help/theme.js',
+      // ])).default,
     }
+  }
+
+  async importMiao(paths, errorTip = '当前版本的喵喵插件暂不支持，请联系锅巴作者尽快修复！') {
+    for (let p of paths) {
+      try {
+        return await import(p)
+      } catch (e) {
+        logger.error(e.message || e)
+      }
+    }
+    throw new GuobaError(errorTip)
   }
 
   initBackup() {
