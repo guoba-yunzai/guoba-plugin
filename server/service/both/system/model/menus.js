@@ -42,6 +42,16 @@ const pluginsMenu = {
   },
 }
 
+const miaoV1Menu = {
+  path: 'plugins/miao-plugin',
+  name: 'MiaoPlugin',
+  component: '/guoba/plugins/extra-config/miao-plugin-v1/index',
+  meta: {
+    title: '喵喵帮助',
+    icon: 'twemoji:heart-with-ribbon',
+  },
+}
+
 const miaoMenu = {
   path: 'plugins/miao-plugin',
   name: 'MiaoPlugin',
@@ -69,7 +79,17 @@ export async function useMenus() {
   menus.push(pluginsMenu)
   // 判断是否安装了喵喵插件
   if (PluginsMap.get('miao-plugin')) {
-    menus.push(miaoMenu)
+    // 判断喵喵插件版本
+    try {
+      let miaoVersion = (await import('../../../../../../miao-plugin/components/Version.js')).default
+      if (miaoVersion.version.startsWith('1')) {
+        menus.push(miaoV1Menu)
+      } else {
+        menus.push(miaoMenu)
+      }
+    } catch (e) {
+      logger.error(e)
+    }
   }
   menus.push(accountMenu)
   menus.push(aboutMenu)
