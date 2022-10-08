@@ -18,12 +18,13 @@ export class LoginController extends RestController {
   }
 
   async login(req) {
-    let {username, password} = req.body
-    if (username === 'admin' && password === 'admin') {
-      let token = this.loginService.signToken(username)
-      return Result.ok({token})
-    }
-    return Result.error('用户名或密码错误')
+    // let {username, password} = req.body
+    // if (username === 'admin' && password === 'admin') {
+    //   let token = this.loginService.signToken(username)
+    //   return Result.ok({token})
+    // }
+    // return Result.error('用户名或密码错误')
+    return Result.error('请使用“#锅巴登录”')
   }
 
   async logout(req) {
