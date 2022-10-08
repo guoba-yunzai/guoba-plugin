@@ -93,11 +93,11 @@ export default class MiaoPluginService extends IMiaoPluginService {
       custom = help
     }
 
-    let helpCfg = lodash.merge(
+    let helpCfg = lodash.defaults(
+      diyCfg.helpCfg || {}, custom.helpCfg, sysCfg.helpCfg,
       // ----- 兼容喵喵字段问题 ------
       {colCount: 3, bgBlur: true},
       // ---------------------------
-      sysCfg.helpCfg, diyCfg.helpCfg || {}, custom.helpCfg
     )
     let helpList = diyCfg.helpList || custom.helpList || sysCfg.helpList
     let themeNames = this.getThemeNames()
