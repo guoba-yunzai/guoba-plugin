@@ -129,7 +129,7 @@ export async function getAllWebAddress() {
   port = port === 80 ? null : port
   let custom = []
   let local = getAutoIps(port, true)
-  let remote = await getRemoteIps(port)
+  let remote = await getRemoteIps()
   if (remote && remote.length > 0) {
     remote = remote.map((i) => joinHttpPort(i, port))
   }
@@ -229,7 +229,7 @@ export function getLocalIps(port) {
  * 获取外网ip地址
  * @author @吃吃吃个柚子皮
  */
-export async function getRemoteIps(port) {
+export async function getRemoteIps() {
   let redisKey = Constant.REDIS_PREFIX + 'remote-ips:3'
   let cacheData = await redis.get(redisKey)
   let ips
@@ -267,8 +267,7 @@ export async function getRemoteIps(port) {
   if (ips.length > 0) {
     redis.set(redisKey, JSON.stringify(ips), {EX: 3600 * 24})
   }
-  port = port ? `:${port}` : ''
-  return ips.map(ip => `http://${ip}${port}`)
+  return ips
 }
 
 export function sleep(ms = 1000) {

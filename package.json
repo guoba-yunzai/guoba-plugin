@@ -1,6 +1,6 @@
 {
   "name": "guoba-plugin",
-  "version": "1.0.7-beta.4",
+  "version": "1.0.7-beta.5",
   "description": "Yunzai-Bot插件",
   "type": "module",
   "module": "index.js",
