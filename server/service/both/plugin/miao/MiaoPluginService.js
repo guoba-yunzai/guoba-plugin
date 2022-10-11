@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
+import moment from 'moment'
 import {_paths} from '../../../../../utils/paths.js'
 import {moveFile} from '../../../../../utils/common.js'
 
@@ -126,8 +127,10 @@ export default class MiaoPluginService extends IMiaoPluginService {
     let content = `export const helpCfg = ${JSON.stringify(helpCfg, null, 2)}\n`
     content += `export const helpList = ${helpList}`
     fs.writeFileSync(helpCfgPath, content, 'utf-8')
-    let [iconFile] = files
-    moveFile(iconFile.path, iconPath)
+    if (Array.isArray(files) && files.length > 0) {
+      let [iconFile] = files
+      moveFile(iconFile.path, iconPath)
+    }
   }
 
   async getHelpThemeList() {
@@ -230,24 +233,117 @@ export default class MiaoPluginService extends IMiaoPluginService {
   }
 
   getBackupCfg() {
-    return {
-      ...super.getBackupCfg(),
-      backupList: [
-        {id: '-', remark: '咕咕咕~', isInit: true, time: '由于喵喵帮助2.0变更较大，当前功能正在兼容中，敬请期待~'},
-      ],
+    let backCfg = super.getBackupCfg()
+    let {backupList} = backCfg
+    backupList.forEach((item) => {
+      if (item.version !== 2) {
+        item.version = 1
+      }
+    })
+    return backCfg
+  }
+
+  addBackup(remark) {
+    let {backupPath, backupList, save} = this.getBackupCfg()
+    let {helpCfgPath, iconPath} = this.miaoPath
+    if (!fs.existsSync(helpCfgPath)) {
+      throw new GuobaError('未检测到配置文件，请先保存一次即可正常使用备份功能')
     }
+    let id = new Date().getTime().toString()
+    backupList.push({id, remark, time: moment().format('YYYY-MM-DD HH:mm:ss'), version: 2})
+    let backupDir = path.join(backupPath, id)
+    fs.mkdirSync(backupDir)
+    fs.cpSync(iconPath, path.join(backupDir, path.basename(iconPath)))
+    fs.cpSync(helpCfgPath, path.join(backupDir, path.basename(helpCfgPath)))
+    save()
+    return true
   }
 
-  addBackup(remark, isInit = false) {
-    throw new GuobaError('由于喵喵帮助2.0变更较大，当前功能正在兼容中，敬请期待~')
+  async restoreBackup(id) {
+    let backupCfg = this.getBackupCfg()
+    let item = backupCfg.find(id)
+    if (!item) {
+      throw new GuobaError('backup not found')
+    }
+    if (item.version !== 2) {
+      await this.convertBackup(item)
+    }
+    let {helpCfgPath, iconPath} = this.miaoPath
+    let backupDir = path.join(backupCfg.backupPath, id)
+    fs.cpSync(path.join(backupDir, path.basename(iconPath)), iconPath)
+    fs.cpSync(path.join(backupDir, path.basename(helpCfgPath)), helpCfgPath)
+    return true
   }
 
-  restoreBackup(id) {
-    throw new GuobaError('由于喵喵帮助2.0变更较大，当前功能正在兼容中，敬请期待~')
+  async convertBackup(backItem) {
+    let {themePath} = this.miaoPath
+    let {backupPath, save} = this.getBackupCfg()
+    let backupDir = path.join(backupPath, backItem.id)
+    // 将配置文件转为新格式
+    let oldCfgPath = path.join(backupDir, 'help-cfg.js')
+    if (!fs.existsSync(oldCfgPath)) {
+      throw new GuobaError('该备份已损坏，无法转换并恢复')
+    }
+    let {Data} = await this.getMiaoUtils()
+    let defCfg
+    try {
+      defCfg = await Data.importModule(`config/help_default.js`)
+    } catch (e) {
+      defCfg = await Data.importModule(`config/system/help_system.js`)
+    }
+    if (!defCfg) {
+      throw new GuobaError('转换失败，请勿删除默认配置文件')
+    }
+    let oldCfg = await Data.importModule('help-cfg.js', backupDir)
+    // 兼容一下旧字段
+    let customCfg
+    if (lodash.isArray(oldCfg.helpCfg)) {
+      customCfg = {
+        helpList: oldCfg.helpCfg,
+        helpCfg: {},
+      }
+    } else {
+      customCfg = oldCfg
+    }
+    let helpCfg = lodash.defaults(customCfg.helpCfg || {}, defCfg.helpCfg)
+    let helpList = customCfg.helpList || defCfg.helpList
+    let mainImgPath = path.join(backupDir, 'main-01.png')
+    // 将背景图片转为皮肤
+    if (fs.existsSync(mainImgPath)) {
+      let themeName = backItem.remark
+      let themeDir = path.join(themePath, themeName)
+      let count = 0
+      while (fs.existsSync(themeDir)) {
+        if (count++ > 10) {
+          throw new GuobaError('转换失败，皮肤名称重复')
+        }
+        themeName += '_' + lodash.random(100, 999)
+        themeDir = path.join(themePath, themeName)
+      }
+      fs.mkdirSync(themeDir)
+      moveFile(mainImgPath, path.join(themeDir, 'main.png'))
+      // 指定为转换后的皮肤
+      helpCfg.theme = [themeName]
+    }
+    // 保存新配置
+    let newHelpPath = path.join(backupDir, 'help.js')
+    let content = `export const helpCfg = ${JSON.stringify(helpCfg, null, 2)}\n`
+    content += `export const helpList = ${JSON.stringify(helpList, null, 2)}`
+    fs.writeFileSync(newHelpPath, content, 'utf-8')
+    backItem.version = 2
+    delete backItem.isInit
+    save()
+    // 删除旧配置
+    fs.unlinkSync(oldCfgPath)
   }
 
   deleteBackup(id) {
-    throw new GuobaError('由于喵喵帮助2.0变更较大，当前功能正在兼容中，敬请期待~')
+    let {backupPath, backupList, save} = this.getBackupCfg()
+    let backupDir = path.join(backupPath, id)
+    fs.rmSync(backupDir, {recursive: true})
+    lodash.remove(backupList, {id})
+    save()
+    return true
   }
 
 }

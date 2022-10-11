@@ -114,6 +114,9 @@ export default class IMiaoPluginService extends Service {
       save() {
         fs.writeFileSync(dbPath, yaml.stringify(backupList), 'utf-8')
       },
+      find(id) {
+        return backupList.find(item => item.id === id)
+      },
     }
   }
 

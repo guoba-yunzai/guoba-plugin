@@ -130,9 +130,9 @@ export default class MiaoPluginController extends RestController {
     return Result.ok()
   }
 
-  restoreBackup(req) {
+  async restoreBackup(req) {
     let {id} = req.body
-    this.miaoService.restoreBackup(id)
+    await this.miaoService.restoreBackup(id)
     return Result.ok()
   }
 
