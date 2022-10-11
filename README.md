@@ -20,17 +20,19 @@
 
 ## 安装插件
 
-1、在BOT根目录下打开终端，运行
+#### 第 1 步：下载插件
+
+在BOT根目录下打开终端，运行
 
 ```
 git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/
 ```
 
-2、安装依赖
+#### 第 2 步：安装依赖
 
-**方式1：采用 pnpm**
+##### 方式1：采用 pnpm
 
-> 注：如果你不是通过`pnpm`安装的云崽，那么请不要使用此方式，请看“**方式2**”
+> 注：如果你不是通过`pnpm`安装的云崽，那么请【**不要**】使用此方式，请看`方式2`
 
 如果你是使用`pnpm`安装的云崽，那么只需要在云崽根目录下运行此命令即可：
 
@@ -41,7 +43,7 @@ pnpm install --filter=guoba-plugin
 > 注：请务必直接复制提供的命令，否则可能会导致依赖丢失的情况，若发生需自行重新安装。<br>
 > `--filter=guoba-plugin`：只安装`guoba-plugin`下的依赖，其他依赖不处理，防止丢失。
 
-**方式2：采用 npm 或 cnpm**
+##### 方式2：采用 npm 或 cnpm
 
 如果是使用`npm`或`cnpm`等其他依赖安装工具，需要手动安装以下依赖：
 
@@ -56,10 +58,15 @@ npm install jsonwebtoken
 > 注：cnpm需要单独安装，已安装的可以忽略，安装命令如下：<br>
 > `npm install cnpm -g --registry=https://registry.npmmirror.com`
 
-3、依赖安装完毕之后，直接运行即可，默认运行端口号是：50831
-   > 可在 config/application.yaml 中修改
+#### 第 3 步：运行插件
 
-4、启动完成之后，可以在控制台中看到网页地址，复制到浏览器中即可访问。
+依赖安装完毕之后，直接运行即可，默认运行端口号是：50831
+
+> 可在 config/application.yaml 中修改
+
+启动完成之后，可以在控制台中看到网页地址，复制到浏览器中即可访问。
+
+如果访问不到，请发送`#锅巴帮助`指令获取帮助。
 
 ## 更新插件
 
