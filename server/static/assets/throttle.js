@@ -1,1 +1,1 @@
-import{cM as i,bf as n}from"./index.js";function t(t,a,r){var e=!0,o=!0;if("function"!=typeof t)throw new TypeError("Expected a function");return i(r)&&(e="leading"in r?!!r.leading:e,o="trailing"in r?!!r.trailing:o),n(t,a,{leading:e,maxWait:a,trailing:o})}export{t};
+import{a4 as i,a6 as n}from"./index.js";function a(a,t,r){var e=!0,o=!0;if("function"!=typeof a)throw new TypeError("Expected a function");return n(r)&&(e="leading"in r?!!r.leading:e,o="trailing"in r?!!r.trailing:o),i(a,t,{leading:e,maxWait:t,trailing:o})}export{a as t};

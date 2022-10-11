@@ -1,4 +1,4 @@
-import{b as t,o as e,i,k as n}from"./index.js";
+import{b as t,o as e,i,l as n}from"./index.js";
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 

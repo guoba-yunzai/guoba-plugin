@@ -1,1 +1,0 @@
-import{c as a,cA as e,al as s,v as l,ck as u,q as v,be as n,x as t,aA as c}from"./index.js";function o(o,i="value",r="change",m){const x=c(),d=null==x?void 0:x.emit,f=a({value:o[i]}),g=e(f);s((()=>{f.value=o[i]}));return[l({get:()=>f.value,set(a){u(a,g.value)||(f.value=a,v((()=>{null==d||d(r,a,...n(t(m))||[])})))}}),a=>{f.value=a},g]}export{o as u};
