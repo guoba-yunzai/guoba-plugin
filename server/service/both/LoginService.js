@@ -9,12 +9,11 @@ const GuobaError = await Guoba.GID('@/components/GuobaError.js')
 export class LoginService extends Service {
   constructor(app) {
     super(app)
-    this.secret = cfg.get('jwt.secret')
   }
 
   /** 注册并保存Token */
   signToken(username) {
-    let token = jwt.sign({username}, this.secret)
+    let token = jwt.sign({username}, cfg.getJwtSecret())
     // 将token存入redis
     let redisKey = this.getRedisKey(token)
     redis.set(redisKey, token, {EX: 3600 * 24})

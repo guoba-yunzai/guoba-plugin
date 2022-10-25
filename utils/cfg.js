@@ -76,6 +76,17 @@ class GuobaConfig {
     return host
   }
 
+  getJwtSecret() {
+    let secret = this.get('jwt.secret')
+    if (!secret || secret.length !== 32) {
+      // 随机生成32位 secret
+      secret = randomString(32)
+      this.set('jwt.secret', secret)
+      logger.warn(`[Guoba] 检测到 jwt.secret 配置损坏，已重新生成！请勿随意更改或泄漏此配置！`)
+    }
+    return secret
+  }
+
 }
 
 export default new GuobaConfig()

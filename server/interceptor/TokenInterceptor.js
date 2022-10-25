@@ -35,7 +35,6 @@ export default class TokenInterceptor extends Interceptor {
 
   constructor(app) {
     super(app)
-    this.secret = cfg.get('jwt.secret')
   }
 
   async handler(req, res, next) {
@@ -61,7 +60,7 @@ export default class TokenInterceptor extends Interceptor {
           let redisToken = await redis.get(redisKey)
           if (redisToken) {
             try {
-              jwt.verify(redisToken, this.secret)
+              jwt.verify(redisToken, cfg.getJwtSecret())
               next()
               return
             } catch {
