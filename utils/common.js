@@ -213,7 +213,11 @@ export function getLocalIps(port) {
        * 过滤lo回环网卡（Linux要过滤'lo'），去掉会导致Linxu"::1"过滤失败（踩坑）
        * 如有虚拟网卡需自己加上过滤--技术有限
        */
-      if ((wlan.netmask !== 'ffff:ffff:ffff:ffff::') && (wlan.mac !== '00:00:00:00:00:00') && (name !== 'docker0' && name !== 'lo')) {
+      /**
+         * 修复过滤，部分Linux读取不到IPv6
+         * 放弃使用网段过滤，采取过滤fe、fc开头地址
+         */
+      if (name!='lo' && name != 'docker0' && wlan.address.slice(0,2)!='fe' && wlan.address.slice(0,2)!='fc') {
         if (wlan.family === 'IPv6') {
           ips.push(`[${wlan.address}]${port}`)
         } else {
