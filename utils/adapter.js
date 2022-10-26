@@ -1,7 +1,7 @@
 /*
 * 更改此文件需要重启
 */
-import {yunzaiPackage} from '../utils/package.js'
+import {yunzaiPackage} from './package.js'
 
 let isV2 = false, isV3 = false, yunzaiVersion = yunzaiPackage?.version
 

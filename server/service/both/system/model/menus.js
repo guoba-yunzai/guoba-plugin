@@ -1,3 +1,5 @@
+import {isV2} from '../../../../../utils/adapter.js'
+
 const {PluginsMap} = await Guoba.GI('@/utils/common.js')
 
 // 首页菜单
@@ -73,6 +75,7 @@ const aboutMenu = {
 }
 
 export async function useMenus() {
+  if (isV2) return useV2Menu()
   let menus = []
   menus.push(homeMenu)
   menus.push(configMenu)
@@ -94,4 +97,8 @@ export async function useMenus() {
   menus.push(accountMenu)
   menus.push(aboutMenu)
   return menus
+}
+
+async function useV2Menu() {
+  return []
 }

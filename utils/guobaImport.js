@@ -4,7 +4,7 @@
 import os from 'os'
 import path from 'path'
 import lodash from 'lodash'
-import {_paths} from './common.js'
+import {_paths} from './paths.js'
 
 let instanceVersion = ''
 

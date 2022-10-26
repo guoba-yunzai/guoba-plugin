@@ -6,9 +6,8 @@ import fetch from 'node-fetch'
 import cfg from './cfg.js'
 import {pluginPackage} from './package.js'
 import {_paths} from './paths.js'
-import common from '../../../lib/common/common.js'
-import BotCfg from '../../../lib/config/config.js'
 import Constant from '../server/constant/Constant.js'
+import {isV3} from './adapter.js'
 
 export const _version = pluginPackage.version
 
@@ -105,6 +104,14 @@ export function toPairsMap(arg) {
   return obj
 }
 
+async function getMasterQQ() {
+  if (isV3) {
+    (await import( '../../../lib/config/config.js')).default.masterQQ
+  } else {
+    return BotConfig.masterQQ
+  }
+}
+
 /**
  * 给主人发送消息
  * @param msg 消息内容
@@ -112,10 +119,26 @@ export function toPairsMap(arg) {
  * @param idx 不发送给所有主人时，指定发送给第几个主人，默认发送给第一个主人
  */
 export async function sendToMaster(msg, all = false, idx = 0) {
-  let masterQQ = BotCfg.masterQQ
+  let masterQQ = await getMasterQQ()
   let sendTo = all ? masterQQ : [masterQQ[idx]]
   for (let qq of sendTo) {
-    await common.relpyPrivate(qq, msg)
+    await replyPrivate(qq, msg)
+  }
+}
+
+/**
+ * 发送私聊消息，仅给好友发送
+ * @param userId qq号
+ * @param msg 消息
+ */
+async function replyPrivate(userId, msg) {
+  userId = Number(userId)
+  let friend = Bot.fl.get(userId)
+  if (friend) {
+    logger.mark(`发送好友消息[${friend.nickname}](${userId})`)
+    return await Bot.pickUser(userId).sendMsg(msg).catch((err) => {
+      logger.mark(err)
+    })
   }
 }
 
