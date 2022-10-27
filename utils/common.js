@@ -254,7 +254,7 @@ export function getLocalIps(port) {
     }
   }
   if (ips.length === 0) {
-    ips.push(`localhost:${port}`)
+    ips.push(`localhost${port}`)
   }
   return ips
 }
