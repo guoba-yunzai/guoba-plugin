@@ -241,6 +241,10 @@ export function getLocalIps(port) {
          * 放弃使用网段过滤，采取过滤fe、fc开头地址
          */
       if (name!='lo' && name != 'docker0' && wlan.address.slice(0,2)!='fe' && wlan.address.slice(0,2)!='fc') {
+        // 过滤本地回环地址
+        if (['127.0.0.1', '::1'].includes(wlan.address)) {
+          continue
+        }
         if (wlan.family === 'IPv6') {
           ips.push(`[${wlan.address}]${port}`)
         } else {
@@ -248,6 +252,9 @@ export function getLocalIps(port) {
         }
       }
     }
+  }
+  if (ips.length === 0) {
+    ips.push(`localhost:${port}`)
   }
   return ips
 }
