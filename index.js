@@ -12,10 +12,12 @@ global.Guoba = {GI, GID, createImport}
 
 const apps = {}, rule = {}
 
+let appRouter = null
+
 if (isV3) {
   await (await import('./utils/adapter/initV3.js')).init(apps)
 } else {
-  await (await import('./utils/adapter/initV2.js')).init(rule)
+  appRouter = await (await import('./utils/adapter/initV2.js')).init(rule)
 }
 
-export {apps, rule}
+export {apps, rule, appRouter}

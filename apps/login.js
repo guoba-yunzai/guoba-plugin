@@ -6,7 +6,7 @@ export class GuobaLogin extends plugin {
 
   loginService = autowired('loginService')
 
-  constructor() {
+  constructor(e) {
     super({
       name: '锅巴登录',
       dsc: '锅巴快捷登录',
@@ -18,7 +18,7 @@ export class GuobaLogin extends plugin {
           fnc: 'login',
         },
       ],
-    })
+    }, e)
   }
 
   async login() {
