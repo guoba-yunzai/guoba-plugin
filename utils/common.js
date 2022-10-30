@@ -368,3 +368,15 @@ export function moveFile(src, dest) {
   fs.copyFileSync(src, dest)
   fs.unlinkSync(src)
 }
+
+// 递归创建目录 同步方法
+export function mkdirSync(dirname) {
+  if (fs.existsSync(dirname)) {
+    return true
+  } else {
+    if (mkdirSync(path.dirname(dirname))) {
+      fs.mkdirSync(dirname)
+      return true
+    }
+  }
+}

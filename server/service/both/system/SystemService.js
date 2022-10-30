@@ -3,6 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import {liteToken} from './model/tokens.js'
 import {getDrives} from '../../../../lib/diskinfo.js'
+import {mkdirSync} from '../../../../utils/common.js'
 
 const {GI, GID} = Guoba.createImport(import.meta.url)
 const Service = await GID('#/components/Service.js')
@@ -24,6 +25,19 @@ export class SystemService extends Service {
   }
 
   /**
+   * 创建目录
+   * @param parentPath
+   * @param dirName
+   */
+  createDir(parentPath, dirName) {
+    let joinPath = path.join(parentPath, dirName)
+    if (fs.existsSync(joinPath)) {
+      throw new GuobaError('目录已存在！')
+    }
+    return mkdirSync(joinPath)
+  }
+
+  /**
    * 获取文件系统树根路径
    * @returns {Promise}
    */
@@ -36,8 +50,9 @@ export class SystemService extends Service {
     } else {
       let drives = await getDrives()
       return drives.map(drive => {
+        let title = drive.volumeName ? `${drive.volumeName}（${drive.mounted}）` : drive.mounted
         return {
-          title: drive.mounted,
+          title: title,
           path: drive.mounted + '\\',
           isLeaf: false,
           children: null,

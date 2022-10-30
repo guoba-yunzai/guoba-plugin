@@ -14,8 +14,15 @@ export class SystemController extends RestController {
   }
 
   registerRouters() {
+    this.put('/fs/create-dir', this.putCreateDir)
     this.get('/fs/tree/root', this.getFsTreeRoot)
     this.get('/fs/tree/children', this.getFsTreeChildren)
+  }
+
+  async putCreateDir(req) {
+    let {path, name} = req.body
+    let result = await this.systemService.createDir(path, name)
+    return Result.ok(result)
   }
 
   async getFsTreeRoot() {
