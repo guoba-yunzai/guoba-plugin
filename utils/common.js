@@ -1,6 +1,7 @@
 import os from 'os'
 import fs from 'fs'
 import path from 'path'
+import chalk from 'chalk'
 import lodash from 'lodash'
 import fetch from 'node-fetch'
 import cfg from './cfg.js'
@@ -40,7 +41,7 @@ export async function loadClasses(rootPath, clazz, classes = {}) {
         }
       }
     } catch (e) {
-      logger.error(`[Guoba] loadClasses error: ${logger.red(path.basename(filePath))}`, e)
+      logger.error(`[Guoba] loadClasses error: ${chalk.red(path.basename(filePath))}`, e)
     }
   }
   return classes
