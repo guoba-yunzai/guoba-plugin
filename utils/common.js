@@ -107,7 +107,7 @@ export function toPairsMap(arg) {
 
 async function getMasterQQ() {
   if (isV3) {
-    (await import( '../../../lib/config/config.js')).default.masterQQ
+    return (await import( '../../../lib/config/config.js')).default.masterQQ
   } else {
     return BotConfig.masterQQ
   }
