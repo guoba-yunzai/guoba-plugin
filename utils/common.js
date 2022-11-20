@@ -238,10 +238,10 @@ export function getLocalIps(port) {
        * 如有虚拟网卡需自己加上过滤--技术有限
        */
       /**
-         * 修复过滤，部分Linux读取不到IPv6
-         * 放弃使用网段过滤，采取过滤fe、fc开头地址
-         */
-      if (name!='lo' && name != 'docker0' && wlan.address.slice(0,2)!='fe' && wlan.address.slice(0,2)!='fc') {
+       * 修复过滤，部分Linux读取不到IPv6
+       * 放弃使用网段过滤，采取过滤fe、fc开头地址
+       */
+      if (name != 'lo' && name != 'docker0' && wlan.address.slice(0, 2) != 'fe' && wlan.address.slice(0, 2) != 'fc') {
         // 过滤本地回环地址
         if (['127.0.0.1', '::1'].includes(wlan.address)) {
           continue
