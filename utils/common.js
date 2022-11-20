@@ -1,6 +1,7 @@
 import os from 'os'
 import fs from 'fs'
 import path from 'path'
+import chalk from 'chalk'
 import lodash from 'lodash'
 import fetch from 'node-fetch'
 import cfg from './cfg.js'
@@ -40,7 +41,7 @@ export async function loadClasses(rootPath, clazz, classes = {}) {
         }
       }
     } catch (e) {
-      logger.error(`[Guoba] loadClasses error: ${logger.red(path.basename(filePath))}`, e)
+      logger.error(`[Guoba] loadClasses error: ${chalk.red(path.basename(filePath))}`, e)
     }
   }
   return classes
@@ -106,7 +107,7 @@ export function toPairsMap(arg) {
 
 async function getMasterQQ() {
   if (isV3) {
-    (await import( '../../../lib/config/config.js')).default.masterQQ
+    return (await import( '../../../lib/config/config.js')).default.masterQQ
   } else {
     return BotConfig.masterQQ
   }
@@ -237,10 +238,10 @@ export function getLocalIps(port) {
        * 如有虚拟网卡需自己加上过滤--技术有限
        */
       /**
-         * 修复过滤，部分Linux读取不到IPv6
-         * 放弃使用网段过滤，采取过滤fe、fc开头地址
-         */
-      if (name!='lo' && name != 'docker0' && wlan.address.slice(0,2)!='fe' && wlan.address.slice(0,2)!='fc') {
+       * 修复过滤，部分Linux读取不到IPv6
+       * 放弃使用网段过滤，采取过滤fe、fc开头地址
+       */
+      if (name != 'lo' && name != 'docker0' && wlan.address.slice(0, 2) != 'fe' && wlan.address.slice(0, 2) != 'fc') {
         // 过滤本地回环地址
         if (['127.0.0.1', '::1'].includes(wlan.address)) {
           continue
