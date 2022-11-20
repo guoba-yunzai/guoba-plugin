@@ -2,6 +2,7 @@ import os from 'os'
 import fs from 'fs'
 import path from 'path'
 import chalk from 'chalk'
+import moment from 'moment'
 import lodash from 'lodash'
 import fetch from 'node-fetch'
 import cfg from './cfg.js'
@@ -230,14 +231,14 @@ export function getLocalIps(port) {
   port = port ? `:${port}` : ''
   for (let [name, wlans] of Object.entries(networks)) {
     for (let wlan of wlans) {
-      /**
+      /*
        * 更改过滤规则,填坑。(之前未测试Windows系统)
        * 通过掩码过滤本地IPv6
        * 通过MAC地址过滤Windows 本地回环地址（踩坑）
        * 过滤lo回环网卡（Linux要过滤'lo'），去掉会导致Linxu"::1"过滤失败（踩坑）
        * 如有虚拟网卡需自己加上过滤--技术有限
        */
-      /**
+      /*
        * 修复过滤，部分Linux读取不到IPv6
        * 放弃使用网段过滤，采取过滤fe、fc开头地址
        */
@@ -380,4 +381,46 @@ export function mkdirSync(dirname) {
       return true
     }
   }
+}
+
+// 判断目录是否为空
+export function dirIsEmpty(dirPath) {
+  if (!fs.existsSync(dirPath)) {
+    return true
+  }
+  try {
+    fs.rmdirSync(dirPath)
+    fs.mkdirSync(dirPath)
+    return true
+  } catch (e) {
+    if (/directory not empty/.test(e?.message)) {
+      return false
+    }
+    throw e
+  }
+}
+
+/**
+ * 日期比较，相差时间数
+ * @param beginTime
+ * @param endTime
+ * @return {{hours: number, seconds: number, minutes: number, days: number}}
+ */
+export function dateDiff(beginTime, endTime) {
+  let diff = moment(endTime).diff(moment(beginTime))
+  if (diff < 0) {
+    throw new Error('结束时间不能小于开始时间')
+  }
+  // 计算出相差天数
+  let days = Math.floor(diff / (24 * 3600 * 1000))
+  // 计算出小时数
+  let leave1 = diff % (24 * 3600 * 1000)
+  let hours = Math.floor(leave1 / (3600 * 1000))
+  // 计算相差分钟数
+  let leave2 = leave1 % (3600 * 1000)
+  let minutes = Math.floor(leave2 / (60 * 1000))
+  // 计算相差秒数
+  let leave3 = leave2 % (60 * 1000)
+  let seconds = Math.round(leave3 / 1000)
+  return {days, hours, minutes, seconds}
 }
