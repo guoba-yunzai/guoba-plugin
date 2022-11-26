@@ -87,7 +87,7 @@ export default class IPluginService extends Service {
       let stat = fs.statSync(filePath)
       if (stat.isDirectory()) {
         let jsPath = path.join(filePath, 'index.js')
-        if (fs.existsSync(jsPath)) {
+        if (fs.existsSync(jsPath) || fs.existsSync(path.join(filePath, '.git/'))) {
           let plugin = {
             name: name.toLowerCase(),
           }
