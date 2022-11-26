@@ -1,6 +1,7 @@
 import os from 'os'
 import fs from 'fs'
 import path from 'path'
+import lodash from 'lodash'
 import fetch from 'node-fetch'
 
 const Service = await Guoba.GID('#/components/Service.js')
@@ -23,7 +24,7 @@ export default class IPluginService extends Service {
     let remotePlugins = await this.getRemotePlugins(force)
     let localPlugins = await this.readLocalPlugins(this.pluginsPath)
     for (let rp of remotePlugins) {
-      let idx = localPlugins.findIndex(({name}) => name === rp.name)
+      let idx = localPlugins.findIndex(({name}) => lodash.toLower(name) === lodash.toLower(rp.name))
       if (idx > -1) {
         let lp = localPlugins[idx]
         Object.assign(rp, lp, {installed: true})
