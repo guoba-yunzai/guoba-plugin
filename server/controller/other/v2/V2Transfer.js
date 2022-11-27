@@ -5,6 +5,7 @@ import child from 'child_process'
 import {_paths} from '../../../../utils/paths.js'
 import {isV2} from '../../../../utils/adapter.js'
 import {ACTION_CODE} from './child/constant.js'
+import {sleep} from '../../../../utils/common.js'
 
 const Result = await Guoba.GID('#/components/Result.js')
 const GuobaError = await Guoba.GID('@/components/GuobaError.js')
@@ -73,10 +74,12 @@ export default class V2Transfer extends RestController {
 
   childProcess = null
 
-  stopTransfer(req, res) {
+  async stopTransfer(req, res) {
     if (this.status.state !== ACTION_CODE.ing || !this.childProcess) {
       return Result.error('没有正在迁移，无需停止')
     }
+    this.childProcess.send({type: 'stop'})
+    await sleep(150)
     this.childProcess.kill()
     this.childProcess = null
     this.log('迁移程序已被强行终止')
@@ -92,7 +95,7 @@ export default class V2Transfer extends RestController {
       this.childProcess.on('message', (e) => {
         if (e.type === 'mounted') {
           resolve()
-          this.childProcess.send({type: 'start', config})
+          this.childProcess.send({type: 'start', config, BotConfig})
         } else if (e.type === 'log') {
           this.log(e.text)
           if (e.reason) {

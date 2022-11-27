@@ -2,6 +2,7 @@ import chalk from 'chalk'
 import {isV3} from '../adapter.js'
 
 const needPackage = [
+  'yaml',
   'express',
   'body-parser',
   'multer',
