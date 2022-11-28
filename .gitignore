@@ -118,6 +118,7 @@ dist
 
 # Guoba Ingored
 /lib/test.js
+/lib/v2-js/*
 /config/*
 /test/
 /server/static/_app.guoba.preload.js
