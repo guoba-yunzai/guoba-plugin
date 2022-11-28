@@ -20,11 +20,11 @@ if (typeof process.send === 'function') {
   process.on('message', (e) => {
     if (e.type === 'start') {
       BotConfig = e.BotConfig
-      doTransferV2(e.config).finally(selfKill)
+      doTransferV2(e.config).finally(selfExit)
     } else if (e.type === 'stop') {
       // kill所有子子进程
       for (let ins of Object.values(childIns)) if (ins?.kill) ins.kill()
-      selfKill()
+      selfExit()
     }
   })
 }
@@ -238,7 +238,7 @@ function doMovePlugin({installPath}) {
 }
 
 // 迁移配置文件
-function doMoveConfig(config) {
+async function doMoveConfig(config) {
   /** @return YamlReader */
   const gcr = (k) => getConfigRender(k, config)
 
@@ -311,6 +311,7 @@ function doMoveConfig(config) {
     ])
     cfg.save()
   }
+  await sleep()
   // 配置：公告推送
   if (config.cfg_pushNews) {
     let pushNewsPath = path.join(_paths.data, 'PushNews/PushNews.json')
@@ -331,6 +332,7 @@ function doMoveConfig(config) {
       }
     }
   }
+  await sleep()
   // 迁移群默认配置
   if (config.cfg_groupDefault) {
     log('正在迁移群聊默认配置')
@@ -350,6 +352,7 @@ function doMoveConfig(config) {
     cfg.setData(defGroup)
     cfg.save()
   }
+  await sleep()
   // 迁移群单独配置
   if (config.cfg_group) {
     log('正在迁移群单独配置')
@@ -408,15 +411,15 @@ const configFileMapping = {
   ],
   mysSet: [
     path.join('/plugins/genshin/config/mys.set.yaml'),
-    path.join('/plugins/genshin/config/mys/set.yaml'),
+    path.join('/plugins/genshin/defSet/mys/set.yaml'),
   ],
   mysPubCk: [
     path.join('/plugins/genshin/config/mys.pubCk.yaml'),
-    path.join('/plugins/genshin/config/mys/pubCk.yaml'),
+    path.join('/plugins/genshin/defSet/mys/pubCk.yaml'),
   ],
   pushNews: [
     path.join('/plugins/genshin/config/mys.pushNews.yaml'),
-    path.join('/plugins/genshin/config/mys/pushNews.yaml'),
+    path.join('/plugins/genshin/defSet/mys/pushNews.yaml'),
   ],
 }
 
@@ -480,6 +483,6 @@ function updatePercent(percent) {
   process.send({type: 'percent', percent})
 }
 
-function selfKill() {
-  setTimeout(() => process.kill(0), 100)
+function selfExit() {
+  setTimeout(() => process.exit(), 100)
 }
