@@ -105,6 +105,16 @@ export default class V2Transfer extends RestController {
           this.status.state = e.state
         } else if (e.type === 'percent') {
           this.status.percent = e.percent
+        } else if (e.type === 'redis-execute') {
+          let fn = redis[e.fn]
+          if (typeof fn === 'function') {
+            (async () => {
+              let data = await fn.apply(redis, e.args)
+              this.childProcess.send({type: 'redis-callback', id: e.id, data})
+            })()
+          } else {
+            this.childProcess.send({type: 'redis-callback', id: e.id})
+          }
         }
       })
     })

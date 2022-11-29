@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import lodash from 'lodash'
 import moment from 'moment'
 import child from 'child_process'
 import {ACTION_CODE, RES_SET} from './constant.js'
@@ -15,6 +16,9 @@ import {_paths, dateDiff, mkdirSync, sleep} from '../../../../../utils/common.js
 const childIns = {}
 let BotConfig = {}
 
+// 执行redis操作
+const RedisCaller = {}
+
 if (typeof process.send === 'function') {
   process.send({type: 'mounted'})
   process.on('message', (e) => {
@@ -25,6 +29,11 @@ if (typeof process.send === 'function') {
       // kill所有子子进程
       for (let ins of Object.values(childIns)) if (ins?.kill) ins.kill()
       selfExit()
+    } else if (e.type === 'redis-callback') {
+      let caller = RedisCaller[e.id]
+      if (caller?.callback) {
+        caller.callback(e.data)
+      }
     }
   })
 }
@@ -49,9 +58,17 @@ async function doTransferV2(config) {
 
     await sleep(1000)
     await doMoveConfig(config)
+    updatePercent(70)
+
+    await sleep(1000)
+    await doMoveRedis(config)
     updatePercent(80)
 
+    await sleep(1000)
     // TODO 迁移JS插件
+    updatePercent(90)
+
+    await sleep(1000)
     // TODO 安装依赖
 
     await sleep(1500)
@@ -218,7 +235,7 @@ async function doMoveData(config) {
 }
 
 // 迁移 plugins
-function doMovePlugin({installPath}) {
+async function doMovePlugin({installPath}) {
   log('开始迁移 plugins')
   let v2Path = path.join(_paths.root, 'plugins')
   let v3Path = path.join(installPath, 'plugins')
@@ -233,6 +250,7 @@ function doMovePlugin({installPath}) {
       log('正在迁移' + item)
       let toPath = path.join(v3Path, item)
       fs.cpSync(itemPath, toPath, {recursive: true})
+      await sleep(1000)
     }
   }
 }
@@ -311,7 +329,7 @@ async function doMoveConfig(config) {
     ])
     cfg.save()
   }
-  await sleep()
+  await sleep(1000)
   // 配置：公告推送
   if (config.cfg_pushNews) {
     let pushNewsPath = path.join(_paths.data, 'PushNews/PushNews.json')
@@ -332,7 +350,7 @@ async function doMoveConfig(config) {
       }
     }
   }
-  await sleep()
+  await sleep(1000)
   // 迁移群默认配置
   if (config.cfg_groupDefault) {
     log('正在迁移群聊默认配置')
@@ -352,7 +370,7 @@ async function doMoveConfig(config) {
     cfg.setData(defGroup)
     cfg.save()
   }
-  await sleep()
+  await sleep(1000)
   // 迁移群单独配置
   if (config.cfg_group) {
     log('正在迁移群单独配置')
@@ -441,6 +459,38 @@ function getConfigRender(key, {installPath}) {
   return render
 }
 
+// 迁移Redis
+async function doMoveRedis({groupBind, redisClean}) {
+  if (groupBind) {
+    log('正在迁移redis')
+    await sleep(1000)
+    let keys = await execRedis('keys', 'Yunzai:group_id:*')
+    if (Array.isArray(keys) && keys.length > 0) {
+      for (let key of keys) {
+        let value = await execRedis('get', key)
+        let newKey = key.replace('Yunzai:', 'Yz:')
+        await execRedis('setEx', newKey, 3600 * 24 * 30, value)
+      }
+      log('redis迁移完成')
+    } else {
+      log('redis无需迁移')
+    }
+    await sleep(1000)
+  }
+  if (redisClean) {
+    log('正在清理redis')
+    let cleanKeys = ['Yunzai:*', 'genshin:*']
+    for (let cleanKey of cleanKeys) {
+      let keys = await execRedis('keys', cleanKey)
+      log(`正在清理: ${cleanKey}，共有${keys.length}受影响的key`)
+      for (let key of keys) {
+        await execRedis('del', key)
+      }
+      await sleep(1000)
+    }
+  }
+}
+
 // 递归遍历目录
 async function recursiveDir(dirPaths = [], cb, level = 0) {
   let dirPath = path.join(_paths.root, ...dirPaths)
@@ -485,4 +535,14 @@ function updatePercent(percent) {
 
 function selfExit() {
   setTimeout(() => process.exit(), 100)
+}
+
+async function execRedis(fn, ...args) {
+  return new Promise(resolve => {
+    let id = lodash.uniqueId('guoba-transfer-redis-')
+    RedisCaller[id] = {
+      callback: (ret) => resolve(ret)
+    }
+    process.send({type: 'redis-execute', id, fn, args})
+  })
 }
