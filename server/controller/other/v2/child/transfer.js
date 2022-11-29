@@ -6,6 +6,7 @@ import child from 'child_process'
 import {ACTION_CODE, RES_SET} from './constant.js'
 import YamlReader from '../../../../../components/YamlReader.js'
 import {_paths, dateDiff, mkdirSync, sleep} from '../../../../../utils/common.js'
+import {needPackage} from '../../../../../utils/adapter/check.js'
 
 /*
  * 迁移子进程。
@@ -69,12 +70,19 @@ async function doTransferV2(config) {
     updatePercent(90)
 
     await sleep(1000)
-    // TODO 安装依赖
-
-    await sleep(1500)
+    let flag = await doInstallModules(config)
     // done
+    await sleep(1000)
     updateState(ACTION_CODE.success)
     updatePercent(100)
+    if (flag) {
+      log('[重要提示] 迁移成功，但依赖安装失败，请自行排查问题并解决……')
+      log('一但依赖问题解决，即可直接启动V3云崽。')
+      await sleep(1000)
+    } else {
+      log('迁移成功，请先停止当前云崽，再去启动V3云崽！')
+    }
+    log('V3云崽安装目录：' + path.join(config.installPath))
     return true
   } catch (e) {
     if (e !== ACTION_CODE.fail) {
@@ -491,6 +499,86 @@ async function doMoveRedis({groupBind, redisClean}) {
   }
 }
 
+const tbMirror = 'https://registry.npmmirror.com'
+const npmTools = {
+  npm: {
+    install: 'npm install',
+    add: 'npm install $pkg',
+  },
+  pnpm: {
+    install: 'pnpm install',
+    add: 'pnpm add $pkg -w',
+    registry: 'pnpm config set registry ' + tbMirror
+  },
+  yarn: {
+    install: 'yarn install',
+    add: 'yarn add $pkg',
+    registry: 'yarn config set registry ' + tbMirror
+  },
+  cnpm: {
+    install: 'cnpm install',
+    add: 'cnpm install $pkg',
+  }
+}
+
+async function doInstallModules({moduleTool, installPath}) {
+  let tool = npmTools[moduleTool]
+  if (!tool) {
+    log(`不支持的npm包管理工具：${moduleTool}`)
+    return false
+  }
+  log(`正在尝试通过 ${moduleTool} 安装依赖`)
+  let check = autoInstallNpm(moduleTool)
+  if (!check) {
+    return false
+  }
+  const execTo = (cmd) => new Promise((resolve) => {
+    childIns.npm = child.exec(cmd, {windowsHide: true, cwd: installPath}, (error) => {
+      resolve(error == null)
+    })
+  })
+  // 安装依赖
+  let flag = await execTo(tool.install)
+  if (!flag) return false
+  log(`依赖安装成功！`)
+  await sleep(1000)
+  // 非pnpm，需要单独安装锅巴的依赖
+  if (moduleTool !== 'pnpm') {
+    log(`正在安装 Guoba-Plugin 所需依赖`)
+    flag = await execTo(tool.add.replace('$pkg', needPackage.join(' ')))
+    if (!flag) return false
+    log(`Guoba-Plugin 依赖安装成功！`)
+    await sleep(1000)
+  }
+  log(`正在安装 miao-plugin 所需依赖`)
+  flag = await execTo(tool.add.replace('$pkg', 'image-size'))
+  if (!flag) return false
+  log(`miao-plugin 依赖安装成功！`)
+}
+
+/** 检查并按照包管理工具 */
+function autoInstallNpm(tool) {
+  let v = npmVersion(tool)
+  if (v == null) {
+    log(`检测到 ${tool} 未安装，正在尝试安装……`)
+    installNpmTool(tool)
+    v = npmVersion(tool)
+    if (v == null) {
+      log(`${tool} 未安装或安装失败……`)
+    } else {
+      log(`${tool} 安装成功，版本：${v}`)
+      let registry = npmTools[tool].registry
+      if (registry) {
+        child.execSync(registry)
+        log(`已将 ${tool} 设为国内淘宝镜像`)
+      }
+    }
+  } else {
+    log(`检测到 ${tool} 已安装，当前版本：` + v)
+  }
+  return v != null
+}
+
 // 递归遍历目录
 async function recursiveDir(dirPaths = [], cb, level = 0) {
   let dirPath = path.join(_paths.root, ...dirPaths)
@@ -545,4 +633,27 @@ async function execRedis(fn, ...args) {
     }
     process.send({type: 'redis-execute', id, fn, args})
   })
+}
+
+/** 获取包管理工具的版本号 */
+function npmVersion(tool = 'npm') {
+  try {
+    let res = child.execSync(`${tool} -v`, {encoding: 'utf-8', windowsHide: true})
+    if (/\d{1,2}\.\d{1,2}(\.\d{1,2})?/) {
+      if (tool === 'cnpm') {
+        res = res.match(/cnpm@(\d{1,2}\.\d{1,2}(\.\d{1,2})?)/)[1]
+      }
+      return res.trim()
+    }
+    return null
+  } catch (e) {
+    return null
+  }
+}
+
+/** 安装包管理工具 */
+function installNpmTool(tool) {
+  let registry = 'https://registry.npmmirror.com'
+  let cmd = `npm install ${tool} -g --registry=${registry}`
+  return child.execSync(cmd, {encoding: 'utf-8', windowsHide: true})
 }

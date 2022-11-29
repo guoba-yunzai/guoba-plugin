@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 import {isV3} from '../adapter.js'
 
-const needPackage = [
+export const needPackage = [
   'yaml',
   'express',
   'body-parser',
