@@ -61,7 +61,7 @@ export default class YamlReader {
   }
 
   /**
-   * 设置 document 的数据（递归式）
+   * 设置 document 的数据并保存（递归式）
    * @param data 要写入的数据
    */
   setData(data) {
@@ -69,6 +69,11 @@ export default class YamlReader {
     this.save()
   }
 
+  /**
+   * 递归式设置数据，但不保存
+   * @param data
+   * @param parentKeys
+   */
   setDataRecursion(data, parentKeys) {
     if (Array.isArray(data)) {
       this.document.setIn(this.mapParentKeys(parentKeys), data)
@@ -100,6 +105,7 @@ export default class YamlReader {
     this.save()
   }
 
+  // 保存yaml文件，写入文件
   save() {
     this.isSave = true
     let yaml = this.document.toString()
