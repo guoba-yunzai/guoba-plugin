@@ -3,10 +3,11 @@ import path from 'path'
 import lodash from 'lodash'
 import moment from 'moment'
 import child from 'child_process'
-import {ACTION_CODE, RES_SET} from './constant.js'
+import {ACTION_CODE, checkJsCompatibility, examplePath, RES_SET} from './constant.js'
 import YamlReader from '../../../../../components/YamlReader.js'
 import {_paths, dateDiff, mkdirSync, sleep} from '../../../../../utils/common.js'
 import {needPackage} from '../../../../../utils/adapter/check.js'
+import {pluginName} from '../../../../../utils/package.js'
 
 /*
  * 迁移子进程。
@@ -66,7 +67,7 @@ async function doTransferV2(config) {
     updatePercent(80)
 
     await sleep(1000)
-    // TODO 迁移JS插件
+    await doTransferJs(config)
     updatePercent(90)
 
     await sleep(1000)
@@ -325,7 +326,11 @@ async function doMoveConfig(config) {
       cfg.set('cookieDoc', BotConfig.cookieDoc)
     }
     cfg.save()
-    // mysPubCk
+  }
+  await sleep(1000)
+  // mysPubCk
+  if (config.commonCookie) {
+    log('正在迁移公共Cookie')
     cfg = gcr('mysPubCk')
     temp = cfg.jsonData
     if (!Array.isArray(temp)) {
@@ -497,6 +502,58 @@ async function doMoveRedis({groupBind, redisClean}) {
       await sleep(1000)
     }
   }
+}
+
+// 迁移JS插件
+async function doTransferJs(config) {
+  if (config.transferJs) {
+    log(`正在迁移JS单文件插件`)
+    let passed = null
+    if (!config.transferJsForce) {
+      let res = parseCheckRes(checkJsCompatibility(examplePath))
+      log(res.text)
+      if (res.total === 0) {
+        return
+      }
+      passed = res.passed
+    } else {
+      log(`未启用兼容性检测，将会迁移所有插件`)
+    }
+    await sleep(1000)
+    if (fs.existsSync(examplePath)) {
+      let toPath = path.join(config.installPath, 'plugins', pluginName, 'lib/v2-js')
+      let fileList = fs.readdirSync(examplePath)
+        .filter(i => path.extname(i) === '.js')
+        .map((fileName) => ({filePath: path.join(examplePath, fileName), fileName}))
+      for (let {fileName, filePath} of fileList) {
+        if (passed != null) {
+          if (passed.find((i) => i.file === fileName) == null) {
+            continue
+          }
+        }
+        fs.copyFileSync(filePath, path.join(toPath, fileName))
+      }
+    }
+    log(`JS单文件插件迁移完成`)
+  }
+}
+
+function parseCheckRes({passed, noPass}) {
+  passed = Array.isArray(passed) ? passed : []
+  noPass = Array.isArray(noPass) ? noPass : []
+  let total = passed.length + noPass.length
+  let text = '未检测到JS插件'
+  if (total !== 0) {
+    text = `检测到 ${total} 个JS插件，`
+    if (noPass.length === 0) {
+      text += `全部可以迁移。`
+    } else if (passed.length === 0) {
+      text += `全部不兼容。`
+    } else {
+      text += `其中 ${noPass.length} 个不兼容， ${passed.length} 个可以迁移。`
+    }
+  }
+  return {total, passed, noPass, text}
 }
 
 const tbMirror = 'https://registry.npmmirror.com'
