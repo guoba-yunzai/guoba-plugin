@@ -505,11 +505,11 @@ async function doMoveRedis({groupBind, redisClean}) {
 }
 
 // 迁移JS插件
-async function doTransferJs(config) {
-  if (config.transferJs) {
+async function doTransferJs({transferJsMode, installPath}) {
+  if (transferJsMode !== 'none') {
     log(`正在迁移JS单文件插件`)
     let passed = null
-    if (!config.transferJsForce) {
+    if (transferJsMode !== 'force') {
       let res = parseCheckRes(checkJsCompatibility(examplePath))
       log(res.text)
       if (res.total === 0) {
@@ -520,8 +520,9 @@ async function doTransferJs(config) {
       log(`未启用兼容性检测，将会迁移所有插件`)
     }
     await sleep(1000)
+    let i = 0
     if (fs.existsSync(examplePath)) {
-      let toPath = path.join(config.installPath, 'plugins', pluginName, 'lib/v2-js')
+      let toPath = path.join(installPath, 'plugins', pluginName, 'lib/v2-js')
       let fileList = fs.readdirSync(examplePath)
         .filter(i => path.extname(i) === '.js')
         .map((fileName) => ({filePath: path.join(examplePath, fileName), fileName}))
@@ -531,10 +532,11 @@ async function doTransferJs(config) {
             continue
           }
         }
+        i++
         fs.copyFileSync(filePath, path.join(toPath, fileName))
       }
     }
-    log(`JS单文件插件迁移完成`)
+    log(`共迁移了${i}个JS单文件`)
   }
 }
 
