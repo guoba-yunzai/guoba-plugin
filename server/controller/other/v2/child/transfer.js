@@ -612,6 +612,7 @@ async function doInstallModules({moduleTool, installPath}) {
   flag = await execTo(tool.add.replace('$pkg', 'image-size'))
   if (!flag) return false
   log(`miao-plugin 依赖安装成功！`)
+  return true
 }
 
 /** 检查并按照包管理工具 */
