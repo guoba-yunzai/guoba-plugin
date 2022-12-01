@@ -72,18 +72,17 @@ async function doTransferV2(config) {
 
     await sleep(1000)
     let flag = await doInstallModules(config)
-    // done
-    await sleep(1000)
-    updateState(ACTION_CODE.success)
-    updatePercent(100)
-    if (flag) {
+    if (!flag) {
       log('[重要提示] 迁移成功，但依赖安装失败，请自行排查问题并解决……')
       log('一但依赖问题解决，即可直接启动V3云崽。')
-      await sleep(1000)
     } else {
       log('迁移成功，请先停止当前云崽，再去启动V3云崽！')
     }
     log('V3云崽安装目录：' + path.join(config.installPath))
+
+    // done
+    updateState(ACTION_CODE.success)
+    updatePercent(100)
     return true
   } catch (e) {
     if (e !== ACTION_CODE.fail) {
@@ -536,7 +535,7 @@ async function doTransferJs({transferJsMode, installPath}) {
         fs.copyFileSync(filePath, path.join(toPath, fileName))
       }
     }
-    log(`共迁移了${i}个JS单文件`)
+    log(`共迁移了${i}个JS单文件插件`)
   }
 }
 
