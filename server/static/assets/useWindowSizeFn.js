@@ -1,0 +1,1 @@
+import{aa as e,a8 as n,ab as t}from"./index.js";function i(i,s=150,a){let r=()=>{i()};const o=t(r,s);r=o;const d=()=>{a&&a.immediate&&r(),window.addEventListener("resize",r)},m=()=>{window.removeEventListener("resize",r)};return e((()=>{d()})),n((()=>{m()})),[d,m]}export{i as u};
