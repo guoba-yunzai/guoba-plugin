@@ -15,7 +15,7 @@
 - [x] plugin插件管理
     - [x] plugin插件配置
 - [x] 编辑喵喵帮助 [@realhuhu](https://github.com/realhuhu)
-- [x] V2云崽丝滑迁移至V3
+- [x] V2云崽丝滑迁移至V3（[视频教程](https://www.bilibili.com/video/BV1fP411T7KM)）
 
 [TODO代办](https://gitee.com/guoba-yunzai/resources/blob/master/other/TODO.md)
 
