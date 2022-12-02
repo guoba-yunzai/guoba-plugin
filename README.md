@@ -2,7 +2,7 @@
 
 `Guoba-Plugin`是`Yunzai-Bot`的扩展插件，主要提供后台管理界面。
 
-> 目前仅支持V3版本的Yunzai
+> 管理面板仅支持V3版本的Yunzai；V2版本Yunzai仅支持迁移至V3功能。
 
 具体功能可在安装插件后，通过发送`#锅巴帮助`来进行查看。
 
@@ -15,6 +15,7 @@
 - [x] plugin插件管理
     - [x] plugin插件配置
 - [x] 编辑喵喵帮助 [@realhuhu](https://github.com/realhuhu)
+- [x] V2云崽丝滑迁移至V3
 
 [TODO代办](https://gitee.com/guoba-yunzai/resources/blob/master/other/TODO.md)
 
@@ -22,7 +23,7 @@
 
 #### 第 1 步：下载插件
 
-在BOT根目录下打开终端，运行
+在云崽根目录下打开终端，运行
 
 ```
 git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/
@@ -48,11 +49,9 @@ pnpm install --filter=guoba-plugin
 如果是使用`npm`或`cnpm`等其他依赖安装工具，需要手动安装以下依赖：
 
 ```bash
-npm install express
-npm install multer
-npm install body-parser
-npm install jsonwebtoken
+npm install express multer body-parser jsonwebtoken
 ```
+
 如果以上命令执行失败，可尝试使用`cnpm`进行安装，只需将开头的`npm`替换成`cnpm`即可。
 
 > 注：cnpm需要单独安装，已安装的可以忽略，安装命令如下：<br>
@@ -75,19 +74,19 @@ npm install jsonwebtoken
 # 功能预览
 
 - 主界面
-![001](./resources/images/readme/001.png)
+  ![001](./resources/images/readme/001.png)
 
 - 查看插件README
-![002](./resources/images/readme/002.png)
+  ![002](./resources/images/readme/002.png)
 
 - 基础配置
-![003](./resources/images/readme/003.png)
+  ![003](./resources/images/readme/003.png)
 
 - 群组配置
-![004](./resources/images/readme/004.png)
+  ![004](./resources/images/readme/004.png)
 
 - 编辑喵喵帮助
-![005](./resources/images/readme/005.png)
+  ![005](./resources/images/readme/005.png)
 
 # 免责声明
 
