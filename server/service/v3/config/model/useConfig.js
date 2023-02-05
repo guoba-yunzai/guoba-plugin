@@ -102,6 +102,21 @@ const baseConfig = {
             placeholder: '请输入米游社代理地址',
           },
         },
+        {
+          field: 'online_msg',
+          label: '推送帮助',
+          bottomHelpMessage: '被上线时给首个主人QQ推送帮助',
+          component: 'Switch',
+        },
+        {
+          field: 'online_msg_exp',
+          label: '推送帮助冷却',
+          bottomHelpMessage: '填上线推送通知的冷却时间',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入冷却时间，单位秒',
+          },
+        },
       ],
     },
     {
