@@ -225,38 +225,44 @@ function getAutoIps(port, allIp) {
  * @return {*[]}
  */
 export function getLocalIps(port) {
-  let networks = os.networkInterfaces()
   let ips = []
-  // noinspection EqualityComparisonWithCoercionJS
-  port = port ? `:${port}` : ''
-  for (let [name, wlans] of Object.entries(networks)) {
-    for (let wlan of wlans) {
-      /*
-       * 更改过滤规则,填坑。(之前未测试Windows系统)
-       * 通过掩码过滤本地IPv6
-       * 通过MAC地址过滤Windows 本地回环地址（踩坑）
-       * 过滤lo回环网卡（Linux要过滤'lo'），去掉会导致Linxu"::1"过滤失败（踩坑）
-       * 如有虚拟网卡需自己加上过滤--技术有限
-       */
-      /*
-       * 修复过滤，部分Linux读取不到IPv6
-       * 放弃使用网段过滤，采取过滤fe、fc开头地址
-       */
-      if (name != 'lo' && name != 'docker0' && wlan.address.slice(0, 2) != 'fe' && wlan.address.slice(0, 2) != 'fc') {
-        // 过滤本地回环地址
-        if (['127.0.0.1', '::1'].includes(wlan.address)) {
-          continue
-        }
-        if (wlan.family === 'IPv6') {
-          ips.push(`[${wlan.address}]${port}`)
-        } else {
-          ips.push(`${wlan.address}${port}`)
+  try {
+    let networks = os.networkInterfaces()
+    let ips = []
+    // noinspection EqualityComparisonWithCoercionJS
+    port = port ? `:${port}` : ''
+    for (let [name, wlans] of Object.entries(networks)) {
+      for (let wlan of wlans) {
+        /*
+         * 更改过滤规则,填坑。(之前未测试Windows系统)
+         * 通过掩码过滤本地IPv6
+         * 通过MAC地址过滤Windows 本地回环地址（踩坑）
+         * 过滤lo回环网卡（Linux要过滤'lo'），去掉会导致Linxu"::1"过滤失败（踩坑）
+         * 如有虚拟网卡需自己加上过滤--技术有限
+         */
+        /*
+         * 修复过滤，部分Linux读取不到IPv6
+         * 放弃使用网段过滤，采取过滤fe、fc开头地址
+         */
+        if (name != 'lo' && name != 'docker0' && wlan.address.slice(0, 2) != 'fe' && wlan.address.slice(0, 2) != 'fc') {
+          // 过滤本地回环地址
+          if (['127.0.0.1', '::1'].includes(wlan.address)) {
+            continue
+          }
+          if (wlan.family === 'IPv6') {
+            ips.push(`[${wlan.address}]${port}`)
+          } else {
+            ips.push(`${wlan.address}${port}`)
+          }
         }
       }
     }
+  } catch (e) {
+    logger.error(`错误：${logger.red(e)}`)
   }
   if (ips.length === 0) {
-    ips.push(`localhost${port}`)
+    logger.warn('无法获取到IP地址，仅显示本地回环地址')
+    ips.push(`localhost:${port}`)
   }
   return ips
 }
