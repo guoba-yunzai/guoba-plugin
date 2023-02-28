@@ -226,11 +226,10 @@ function getAutoIps(port, allIp) {
  */
 export function getLocalIps(port) {
   let ips = []
+  port = port ? `:${port}` : ''
   try {
     let networks = os.networkInterfaces()
-    let ips = []
     // noinspection EqualityComparisonWithCoercionJS
-    port = port ? `:${port}` : ''
     for (let [name, wlans] of Object.entries(networks)) {
       for (let wlan of wlans) {
         /*
@@ -262,7 +261,7 @@ export function getLocalIps(port) {
   }
   if (ips.length === 0) {
     logger.warn('无法获取到IP地址，仅显示本地回环地址')
-    ips.push(`localhost:${port}`)
+    ips.push(`localhost${port}`)
   }
   return ips
 }
