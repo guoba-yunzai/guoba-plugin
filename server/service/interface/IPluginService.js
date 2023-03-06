@@ -137,9 +137,18 @@ export default class IPluginService extends Service {
     if (remotePlugins) {
       return JSON.parse(remotePlugins)
     }
-    remotePlugins = (await parsePluginsIndex()).plugins
+    try {
+      const remotesMap = await parsePluginsIndex()
+      if (!remotesMap) {
+        return []
+      }
+      const {topPlugins = [], plugins = [], gamePlugins = []} = remotesMap;
+      remotePlugins = [...topPlugins, ...plugins, ...gamePlugins]
+    } catch (e) {
+      logger.error(e)
+    }
     // 读取失败……
-    if (!remotePlugins) {
+    if (!remotePlugins || remotePlugins.length === 0) {
       return []
     }
     redis.set(redisKey, JSON.stringify(remotePlugins), {EX: 3600 * 12})
@@ -187,8 +196,20 @@ export default class IPluginService extends Service {
 }
 
 const parseConfig = {
+  topPlugins: {
+    identifyReg: /##\s*置顶(（plugin）)?.*/,
+    beginReg: /(\|\s*-{3,}\s*){5}\|/,
+    itemReg: /\|(.*)\|(.*)\|(.*)\|(.*)\|(.*)\|/,
+    linkReg: /\[(.*)]\((.*)\)/,
+  },
   plugins: {
-    identifyReg: /##\s*插件包.*/,
+    identifyReg: /##\s*功能插件(（plugin）)?.*/,
+    beginReg: /(\|\s*-{3,}\s*){5}\|/,
+    itemReg: /\|(.*)\|(.*)\|(.*)\|(.*)\|(.*)\|/,
+    linkReg: /\[(.*)]\((.*)\)/,
+  },
+  gamePlugins: {
+    identifyReg: /##\s*游戏插件(（plugin）)?.*/,
     beginReg: /(\|\s*-{3,}\s*){5}\|/,
     itemReg: /\|(.*)\|(.*)\|(.*)\|(.*)\|(.*)\|/,
     linkReg: /\[(.*)]\((.*)\)/,
