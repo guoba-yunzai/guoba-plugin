@@ -1,5 +1,4 @@
 import path from 'path'
-import {segment} from 'oicq'
 import {_paths, sendToMaster} from '../utils/common.js'
 import cfg from '../utils/cfg.js'
 
