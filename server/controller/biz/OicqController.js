@@ -19,6 +19,8 @@ export class OicqController extends RestController {
     // avatarUrl: `https://q1.qlogo.cn/g?b=qq&s=${0}&nk=${qq}`,
     this.get('/friend/list', this.queryFriendList)
     this.get('/friend/count', () => Result.ok(this.oicqService.getFriendCount()))
+
+    this.get('/group/list', this.queryGroupList)
   }
 
   /** 获取一个QQ用户信息 */
@@ -37,10 +39,49 @@ export class OicqController extends RestController {
     if (!groupId) {
       return Result.error(`参数 groupId 不能为空`)
     }
-    let group = this.oicqService.pickGroup(groupId)
+    let group = await this.oicqService.pickGroup(groupId)
     return Result.ok(group)
   }
 
+  async queryGroupList(req) {
+    let {pageNo, pageSize, user_id, query_group_id, query_name} = req.query
+    pageNo = !pageNo ? 1 : Number.parseInt(pageNo)
+    pageSize = !pageSize ? 10 : Number.parseInt(pageSize)
+
+    let friendList = Bot.getGroupList()
+    let list = []
+    let filter = (_) => true
+    // 根据 group_id 模糊查询
+    if (query_group_id || query_name) {
+      filter = (item) => {
+        let flag = true
+        if (query_group_id) {
+          flag = String(item.group_id).includes(query_qq)
+        }
+        // 根据群名称或备注模糊筛选
+        if (query_name && flag) {
+          flag = String(item.group_name).includes(query_name)
+        }
+        return flag
+      }
+    }
+    // 根据group_id过滤
+    let userId = query_group_id ? query_group_id.split(',').map(u => Number.parseInt(u)) : null
+    if (userId && userId.length > 0) {
+      pageNo = 1
+      pageSize = userId.length
+      filter = (item) => userId.includes(item.group_id)
+    }
+
+    for (let [, item] of friendList) {
+      if (filter(item)) {
+        list.push(item)
+      }
+    }
+
+    let page = new Pager(list, pageNo, pageSize)
+    return Result.ok(page.toJSON())
+  }
   async queryFriendList(req) {
     let {pageNo, pageSize, user_id, query_qq, query_name} = req.query
     pageNo = !pageNo ? 1 : Number.parseInt(pageNo)

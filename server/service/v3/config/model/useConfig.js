@@ -475,15 +475,10 @@ const otherConfig = {
         {
           field: 'whiteGroup',
           label: '白名单群',
-          bottomHelpMessage: '白名单群，可以设置多个，用英文逗号分隔（后续版本将支持选择）',
-          component: 'GTags',
+          bottomHelpMessage: '白名单群，可以设置多个',
+          component: 'GSelectGroup',
           componentProps: {
-            placeholder: '请输入白名单群',
-            allowAdd: true,
-            allowDel: true,
-            showPrompt: true,
-            promptProps: addGroupPromptProps,
-            valueFormatter: ((value) => Number.parseInt(value)).toString(),
+            placeholder: '请选择白名单群',
           },
         },
         {
