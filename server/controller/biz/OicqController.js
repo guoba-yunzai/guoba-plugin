@@ -44,11 +44,11 @@ export class OicqController extends RestController {
   }
 
   async queryGroupList(req) {
-    let {pageNo, pageSize, user_id, query_group_id, query_name} = req.query
+    let {pageNo, pageSize, query_group_id, query_name} = req.query
     pageNo = !pageNo ? 1 : Number.parseInt(pageNo)
     pageSize = !pageSize ? 10 : Number.parseInt(pageSize)
 
-    let friendList = Bot.getGroupList()
+    let groupList = Bot.getGroupList()
     let list = []
     let filter = (_) => true
     // 根据 group_id 模糊查询
@@ -56,7 +56,7 @@ export class OicqController extends RestController {
       filter = (item) => {
         let flag = true
         if (query_group_id) {
-          flag = String(item.group_id).includes(query_qq)
+          flag = String(item.group_id).includes(query_group_id)
         }
         // 根据群名称或备注模糊筛选
         if (query_name && flag) {
@@ -66,14 +66,14 @@ export class OicqController extends RestController {
       }
     }
     // 根据group_id过滤
-    let userId = query_group_id ? query_group_id.split(',').map(u => Number.parseInt(u)) : null
-    if (userId && userId.length > 0) {
+    let groupId = query_group_id ? query_group_id.split(',').map(u => Number.parseInt(u)) : null
+    if (groupId && groupId.length > 0) {
       pageNo = 1
-      pageSize = userId.length
-      filter = (item) => userId.includes(item.group_id)
+      pageSize = groupId.length
+      filter = (item) => groupId.includes(item.group_id)
     }
 
-    for (let [, item] of friendList) {
+    for (let [, item] of groupList) {
       if (filter(item)) {
         list.push(item)
       }
@@ -82,6 +82,7 @@ export class OicqController extends RestController {
     let page = new Pager(list, pageNo, pageSize)
     return Result.ok(page.toJSON())
   }
+
   async queryFriendList(req) {
     let {pageNo, pageSize, user_id, query_qq, query_name} = req.query
     pageNo = !pageNo ? 1 : Number.parseInt(pageNo)
