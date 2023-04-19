@@ -484,15 +484,10 @@ const otherConfig = {
         {
           field: 'blackGroup',
           label: '黑名单群',
-          bottomHelpMessage: '黑名单群，可以设置多个，用英文逗号分隔',
-          component: 'GTags',
+          bottomHelpMessage: '黑名单群，可以设置多个',
+          component: 'GSelectGroup',
           componentProps: {
-            placeholder: '请输入黑名单群',
-            allowAdd: true,
-            allowDel: true,
-            showPrompt: true,
-            promptProps: addGroupPromptProps,
-            valueFormatter: ((value) => Number.parseInt(value)).toString(),
+            placeholder: '请选择黑名单群',
           },
         },
         {
