@@ -65,7 +65,7 @@ export default class PluginController extends RestController {
   }
 
   // 获取插件配置数据（如果有）
-  getPluginConfig(req) {
+  async getPluginConfig(req) {
     let {pluginName} = req.params
     let supportObject = this.getSupport(pluginName)
     let {configInfo} = supportObject
@@ -73,7 +73,7 @@ export default class PluginController extends RestController {
     if (typeof getConfigData !== 'function') {
       return Result.error('该插件没有配置getConfigData')
     }
-    return Result.ok(getConfigData())
+    return Result.ok(await getConfigData())
   }
 
   // 设置插件配置数据
