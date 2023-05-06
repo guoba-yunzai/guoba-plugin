@@ -44,7 +44,7 @@ export class OicqController extends RestController {
   }
 
   async queryGroupList(req) {
-    let {pageNo, pageSize, query_group_id, query_name} = req.query
+    let {pageNo, pageSize, group_id, query_group_id, query_name} = req.query
     pageNo = !pageNo ? 1 : Number.parseInt(pageNo)
     pageSize = !pageSize ? 10 : Number.parseInt(pageSize)
 
@@ -66,7 +66,7 @@ export class OicqController extends RestController {
       }
     }
     // 根据group_id过滤
-    let groupId = query_group_id ? query_group_id.split(',').map(u => Number.parseInt(u)) : null
+    let groupId = group_id ? group_id.split(',').map(u => Number.parseInt(u)) : null
     if (groupId && groupId.length > 0) {
       pageNo = 1
       pageSize = groupId.length
