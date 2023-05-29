@@ -27,9 +27,8 @@ export class HomeController extends RestController {
 
   /** 获取首页数据 */
   async getHomeData() {
-    let cookies = await this.botService.getUserCookies()
     return Result.ok({
-      cookieCount: Object.keys(cookies).length,
+      cookieCount: await this.botService.getCookieCount(),
       friendCount: await this.oicqService.getFriendCount(),
       groupCount: await this.oicqService.getGroupCount(),
     })
