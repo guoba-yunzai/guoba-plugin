@@ -30,19 +30,19 @@ export function supportGuoba() {
     configInfo: {
       // 配置项 schemas
       schemas: [
-        {
-          field: 'base.city',
-          label: '天气城市',
-          helpMessage: '修改后需要刷新页面才能生效',
-          bottomHelpMessage: '配置首页天气显示的城市',
-          // 组件类型，可参考 https://vvbin.cn/doc-next/components/introduction.html
-          // https://antdv.com/components/overview-cn/
-          component: 'Input',
-          required: true,
-          componentProps: {
-            placeholder: '请输入天气城市',
-          },
-        },
+        // {
+        //   field: 'base.city',
+        //   label: '天气城市',
+        //   helpMessage: '修改后需要刷新页面才能生效',
+        //   bottomHelpMessage: '配置首页天气显示的城市',
+        //   // 组件类型，可参考 https://vvbin.cn/doc-next/components/introduction.html
+        //   // https://antdv.com/components/overview-cn/
+        //   component: 'Input',
+        //   required: true,
+        //   componentProps: {
+        //     placeholder: '请输入天气城市',
+        //   },
+        // },
         {
           field: 'server.host',
           label: '服务器地址',
