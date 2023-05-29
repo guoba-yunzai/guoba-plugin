@@ -229,7 +229,6 @@ export function getLocalIps(port) {
   port = port ? `:${port}` : ''
   try {
     let networks = os.networkInterfaces()
-    // noinspection EqualityComparisonWithCoercionJS
     for (let [name, wlans] of Object.entries(networks)) {
       for (let wlan of wlans) {
         /*
@@ -243,6 +242,7 @@ export function getLocalIps(port) {
          * 修复过滤，部分Linux读取不到IPv6
          * 放弃使用网段过滤，采取过滤fe、fc开头地址
          */
+        // noinspection EqualityComparisonWithCoercionJS
         if (name != 'lo' && name != 'docker0' && wlan.address.slice(0, 2) != 'fe' && wlan.address.slice(0, 2) != 'fc') {
           // 过滤本地回环地址
           if (['127.0.0.1', '::1'].includes(wlan.address)) {
@@ -257,10 +257,17 @@ export function getLocalIps(port) {
       }
     }
   } catch (e) {
-    logger.error(`错误：${logger.red(e)}`)
+    let err = e?.stack || e?.message || e
+    err = err ? err.toString() : ''
+    if (/Unknown system error 13/i.test(err)) {
+      logger.warn('[Guoba] 由于系统限制，无法获取到IP地址，仅显示本地回环地址。该问题目前暂无方案解决，但不影响Guoba使用，您可手动配置自定义地址。')
+      ips.push(`localhost${port}`)
+    } else {
+      logger.error(`错误：${logger.red(e)}`)
+    }
   }
   if (ips.length === 0) {
-    logger.warn('无法获取到IP地址，仅显示本地回环地址')
+    logger.warn('[Guoba] 无法获取到IP地址，仅显示本地回环地址，详情请查看以上报错。')
     ips.push(`localhost${port}`)
   }
   return ips
