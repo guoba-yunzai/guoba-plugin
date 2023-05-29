@@ -65,16 +65,20 @@ export class HomeController extends RestController {
       return null
     }
     let rolePath = null
-    for (let i = 0; i < 10 && !rolePath; i++) {
+    let picPaths = []
+    for (let i = 0; i < 10; i++) {
       rolePath = lodash.sample(rolePaths)
       if (fs.statSync(rolePath).isDirectory()) {
-        break
+        picPaths = []
+        fs.readdirSync(rolePath).filter((p) => /\.(jpg|png|jpeg|webp)$/i.test(p)).forEach(p => picPaths.push(path.join(rolePath, p)))
+        // 好可怜，居然一张图片都没有，最多尝试10次
+        if (picPaths.length > 0) {
+          break
+        }
       } else {
         rolePath = null
       }
     }
-    let picPaths = []
-    fs.readdirSync(rolePath).filter(() => /\.(jpg|png|jpeg|webp)$/).forEach(p => picPaths.push(path.join(rolePath, p)))
     if (picPaths.length === 0) {
       return null
     }
