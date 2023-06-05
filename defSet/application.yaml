@@ -16,7 +16,7 @@ server:
   # 是否需要拼接端口号
   splicePort: true
   # 网站ICP备案号
-  ICPNo: '',
+  ICPNo: ''
 
 # jwt配置
 jwt:
