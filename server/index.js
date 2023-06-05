@@ -16,10 +16,10 @@ export async function createServer({isInit}) {
   // 启动服务监听
   let {port} = cfg.get('server')
   let server = await listen(app, port)
-  // 静态资源
-  useStatic(app)
   // 预加载
   usePreload(app)
+  // 静态资源
+  useStatic(app)
   // 辅助工具
   useHelper(app)
   // 拦截器
