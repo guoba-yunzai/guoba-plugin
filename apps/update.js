@@ -1,13 +1,17 @@
 import YAML from 'yaml'
 import fetch from 'node-fetch'
 import {exec} from 'child_process'
+import cfg from "../utils/cfg.js";
 import {_paths} from '../utils/paths.js'
 import {_version, sendToMaster} from '../utils/common.js'
 import {compare} from '../lib/compareVersions.js'
 
+const Constant = await Guoba.GID('#/constant/Constant.js')
+
 const _STATUS = {
   FAIL: 'FAIL',
   SUCCESS: 'SUCCESS',
+  CANCEL: 'CANCEL',
   NO_UPDATE: 'NO_UPDATE',
   HAS_UPDATE: 'HAS_UPDATE',
   GIT_NO_UPDATE: 'GIT_NO_UPDATE',
@@ -79,10 +83,20 @@ export class GuobaUpdate extends plugin {
     }
   }
 
+  // 是否允许检查更新
+  get allowCheckUpdate() {
+    return cfg.get('base.checkUpdate') === true
+  }
+
   async doUpdateTask() {
+    if (!this.allowCheckUpdate) {
+      return
+    }
     logger.mark(`[Guoba] 开始执行自动更新任务……`)
-    let {status, remote, message} = await this.doAutoUpdate(true)
-    if (status === _STATUS.NO_UPDATE) {
+    const {status, remote, message} = await this.doAutoUpdate(true)
+    if (status === _STATUS.CANCEL) {
+      logger.mark(`[Guoba] 自动更新任务执行完毕，没有发现新版本`)
+    } else if (status === _STATUS.NO_UPDATE) {
       logger.mark(`[Guoba] 自动更新任务执行完毕，没有发现新版本`)
     } else if (status === _STATUS.SUCCESS) {
       let msg = `[Guoba] 自动${message}`
@@ -100,12 +114,16 @@ export class GuobaUpdate extends plugin {
   async doAutoUpdate(isTask = false) {
     let response = await this.doCheckUpdate()
     let {status, remote} = response
-    if (status === _STATUS.NO_UPDATE) {
+    if (status === _STATUS.NO_UPDATE || status === _STATUS.CANCEL) {
       return response
     }
     // 需要重启的，自动更新模式下不进行git pull
     if (remote.needRestart && isTask) {
-      return { status: _STATUS.SUCCESS, remote, message: '检查更新发现新版本，但是需要重启，本次不进行自动升级，请手动升级~' }
+      return {
+        status: _STATUS.SUCCESS,
+        remote,
+        message: '检查更新发现新版本，但是需要重启，本次不进行自动升级，请手动升级~'
+      }
     }
     // 不是最新版本，执行git pull更新
     response = await this.doGitPull()
@@ -121,9 +139,9 @@ export class GuobaUpdate extends plugin {
       if (!remote.needRestart) {
         Guoba && Guoba.reload && Guoba.reload()
       }
-      let restartMsg = '本次更新' + (remote.needRestart ? '需要重启才能生效' : '无需重启即可生效')
-      let message = `更新成功，当前版本：${remote.version}\n${restartMsg}，更新日志：\n`
-      message += remote.updateLogs.map((log, index) => `${index + 1}. ${log}`).join('\n')
+      const restartMsg = '本次更新' + (remote.needRestart ? '需要重启才能生效' : '无需重启即可生效')
+      const message = `更新成功，当前版本：${remote.version}\n${restartMsg}，更新日志：\n`
+        + remote.updateLogs.map((log, index) => `${index + 1}. ${log}`).join('\n')
       return {status: _STATUS.SUCCESS, remote, message}
     }
     return {...response, remote}
@@ -134,16 +152,25 @@ export class GuobaUpdate extends plugin {
    * @param tell 是否给master发送消息
    */
   async doCheckUpdate(tell = false) {
-    let remotes = await this.getRemoteVersion()
+    if (!this.allowCheckUpdate) {
+      return {status: _STATUS.CANCEL, message: '已取消'}
+    }
+    const remotes = await this.getRemoteVersion()
     if (!remotes || !remotes[0]) {
       return {status: _STATUS.FAIL, message: '获取远程版本信息失败'}
     }
-    let remote = remotes[0]
+    const remote = remotes[0]
     // 判断远程版本是否小于等于本地版本
     if (compare(remote.version, _version, '<=')) {
       return {status: _STATUS.NO_UPDATE, remote}
     }
-    tell && sendToMaster(`[Guoba] 发现新版本：${remote.version}，请发送“#锅巴更新”进行更新`)
+    // 判断是否已提醒过
+    const checkUpdateRedisKey = Constant.REDIS_PREFIX + 'check-update-version'
+    const checkVersion = await redis.get(checkUpdateRedisKey)
+    // 一个版本只提醒一次
+    if (remote.version !== checkVersion) {
+      tell && sendToMaster(`[Guoba] 发现新版本：${remote.version}，请发送“#锅巴更新”进行更新`)
+    }
     // 判断是否需要重启，不仅要判断当前远程版本，还要判断最近一次需要重启的远程版本是否大于本地版本
     for (let item of remotes) {
       if (!item.needRestart) continue
@@ -152,6 +179,7 @@ export class GuobaUpdate extends plugin {
         break
       }
     }
+    await redis.set(checkUpdateRedisKey, remote.version)
     return {status: _STATUS.HAS_UPDATE, remote}
   }
 
@@ -203,7 +231,10 @@ export class GuobaUpdate extends plugin {
           resolve({status: _STATUS.GIT_NO_UPDATE})
           return
         }
-        resolve({status: _STATUS.SUCCESS, message: '更新成功' + (isForce ? '，由于是强制更新，本次更新需要重启才能生效' : '')});
+        resolve({
+          status: _STATUS.SUCCESS,
+          message: '更新成功' + (isForce ? '，由于是强制更新，本次更新需要重启才能生效' : '')
+        });
       })
     })
   }
