@@ -78,6 +78,16 @@ export function supportGuoba() {
         //   bottomHelpMessage: '当host为auto时，是否在使用"#锅巴登录"时显示所有IP地址',
         //   component: 'Switch',
         // },
+        {
+          field: 'server.ICPNo',
+          label: 'ICP备案号',
+          helpMessage: '如果要将网站放到公网上使用「域名」访问，则需要填写备案号，否则可能会面临被禁止访问的风险！',
+          bottomHelpMessage: '填写你的域名ICP备案号，会显示在页面底部',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入ICP备案号',
+          },
+        },
       ],
       // 获取配置数据方法（用于前端填充显示数据）
       getConfigData() {
