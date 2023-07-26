@@ -3,11 +3,8 @@ import path from 'path'
 import yaml from 'yaml'
 import {_paths} from '../../../../../utils/paths.js'
 
-const Service = await Guoba.GID('#/components/Service.js')
-/** @type {GuobaConstant} */
-const Constant = await Guoba.GID('#/constant/Constant.js')
+import {Result, Service} from '#guoba.framework';
 
-// noinspection JSUnusedGlobalSymbols
 export default class IMiaoPluginService extends Service {
   constructor(app) {
     super(app)
@@ -17,77 +14,77 @@ export default class IMiaoPluginService extends Service {
    * 初始化最初的备份
    */
   initBackup() {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
    * 获取帮助
    */
   getHelpSetting() {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
    * 保存帮助
    */
   saveHelpSetting() {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
    * 获取皮肤main.png路径
    */
   getThemeMainPath() {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
    * 获取皮肤列表
    */
   getHelpThemeList() {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
    * 获取皮肤config配置
    */
   getHelpThemeConfig() {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
    * 保存皮肤config配置
    */
   saveHelpThemeConfig() {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
    * 新增皮肤
    */
   addHelpTheme() {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
    * 修改皮肤（仅底图）
    */
   editHelpTheme() {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
    * 删除皮肤
    */
   deleteHelpTheme() {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
    * 获取皮肤bg路径
    */
   getThemeBgPath() {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   backupCfg = null
@@ -126,7 +123,7 @@ export default class IMiaoPluginService extends Service {
    * @param isInit
    */
   addBackup(remark, isInit = false) {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
@@ -134,7 +131,7 @@ export default class IMiaoPluginService extends Service {
    * @param id
    */
   restoreBackup(id) {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
@@ -142,7 +139,7 @@ export default class IMiaoPluginService extends Service {
    * @param id
    */
   deleteBackup(id) {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
 }

@@ -1,8 +1,7 @@
-const cfg = await Guoba.GID('cfg')
-const Result = await Guoba.GID('#/components/Result.js')
-const {autowired} = await Guoba.GI('#/loader/injection.js')
+import {autowired, Result, RestController} from '#guoba.framework';
+import {cfg} from '#guoba.platform';
+
 const RedisDecorator = await Guoba.GID('#/decorator/RedisDecorator.js')
-const RestController = await Guoba.GID('#/components/RestController.js')
 
 /**
  * 工具类Controller

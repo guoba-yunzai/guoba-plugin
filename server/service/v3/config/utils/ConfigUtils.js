@@ -1,8 +1,8 @@
 import path from 'path'
+import {GuobaError} from "#guoba.framework";
 
 const {_paths} = await Guoba.GI('@/utils/common.js')
 const YamlReader = await Guoba.GID('@/components/YamlReader.js')
-const GuobaError = await Guoba.GID('@/components/GuobaError.js')
 
 export const configReader = new Map()
 

@@ -3,9 +3,9 @@ import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
 import fetch from 'node-fetch'
+import {Service} from '#guoba.framework';
+import {Constant} from "#guoba.platform";
 
-const Service = await Guoba.GID('#/components/Service.js')
-const Constant = await Guoba.GID('#/constant/Constant.js')
 const {GuobaSupportMap, PluginsMap} = await Guoba.GI('@/utils/common.js')
 
 export default class IPluginService extends Service {

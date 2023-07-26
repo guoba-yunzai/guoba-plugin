@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken'
 
-const Constant = await Guoba.GID('#/constant/Constant.js')
-const Decorator = await Guoba.GID('#/components/Decorator.js')
-const GuobaError = await Guoba.GID('@/components/GuobaError.js')
+import {Decorator, GuobaError} from '#guoba.framework'
+import {Constant} from '#guoba.platform'
 
 export default class ReqDecorator extends Decorator {
   constructor() {

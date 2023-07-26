@@ -1,6 +1,4 @@
-const Result = await Guoba.GID('#/components/Result.js')
-const {autowired} = await Guoba.GI('#/loader/injection.js')
-const RestController = await Guoba.GID('#/components/RestController.js')
+import {autowired, Result, RestController} from '#guoba.framework';
 
 export class PermissionController extends RestController {
 

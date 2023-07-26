@@ -5,9 +5,7 @@ import {_paths} from '../../../../utils/paths.js'
 import {isV2} from '../../../../utils/adapter.js'
 import {ACTION_CODE, examplePath, checkJsCompatibility} from './child/constant.js'
 import {sleep} from '../../../../utils/common.js'
-
-const Result = await Guoba.GID('#/components/Result.js')
-const RestController = await Guoba.GID('#/components/RestController.js')
+import {Result, RestController} from '#guoba.framework';
 
 /**
  * V2迁移

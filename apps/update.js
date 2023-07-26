@@ -1,12 +1,11 @@
 import YAML from 'yaml'
 import fetch from 'node-fetch'
 import {exec} from 'child_process'
-import cfg from "../utils/cfg.js";
 import {_paths} from '../utils/paths.js'
 import {_version, sendToMaster} from '../utils/common.js'
 import {compare} from '../lib/compareVersions.js'
 
-const Constant = await Guoba.GID('#/constant/Constant.js')
+import {cfg, Constant} from '#guoba.platform';
 
 const _STATUS = {
   FAIL: 'FAIL',

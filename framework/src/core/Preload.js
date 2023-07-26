@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 
 /**
- * preload
+ * preload：预加载js
  */
 export default class Preload {
   constructor(app, preloadName) {

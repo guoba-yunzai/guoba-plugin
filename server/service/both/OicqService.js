@@ -1,4 +1,5 @@
-const Service = await Guoba.GID('#/components/Service.js')
+import {Service} from '#guoba.framework';
+
 const {toPairsMap} = await Guoba.GI('@/utils/common.js')
 
 export class OicqService extends Service {

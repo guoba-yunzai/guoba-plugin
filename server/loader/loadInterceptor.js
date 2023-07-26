@@ -1,8 +1,7 @@
 import path from 'path'
 import lodash from 'lodash'
+import {Interceptor, instancesMap} from "#guoba.framework";
 
-const {instancesMap} = await Guoba.GI('#/loader/injection.js')
-const Interceptor = await Guoba.GID('#/components/Interceptor.js')
 const {_paths, loadClasses} = await Guoba.GI('@/utils/common.js')
 
 const interceptorPath = path.join(_paths.pluginRoot, 'server/interceptor')

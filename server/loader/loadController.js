@@ -1,8 +1,7 @@
 import path from 'path'
 import lodash from 'lodash'
+import {Controller, instancesMap} from "#guoba.framework";
 
-const {instancesMap} = await Guoba.GI('#/loader/injection.js')
-const Controller = await Guoba.GID('#/components/Controller.js')
 const {_paths, loadClasses} = await Guoba.GI('@/utils/common.js')
 
 const controllerPath = path.join(_paths.pluginRoot, 'server/controller')

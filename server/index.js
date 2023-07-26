@@ -1,8 +1,8 @@
 import express from 'express'
 import {listen} from './helper/listen.js'
 import {getWebAddress} from '../utils/common.js'
+import {cfg} from '#guoba.platform';
 
-const cfg = await Guoba.GID('cfg')
 const {useStatic} = await Guoba.GI('#/loader/loadStatic.js')
 const {useHelper} = await Guoba.GI('#/loader/loadHelper.js')
 const {usePreload} = await Guoba.GI('#/loader/loadPreload.js')

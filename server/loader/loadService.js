@@ -1,9 +1,8 @@
 import path from 'path'
 import lodash from 'lodash'
 import {isV3} from '../../utils/adapter.js'
+import {Service, instancesMap} from '#guoba.framework';
 
-const Service = await Guoba.GID('#/components/Service.js')
-const {instancesMap} = await Guoba.GI('#/loader/injection.js')
 const {_paths, loadClasses} = await Guoba.GI('@/utils/common.js')
 
 const adapter = isV3 ? 'v3' : 'v2'

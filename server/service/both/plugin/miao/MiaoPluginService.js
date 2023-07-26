@@ -4,11 +4,9 @@ import lodash from 'lodash'
 import moment from 'moment'
 import {_paths} from '../../../../../utils/paths.js'
 import {moveFile} from '../../../../../utils/common.js'
+import {GuobaError} from "#guoba.framework";
 
 const {GID} = Guoba.createImport(import.meta.url)
-
-const GuobaError = await Guoba.GID('@/components/GuobaError.js')
-/** @type {IMiaoPluginService} */
 const IMiaoPluginService = await GID('./IMiaoPluginService.js')
 
 // noinspection JSUnusedGlobalSymbols

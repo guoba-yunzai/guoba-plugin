@@ -1,5 +1,4 @@
-const Service = await Guoba.GID('#/components/Service.js')
-const Constant = await Guoba.GID('#/constant/Constant.js')
+import {Result, Service} from '#guoba.framework';
 
 export default class IConfigService extends Service {
   constructor(app) {
@@ -11,7 +10,7 @@ export default class IConfigService extends Service {
    * @return {Promise<any>}
    */
   async getConfigTabs() {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
@@ -20,7 +19,7 @@ export default class IConfigService extends Service {
    * @return {Promise<any>}
    */
   async getConfigData(key) {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
@@ -30,7 +29,7 @@ export default class IConfigService extends Service {
    * @return {Promise<any>}
    */
   async setConfigData(key, data) {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
   /**
@@ -40,6 +39,6 @@ export default class IConfigService extends Service {
    * @return {Promise<void>}
    */
   async removeCardForm(formKey, cardKey) {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 }

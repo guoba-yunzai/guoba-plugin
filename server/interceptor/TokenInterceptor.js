@@ -1,10 +1,6 @@
 import jwt from 'jsonwebtoken'
-
-const cfg = await Guoba.GID('cfg')
-const Result = await Guoba.GID('#/components/Result.js')
-const Constant = await Guoba.GID('#/constant/Constant.js')
-const {autowired} = await Guoba.GI('#/loader/injection.js')
-const Interceptor = await Guoba.GID('#/components/Interceptor.js')
+import {autowired, Result, Interceptor} from "#guoba.framework";
+import {cfg, Constant} from "#guoba.platform";
 
 // 弱令牌（只能用来访问静态资源等）
 const liteInclude = [

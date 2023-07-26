@@ -1,7 +1,5 @@
-const cfg = await Guoba.GID('cfg')
-const Decorator = await Guoba.GID('#/components/Decorator.js')
-const Result = await Guoba.GID('#/components/Result.js')
-const Constant = await Guoba.GID('#/constant/Constant.js')
+import {Result, Decorator} from "#guoba.framework";
+import {Constant} from "#guoba.platform";
 
 export default class RedisDecorator extends Decorator {
   constructor(cacheKey, config) {

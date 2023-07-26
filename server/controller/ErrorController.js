@@ -1,5 +1,4 @@
-const Result = await Guoba.GID('#/components/Result.js')
-const RestController = await Guoba.GID('#/components/RestController.js')
+import {Result, RestController} from '#guoba.framework'
 
 /** 错误处理 */
 export default class ErrorController extends RestController {

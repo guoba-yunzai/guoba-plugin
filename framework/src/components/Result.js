@@ -2,13 +2,12 @@
  * 全局返回结果
  *
  * @class
- * @typedef {Class<Result>} GuobaResult
  * @property {Function} ok 成功
  * @property {Function} error 失败
- * @property {ResultNoLogin} noLogin 未登录
- * @property {ResultNoAuth} noAuth 无权限
- * @property {ResultNotFound} notFound 未找到
- * @property {ResultUnrealized} unrealized 尚未实现
+ * @property noLogin 未登录
+ * @property noAuth 无权限
+ * @property notFound 未找到
+ * @property unrealized 尚未实现
  */
 export default class Result {
   constructor(code, result, message, httpStatus = 200) {
@@ -18,9 +17,13 @@ export default class Result {
     this.httpStatus = httpStatus
   }
 
+  /** 无返回值 */
+  static VOID = Symbol();
+  /** 尚未实现错误码 */
+  static ERR_CODE_501 = Symbol();
+
   /**
    * 成功
-   * @typedef {ok} ResultOk
    * @static
    * @param result 返回结果
    * @param message 返回消息
@@ -32,7 +35,6 @@ export default class Result {
 
   /**
    * 错误
-   * @typedef {error} ResultError
    * @static
    * @returns {Result}
    */
@@ -74,7 +76,6 @@ export default class Result {
   /**
    * 尚未登录
    *
-   * @typedef {noLogin} ResultNoLogin
    * @returns {Result}
    */
   static noLogin() {
@@ -84,7 +85,6 @@ export default class Result {
   /**
    * 尚未授权
    *
-   * @typedef {noAuth} ResultNoAuth
    * @returns {Result}
    */
   static noAuth() {
@@ -94,7 +94,6 @@ export default class Result {
   /**
    * 404未找到
    *
-   * @typedef {notFound} ResultNotFound
    * @returns {Result}
    */
   static notFound() {
@@ -104,7 +103,6 @@ export default class Result {
   /**
    * 功能尚未实现
    *
-   * @typedef {unrealized} ResultUnrealized
    * @returns {Result}
    */
   static unrealized() {

@@ -1,12 +1,15 @@
 {
   "name": "guoba-plugin",
-  "version": "1.1.6",
+  "version": "1.2.0-beta.1",
   "description": "Yunzai-Bot插件",
   "type": "module",
   "module": "index.js",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "imports": {
+    "#guoba.platform": "./models/platform.js",
+    "#guoba.framework": "./framework/index.js"
   },
   "dependencies": {
     "express": "^4.18.1",

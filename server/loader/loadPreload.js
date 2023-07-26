@@ -1,9 +1,8 @@
 import fs from "fs";
 import path from 'path'
 import lodash from 'lodash'
+import {Preload, instancesMap} from "#guoba.framework";
 
-const {instancesMap} = await Guoba.GI('#/loader/injection.js')
-const Preload = await Guoba.GID('#/components/Preload.js')
 const {_paths, loadClasses} = await Guoba.GI('@/utils/common.js')
 
 const preloadPath = path.join(_paths.pluginRoot, 'server/preload')

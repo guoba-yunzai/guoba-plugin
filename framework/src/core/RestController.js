@@ -1,15 +1,10 @@
 import express from 'express'
-
-const Result = await Guoba.GID('#/components/Result.js')
-const Controller = await Guoba.GID('#/components/Controller.js')
-const ReqDecorator = await Guoba.GID('#/decorator/ReqDecorator.js')
-const Constant = await Guoba.GID('#/constant/Constant.js')
-const GuobaError = await Guoba.GID('@/components/GuobaError.js')
+import {Result, GuobaError, Controller} from "#guoba.framework";
 
 const DEFAULT_OPTIONS = {}
 
 /**
- * restful controller
+ * restful控制器基类
  */
 export default class RestController extends Controller {
   /**
@@ -80,7 +75,7 @@ export default class RestController extends Controller {
             try {
               result = await handler.call(this, req, res)
             } catch (e) {
-              if (e === Constant.ERROR_501) {
+              if (e === Result.ERR_CODE_501) {
                 result = Result.unrealized()
               } else if (e instanceof Result) {
                 result = e
@@ -97,7 +92,6 @@ export default class RestController extends Controller {
         },
       }
       // 执行装饰器
-      decorators.unshift(new ReqDecorator())
       for (const decorator of decorators) {
         let ret = await decorator.execute(pjp, req, res)
         if (ret instanceof Result) {
@@ -113,7 +107,7 @@ export default class RestController extends Controller {
         if (result instanceof Result) {
           res.status(result.httpStatus)
           res.json(result.toJSON())
-        } else if (result === Constant.VOID) {
+        } else if (result === Result.VOID) {
         } else {
           res.send(result)
         }

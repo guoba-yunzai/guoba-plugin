@@ -4,11 +4,10 @@ import path from 'path'
 import {liteToken} from './model/tokens.js'
 import {getDrives} from '../../../../lib/diskinfo.js'
 import {mkdirSync} from '../../../../utils/common.js'
+import {Service, GuobaError} from '#guoba.framework';
 
-const {GI, GID} = Guoba.createImport(import.meta.url)
-const Service = await GID('#/components/Service.js')
+const {GI} = Guoba.createImport(import.meta.url)
 const {useMenus} = await GI('./model/menus.js')
-const GuobaError = await Guoba.GID('@/components/GuobaError.js')
 
 export class SystemService extends Service {
 

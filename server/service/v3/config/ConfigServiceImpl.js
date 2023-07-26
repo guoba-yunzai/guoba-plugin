@@ -1,7 +1,8 @@
+import {Constant} from "#guoba.platform";
+
 // 创建可使用相对路径的import方法
 const {GI, GID} = Guoba.createImport(import.meta.url)
 // 引入模块
-const Constant = await GID('#/constant/Constant.js')
 const IConfigService = await GID('#/service/interface/IConfigService.js')
 const {getConfigReader} = await GI('./utils/ConfigUtils.js')
 const {getConfigTabs, configFile} = await GI('./model/useConfig.js')

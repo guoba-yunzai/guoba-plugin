@@ -38,9 +38,6 @@ const pathPrefix = [
  */
 export async function GI(u, relative) {
   let url = u
-  if (/^cfg$/.test(u)) {
-    return await import('./cfg.js')
-  }
   // . 开头的路径，是相对路径
   if (/^\./.test(u) && relative) {
     url = path.join(relative, u)

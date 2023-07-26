@@ -1,5 +1,5 @@
 /**
- * controller
+ * 控制器基类
  */
 export default class Controller {
   constructor(app) {

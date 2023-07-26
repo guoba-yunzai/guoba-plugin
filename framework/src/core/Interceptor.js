@@ -1,5 +1,5 @@
 /**
- * 拦截器
+ * 拦截器基类
  */
 export default class Interceptor {
 

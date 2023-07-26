@@ -1,6 +1,6 @@
 import path from 'path'
 import {_paths, sendToMaster} from '../utils/common.js'
-import cfg from '../utils/cfg.js'
+import {cfg} from "#guoba.platform";
 
 export class GuobaHelp extends plugin {
 

@@ -5,11 +5,10 @@ import chalk from 'chalk'
 import moment from 'moment'
 import lodash from 'lodash'
 import fetch from 'node-fetch'
-import cfg from './cfg.js'
 import {pluginPackage} from './package.js'
 import {_paths} from './paths.js'
-import Constant from '../server/constant/Constant.js'
 import {isV3} from './adapter.js'
+import {cfg, Constant} from "#guoba.platform";
 
 export const _version = pluginPackage.version
 

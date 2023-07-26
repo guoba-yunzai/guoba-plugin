@@ -1,5 +1,5 @@
 /**
- * 装饰器（伪）
+ * 装饰器（伪）基类
  */
 export default class Decorator {
 
@@ -10,4 +10,8 @@ export default class Decorator {
   execute() {
 
   }
+
+  /** 加载优先级 */
+  static priority = 1000
+
 }

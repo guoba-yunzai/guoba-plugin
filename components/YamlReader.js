@@ -2,7 +2,7 @@ import fs from 'fs'
 import YAML from 'yaml'
 import lodash from 'lodash'
 import chokidar from 'chokidar'
-import Constant from '../server/constant/Constant.js'
+import {Constant} from "#guoba.platform";
 
 export default class YamlReader {
   /**

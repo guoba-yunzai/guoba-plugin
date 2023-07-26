@@ -1,9 +1,9 @@
+import {Preload} from "#guoba.framework";
+import {cfg, Constant} from "#guoba.platform";
+
 import {isV3, yunzaiVersion} from '../../utils/adapter.js'
 
 const {_version} = await Guoba.GI('@/utils/common.js')
-const Preload = await Guoba.GID('#/components/Preload.js')
-const Constant = await Guoba.GID('#/constant/Constant.js')
-import cfg from '../../utils/cfg.js'
 
 export default class ConfigPreload extends Preload {
   constructor(app) {

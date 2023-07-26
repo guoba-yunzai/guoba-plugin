@@ -89,4 +89,5 @@ class GuobaConfig {
 
 }
 
+/** Guoba配置 */
 export default new GuobaConfig()
