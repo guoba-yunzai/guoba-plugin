@@ -9,16 +9,21 @@ export const _paths = initPaths()
 
 function initPaths() {
   // BotData目录
-  let data = path.join(_path, 'data')
+  const data = path.join(_path, 'data')
   // Bot资源目录
-  let resources = path.join(_path, 'resources')
-  // 插件根目录
-  let pluginRoot = path.join(_path, 'plugins', pluginName)
+  const resources = path.join(_path, 'resources')
+  // Guoba插件根目录
+  const pluginRoot = path.join(_path, 'plugins', pluginName)
+  // Guoba静态资源路径
+  const staticPath = path.join(pluginRoot, 'server/static')
   // 插件资源目录
-  let pluginResources = path.join(pluginRoot, 'resources')
+  const pluginResources = path.join(pluginRoot, 'resources')
   return {
     root: _path,
-    data, resources,
-    pluginRoot, pluginResources,
+    data,
+    resources,
+    pluginRoot,
+    staticPath,
+    pluginResources,
   }
 }

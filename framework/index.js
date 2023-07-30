@@ -1,6 +1,7 @@
 /* -------------- 公共常量 -------------- */
 
 /* -------------- 公共组件 -------------- */
+export * as GuobaUtils from './src/utils/common.js'
 export {autowired, instancesMap} from './src/helper/injection.js';
 export {default as Result} from './src/components/Result.js';
 export {default as GuobaError} from './src/components/GuobaError.js'
@@ -12,3 +13,4 @@ export {default as Controller} from './src/core/Controller.js'
 export {default as RestController} from './src/core/RestController.js'
 export {default as Decorator} from './src/core/Decorator.js'
 export {default as Interceptor} from './src/core/Interceptor.js'
+export {default as GuobaApplication} from './src/GuobaApplication.js'

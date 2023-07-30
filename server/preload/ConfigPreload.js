@@ -1,13 +1,34 @@
+import lodash from "lodash";
 import {Preload} from "#guoba.framework";
-import {cfg, Constant} from "#guoba.platform";
-
+import {cfg, _version, Constant} from "#guoba.platform";
 import {isV3, yunzaiVersion} from '../../utils/adapter.js'
 
-const {_version} = await Guoba.GI('@/utils/common.js')
-
+// noinspection JSUnusedGlobalSymbols
 export default class ConfigPreload extends Preload {
   constructor(app) {
-    super(app, '_app.guoba.preload.js')
+    const preloadName = '_app.guoba.preload.js'
+    const scriptSrc = `/preload/${preloadName}`
+    super(app, preloadName, scriptSrc);
+    this.watchDynamicCfg()
+  }
+
+  getDynamicCfg() {
+    return {
+      serverICPNo: cfg.get('server.ICPNo')
+    }
+  }
+
+  /** 监听 cfg 变化，并重新加载 */
+  watchDynamicCfg() {
+    this.dynamicCfg = this.getDynamicCfg()
+    // 监听配置文件变化
+    cfg.config.reader.watcher.on('change', () => {
+      const current = this.getDynamicCfg()
+      if (!lodash.isEqual(this.dynamicCfg, current)) {
+        this.dynamicCfg = current;
+        this.regenerate();
+      }
+    })
   }
 
   generateContent() {
@@ -30,7 +51,7 @@ export default class ConfigPreload extends Preload {
   get __GUOBA_CONF__() {
     return `window["__GUOBA_CONF__"] = ${JSON.stringify({
       VERSION: _version,
-      ICP_NO: cfg.get('server.ICPNo'),
+      ICP_NO: this.dynamicCfg.serverICPNo,
     })}`
   }
 

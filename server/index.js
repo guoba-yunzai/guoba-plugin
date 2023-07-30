@@ -1,27 +1,41 @@
-import express from 'express'
+import path from "path";
+import {cfg, _paths} from '#guoba.platform';
+import {GuobaApplication} from "#guoba.framework";
+
 import {listen} from './helper/listen.js'
 import {getWebAddress} from '../utils/common.js'
-import {cfg} from '#guoba.platform';
 
-const {useStatic} = await Guoba.GI('#/loader/loadStatic.js')
-const {useHelper} = await Guoba.GI('#/loader/loadHelper.js')
-const {usePreload} = await Guoba.GI('#/loader/loadPreload.js')
 const {useInterceptor} = await Guoba.GI('#/loader/loadInterceptor.js')
 const {useController} = await Guoba.GI('#/loader/loadController.js')
 const {useService} = await Guoba.GI('#/loader/loadService.js')
 
 export async function createServer({isInit}) {
   const begin = Date.now()
-  const app = express()
-  // 启动服务监听
-  let {port} = cfg.get('server')
-  let server = await listen(app, port)
-  // 预加载
-  usePreload(app)
-  // 静态资源
-  useStatic(app)
-  // 辅助工具
-  useHelper(app)
+  const {port} = cfg.get('server')
+  const staticPath = path.join(_paths.pluginRoot, 'server/static')
+  // 启动服务
+  const application = await GuobaApplication.run({
+    port, staticPath,
+    componentPaths: [
+      path.join(_paths.pluginRoot, 'server/interceptor'),
+      path.join(_paths.pluginRoot, 'server/service'),
+      path.join(_paths.pluginRoot, 'server/controller'),
+    ],
+    preloads: [
+      {
+        code: `PRELOAD_JS`,
+        hook: (req) => req.path === '/' || req.path === '/index.html',
+        path: path.join(_paths.pluginRoot, 'server/preload/ConfigPreload.js'),
+        staticPath: path.join(staticPath, 'index.html'),
+      }
+    ],
+    overrides: {
+      listen: listen,
+    }
+  })
+  const app = application.app
+  const server = application.server
+
   // 拦截器
   useInterceptor(app)
   // 服务
@@ -32,7 +46,7 @@ export async function createServer({isInit}) {
   if (isInit) {
     logger.mark(`--------- >_< ---------`)
     logger.mark(`锅巴服务启动成功~ 耗时:${Date.now() - begin}ms`)
-    let hosts = getWebAddress(true)
+    const hosts = getWebAddress(true)
     for (let host of hosts) {
       logger.mark(host)
     }
