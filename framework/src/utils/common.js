@@ -9,7 +9,11 @@ import chalk from 'chalk'
  * @param classes
  */
 export async function loadClasses(rootPath, clazz, classes = {}) {
-  let files = readdirRecursiveSync(rootPath, file => /\.c?js$/.test(file))
+  let files = readdirRecursiveSync(
+    rootPath,
+    file => /\.c?js$/.test(file),
+    files => files.includes('.ignored_loader')
+  );
   for (let filePath of files) {
     const tempClasses = await loadClass(filePath, clazz);
     Object.assign(classes, tempClasses);
@@ -54,17 +58,21 @@ export async function loadClass(filePath, clazz, onlyDefault = false) {
  * 获取某个目录下的所有文件（返回的是绝对路径）
  *
  * @param rootPath
- * @param filter 文件名过滤器
+ * @param include 文件名过滤器
+ * @param exclude 排除器
  */
-export function readdirRecursiveSync(rootPath, filter = () => true) {
+export function readdirRecursiveSync(rootPath, include = () => true, exclude = () => false) {
   let files = fs.readdirSync(rootPath)
+  if (exclude(files)) {
+    return []
+  }
   let ret = []
   for (let file of files) {
     let filePath = path.join(rootPath, file)
     let stat = fs.statSync(filePath)
     if (stat.isDirectory()) {
-      ret = ret.concat(readdirRecursiveSync(filePath))
-    } else if (filter(file)) {
+      ret = ret.concat(readdirRecursiveSync(filePath, include, exclude));
+    } else if (include(file)) {
       ret.push(filePath)
     }
   }

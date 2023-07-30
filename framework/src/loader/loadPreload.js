@@ -6,9 +6,10 @@ import {Preload, GuobaUtils} from "../../index.js";
 /**
  * 依次创建页面预加载
  * @param app
- * @param {PreloadType[]} preloads
+ * @param {GuobaAppArgs} args
  */
-export async function usePreload(app, preloads) {
+export async function usePreload(app, args) {
+  const {preloads} = args
   for (const item of preloads) {
     await hookAppPreloads(app, item)
   }

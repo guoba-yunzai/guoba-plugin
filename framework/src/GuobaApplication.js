@@ -1,6 +1,7 @@
 import express from 'express'
 import {useHelper} from './loader/loadHelper.js'
 import {usePreload} from './loader/loadPreload.js'
+import {useComponents} from './loader/loadComponents.js'
 
 /**
  * @typedef PreloadType
@@ -44,9 +45,11 @@ export default class GuobaApplication {
     const server = await getListenFn(args)(app, args.port);
 
     // 预加载
-    await usePreload(app, args.preloads)
+    await usePreload(app, args);
     // 辅助工具
     useHelper(app, args.staticPath);
+    // 加载全部组件
+    await useComponents(app, args);
 
     return new GuobaApplication(args, app, server);
   }
