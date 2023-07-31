@@ -91,6 +91,14 @@ export default class RestController extends Controller {
           return result
         },
       }
+      if (!Array.isArray(decorators)) {
+        decorators = []
+      }
+      if (!Array.isArray(this.app.globalDecorators)) {
+        this.app.globalDecorators = []
+      }
+      // 全局预装饰器
+      decorators = [...this.app.globalDecorators, ...decorators]
       // 执行装饰器
       for (const decorator of decorators) {
         let ret = await decorator.execute(pjp, req, res)

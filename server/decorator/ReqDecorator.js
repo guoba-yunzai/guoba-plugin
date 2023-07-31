@@ -1,8 +1,10 @@
 import jwt from 'jsonwebtoken'
-
 import {Decorator, GuobaError} from '#guoba.framework'
 import {Constant} from '#guoba.platform'
 
+/**
+ * 请求装饰器，解析token等操作
+ */
 export default class ReqDecorator extends Decorator {
   constructor() {
     super({})
@@ -25,6 +27,5 @@ export default class ReqDecorator extends Decorator {
       let token = req.getToken()
       if (!token) throw new GuobaError('登录态失效')
     }
-
   }
 }

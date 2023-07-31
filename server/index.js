@@ -24,6 +24,12 @@ export async function createServer({isInit}) {
         staticPath: path.join(_paths.staticPath, 'index.html'),
       }
     ],
+    decorators: [
+      {
+        path: path.join(_paths.pluginRoot, 'server/decorator/ReqDecorator.js'),
+        args: [],
+      }
+    ],
     overrides: {
       listen: listen,
     }

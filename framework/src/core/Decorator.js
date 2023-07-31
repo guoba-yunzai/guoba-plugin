@@ -8,10 +8,6 @@ export default class Decorator {
   }
 
   execute() {
-
   }
-
-  /** 加载优先级 */
-  static priority = 1000
 
 }

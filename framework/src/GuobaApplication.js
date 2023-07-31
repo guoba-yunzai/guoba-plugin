@@ -1,6 +1,7 @@
 import express from 'express'
 import {useHelper} from './loader/loadHelper.js'
 import {usePreload} from './loader/loadPreload.js'
+import {useDecorator} from "./loader/loadDecorator.js";
 import {useComponents} from './loader/loadComponents.js'
 
 /**
@@ -12,12 +13,19 @@ import {useComponents} from './loader/loadComponents.js'
  */
 
 /**
+ * @typedef DecoratorType
+ * @property {String} path 装饰器路径
+ * @property {*[]} args 参数
+ */
+
+/**
  * @typedef GuobaAppArgs
  * @property {Number} port 服务端口
  * @property {String} basePath 项目根路径
  * @property {String} staticPath 静态资源路径
  * @property {String[]} componentPaths 组件路径 - 包括 controller、service等
  * @property {PreloadType[]} preloads 预加载配置
+ * @property {DecoratorType[]} decorators 全局预设装饰器
  * @property {Object<String, Function>} overrides 重新默认逻辑
  *
  */
@@ -43,15 +51,18 @@ export default class GuobaApplication {
   static async run(args) {
     const app = express()
     const server = await getListenFn(args)(app, args.port);
+    const application = new GuobaApplication(args, app, server);
 
     // 预加载
     await usePreload(app, args);
     // 辅助工具
     useHelper(app, args.staticPath);
+    // 预装饰器配置
+    app.globalDecorators = await useDecorator(app, args);
     // 加载全部组件
     await useComponents(app, args);
 
-    return new GuobaApplication(args, app, server);
+    return application
   }
 
   /**
