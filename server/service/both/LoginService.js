@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken'
 import {Service, GuobaError} from '#guoba.framework';
 import {cfg, Constant} from "#guoba.platform";
-
-const {randomString, getAllWebAddress} = await Guoba.GI('@/utils/common.js')
+import {randomString, getAllWebAddress} from '#guoba.utils'
 
 export class LoginService extends Service {
   constructor(app) {

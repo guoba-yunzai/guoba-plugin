@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
-import {_paths} from '../../../utils/paths.js'
+import {_paths} from '#guoba.platform'
 import {autowired, Result, RestController} from '#guoba.framework';
 
 /**

@@ -1,7 +1,8 @@
 import fs from "fs";
 import path from 'path'
 import chalk from 'chalk'
-import {Preload, GuobaUtils} from "../../index.js";
+import {Preload} from "../../index.js";
+import {loadClass} from "../utils/common.js";
 
 /**
  * 依次创建页面预加载
@@ -20,7 +21,7 @@ export async function usePreload(app, args) {
  * @param {PreloadType} preload
  */
 async function hookAppPreloads(app, preload) {
-  const importItem = await GuobaUtils.loadClass(preload.path, Preload, true);
+  const importItem = await loadClass(preload.path, Preload, true);
   if (importItem == null) {
     return
   }

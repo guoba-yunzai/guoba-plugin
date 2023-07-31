@@ -2,7 +2,9 @@ import fs from 'fs'
 import YAML from 'yaml'
 import lodash from 'lodash'
 import chokidar from 'chokidar'
-import {Constant} from "#guoba.platform";
+
+// 配置文件数字key
+const CONFIG_INTEGER_KEY = 'INTEGER__';
 
 export default class YamlReader {
   /**
@@ -90,8 +92,8 @@ export default class YamlReader {
   // 将数字key转为number类型，防止出现引号
   mapParentKeys(parentKeys) {
     return parentKeys.map((k) => {
-      if (k.startsWith(Constant.CONFIG_INTEGER_KEY)) {
-        return Number.parseInt(k.replace(Constant.CONFIG_INTEGER_KEY, ''))
+      if (k.startsWith(CONFIG_INTEGER_KEY)) {
+        return Number.parseInt(k.replace(CONFIG_INTEGER_KEY, ''))
       }
       return k
     })

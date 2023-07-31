@@ -1,6 +1,3 @@
-/*
- *修改此文件需要重启
- */
-import {randomString} from '../../../../../utils/common.js'
+import {randomString} from '#guoba.utils'
 
 export const liteToken = randomString(8)

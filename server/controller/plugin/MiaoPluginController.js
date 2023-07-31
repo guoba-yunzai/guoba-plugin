@@ -1,6 +1,5 @@
 import {autowired, Result, RestController} from '#guoba.framework';
-
-const {PluginsMap} = await Guoba.GI('@/utils/common.js')
+import {PluginsMap} from '#guoba.utils'
 
 export default class MiaoPluginController extends RestController {
 

@@ -1,10 +1,7 @@
-/*
-* 更改此文件需要重启
-*/
 import os from 'os'
 import path from 'path'
 import lodash from 'lodash'
-import {_paths} from './paths.js'
+import {_paths} from '#guoba.platform'
 
 let instanceVersion = ''
 

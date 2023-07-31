@@ -1,6 +1,5 @@
 import {autowired, Result, RestController} from '#guoba.framework';
-
-const {GuobaSupportMap} = await Guoba.GI('@/utils/common.js')
+import {GuobaSupportMap} from '#guoba.utils'
 
 export default class PluginController extends RestController {
 

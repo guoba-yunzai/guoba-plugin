@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
-import {_paths} from '../utils/common.js'
+import {_paths} from '#guoba.platform'
 
 const _logPath = path.join(_paths.pluginRoot, 'CHANGELOG.md')
 

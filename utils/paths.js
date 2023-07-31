@@ -1,6 +1,3 @@
-/*
-* 更改此文件需要重启
-*/
 import path from 'path'
 import {pluginName} from './package.js'
 
@@ -19,6 +16,7 @@ function initPaths() {
   // 插件资源目录
   const pluginResources = path.join(pluginRoot, 'resources')
   return {
+    // Bot根目录
     root: _path,
     data,
     resources,

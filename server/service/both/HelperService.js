@@ -1,8 +1,8 @@
 import path from 'path'
 import fetch from 'node-fetch'
-import {_paths, readJson} from '../../../utils/common.js'
-
 import {Result, Service, GuobaError} from '#guoba.framework';
+import {_paths} from '#guoba.platform'
+import {readJson} from '#guoba.utils'
 
 export default class HelperService extends Service {
   constructor(app) {

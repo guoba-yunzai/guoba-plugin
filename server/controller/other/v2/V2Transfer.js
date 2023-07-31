@@ -1,11 +1,10 @@
 import path from 'path'
 import moment from 'moment'
 import child from 'child_process'
-import {_paths} from '../../../../utils/paths.js'
-import {isV2} from '../../../../utils/adapter.js'
-import {ACTION_CODE, examplePath, checkJsCompatibility} from './child/constant.js'
-import {sleep} from '../../../../utils/common.js'
 import {Result, RestController} from '#guoba.framework';
+import {_paths} from '#guoba.platform'
+import {isV2, sleep} from '#guoba.utils'
+import {ACTION_CODE, examplePath, checkJsCompatibility} from './child/constant.js'
 
 /**
  * V2迁移

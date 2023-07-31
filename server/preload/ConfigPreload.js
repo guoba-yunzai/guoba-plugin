@@ -1,7 +1,7 @@
 import lodash from "lodash";
 import {Preload} from "#guoba.framework";
 import {cfg, _version, Constant} from "#guoba.platform";
-import {isV3, yunzaiVersion} from '../../utils/adapter.js'
+import {isV3, yunzaiVersion} from '#guoba.utils'
 
 // noinspection JSUnusedGlobalSymbols
 export default class ConfigPreload extends Preload {

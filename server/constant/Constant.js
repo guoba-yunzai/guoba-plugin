@@ -8,7 +8,4 @@ export default {
   // redis前缀
   REDIS_PREFIX: 'Yz:Guoba:',
 
-  // 配置文件数字key
-  CONFIG_INTEGER_KEY: 'INTEGER__',
-
 }

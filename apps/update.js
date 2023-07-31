@@ -1,11 +1,9 @@
 import YAML from 'yaml'
 import fetch from 'node-fetch'
 import {exec} from 'child_process'
-import {_paths} from '../utils/paths.js'
-import {_version, sendToMaster} from '../utils/common.js'
-import {compare} from '../lib/compareVersions.js'
-
-import {cfg, Constant} from '#guoba.platform';
+import {cfg, _paths, _version, Constant} from '#guoba.platform'
+import {sendToMaster} from '#guoba.utils'
+import {compareVersions} from '#guoba.libs'
 
 const _STATUS = {
   FAIL: 'FAIL',
@@ -160,7 +158,7 @@ export class GuobaUpdate extends plugin {
     }
     const remote = remotes[0]
     // 判断远程版本是否小于等于本地版本
-    if (compare(remote.version, _version, '<=')) {
+    if (compareVersions.compare(remote.version, _version, '<=')) {
       return {status: _STATUS.NO_UPDATE, remote}
     }
     // 判断是否已提醒过
@@ -173,7 +171,7 @@ export class GuobaUpdate extends plugin {
     // 判断是否需要重启，不仅要判断当前远程版本，还要判断最近一次需要重启的远程版本是否大于本地版本
     for (let item of remotes) {
       if (!item.needRestart) continue
-      if (compare(item.version, _version, '>')) {
+      if (compareVersions.compare(item.version, _version, '>')) {
         remote.needRestart = true
         break
       }

@@ -1,5 +1,5 @@
 import express from 'express'
-import {Result, GuobaError, Controller} from "#guoba.framework";
+import {Result, GuobaError, Controller} from "../../index.js";
 
 const DEFAULT_OPTIONS = {}
 

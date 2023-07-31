@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import yaml from 'yaml'
-import {_paths} from '../../../../../utils/paths.js'
+import {_paths} from '#guoba.platform'
 
 import {Result, Service} from '#guoba.framework';
 

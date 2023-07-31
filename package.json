@@ -9,7 +9,10 @@
   },
   "imports": {
     "#guoba.platform": "./models/platform.js",
-    "#guoba.framework": "./framework/index.js"
+    "#guoba.utils": "./models/utils.js",
+    "#guoba.libs": "./models/libs.js",
+    "#guoba.framework": "./framework/index.js",
+    "#guoba.framework.utils": "./framework/src/utils/common.js"
   },
   "dependencies": {
     "express": "^4.18.1",

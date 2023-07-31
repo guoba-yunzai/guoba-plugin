@@ -1,5 +1,5 @@
 import {autowired} from "#guoba.framework";
-import {makeForwardMsg} from '../utils/common.js'
+import {makeForwardMsg} from '#guoba.utils'
 
 export class GuobaLogin extends plugin {
 

@@ -1,6 +1,4 @@
-import {autowired, Result, RestController} from '#guoba.framework';
-
-const Pager = await Guoba.GID('@/components/Pager.js')
+import {autowired, Result, RestController, Pager} from '#guoba.framework';
 
 /** QQ相关操作 */
 export class OicqController extends RestController {

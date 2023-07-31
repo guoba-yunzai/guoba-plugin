@@ -5,8 +5,7 @@ import lodash from 'lodash'
 import fetch from 'node-fetch'
 import {Service} from '#guoba.framework';
 import {Constant} from "#guoba.platform";
-
-const {GuobaSupportMap, PluginsMap} = await Guoba.GI('@/utils/common.js')
+import {GuobaSupportMap, PluginsMap} from '#guoba.utils'
 
 export default class IPluginService extends Service {
   constructor(app) {

@@ -3,11 +3,12 @@ import path from 'path'
 import lodash from 'lodash'
 import moment from 'moment'
 import child from 'child_process'
+import {YamlReader} from '#guoba.framework'
+import {_paths} from '#guoba.platform'
+import {pluginName, AdapterCheck} from '#guoba.utils'
+import {dateDiff, mkdirSync, sleep} from '#guoba.utils'
+
 import {ACTION_CODE, checkJsCompatibility, examplePath, RES_SET} from './constant.js'
-import YamlReader from '../../../../../components/YamlReader.js'
-import {_paths, dateDiff, mkdirSync, sleep} from '../../../../../utils/common.js'
-import {needPackage} from '../../../../../utils/adapter/check.js'
-import {pluginName} from '../../../../../utils/package.js'
 
 /*
  * 迁移子进程。
@@ -603,7 +604,7 @@ async function doInstallModules({moduleTool, installPath}) {
   // 非pnpm，需要单独安装锅巴的依赖
   if (moduleTool !== 'pnpm') {
     log(`正在安装 Guoba-Plugin 所需依赖`)
-    flag = await execTo(tool.add.replace('$pkg', needPackage.join(' ')))
+    flag = await execTo(tool.add.replace('$pkg', AdapterCheck.needPackage.join(' ')))
     if (!flag) return false
     log(`Guoba-Plugin 依赖安装成功！`)
     await sleep(1000)

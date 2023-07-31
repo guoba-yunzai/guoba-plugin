@@ -5,16 +5,11 @@ import chalk from 'chalk'
 import moment from 'moment'
 import lodash from 'lodash'
 import fetch from 'node-fetch'
-import {pluginPackage} from './package.js'
-import {_paths} from './paths.js'
-import {isV3} from './adapter.js'
 import {cfg, Constant} from "#guoba.platform";
+import {isV3} from '#guoba.utils'
+import {pluginPackage} from './package.js'
 
 export const _version = pluginPackage.version
-
-export {
-  _paths,
-}
 
 export const GuobaSupportMap = new Map()
 export const PluginsMap = new Map()

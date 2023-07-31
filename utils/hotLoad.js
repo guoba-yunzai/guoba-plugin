@@ -1,6 +1,3 @@
-/*
-* 更改此文件需要重启
-*/
 import lodash from 'lodash'
 import chokidar from 'chokidar'
 

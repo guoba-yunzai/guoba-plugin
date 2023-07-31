@@ -1,10 +1,8 @@
 import path from "path";
-import {cfg, _paths} from '#guoba.platform';
 import {GuobaApplication} from "#guoba.framework";
-
-import {isV3} from "../utils/adapter.js";
+import {cfg, _paths} from '#guoba.platform';
+import {isV3, getWebAddress} from "#guoba.utils";
 import {listen} from './helper/listen.js'
-import {getWebAddress} from '../utils/common.js'
 
 export async function createServer({isInit}) {
   const begin = Date.now()
