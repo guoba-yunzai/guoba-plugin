@@ -195,21 +195,21 @@ export default class IPluginService extends Service {
 
 const parseConfig = {
   topPlugins: {
-    identifyReg: /##\s*置顶(（plugin）)?.*/,
-    beginReg: /(\|\s*-{3,}\s*){5}\|/,
-    itemReg: /\|(.*)\|(.*)\|(.*)\|(.*)\|(.*)\|/,
+    identifyReg: /^##\s*置顶(（plugin）)?\s*$/,
+    beginReg: /(\|\s*-{3,}\s*){3}\|/,
+    itemReg: /\|(.*)\|(.*)\|(.*)\|/,
     linkReg: /\[(.*)]\((.*)\)/,
   },
   plugins: {
-    identifyReg: /##\s*功能插件(（plugin）)?.*/,
-    beginReg: /(\|\s*-{3,}\s*){5}\|/,
-    itemReg: /\|(.*)\|(.*)\|(.*)\|(.*)\|(.*)\|/,
+    identifyReg: /^##\s*功能插件(（plugin）)?\s*$/,
+    beginReg: /(\|\s*-{3,}\s*){3}\|/,
+    itemReg: /\|(.*)\|(.*)\|(.*)\|/,
     linkReg: /\[(.*)]\((.*)\)/,
   },
   gamePlugins: {
-    identifyReg: /##\s*游戏插件(（plugin）)?.*/,
-    beginReg: /(\|\s*-{3,}\s*){5}\|/,
-    itemReg: /\|(.*)\|(.*)\|(.*)\|(.*)\|(.*)\|/,
+    identifyReg: /^##\s*游戏插件(（plugin）)?\s*$/,
+    beginReg: /(\|\s*-{3,}\s*){3}\|/,
+    itemReg: /\|(.*)\|(.*)\|(.*)\|/,
     linkReg: /\[(.*)]\((.*)\)/,
   },
 }
@@ -268,8 +268,8 @@ async function parsePluginsIndex() {
             continue
           }
           if (parseItem.itemReg.test(line)) {
-            // 解析5列
-            let [, col1, col2, col3, col4, col5] = line.match(parseItem.itemReg)
+            // 解析3列
+            let [, col1, col2, col3] = line.match(parseItem.itemReg)
             // 解析插件标题和插件链接
             let title = col1.trim(), link = null
             if (parseItem.linkReg.test(title)) {
@@ -308,9 +308,10 @@ async function parsePluginsIndex() {
               }
             }
             // 判断云崽版本兼容情况
-            let supportReg = /[✔√]/
-            let isV2 = supportReg.test(col3)
-            let isV3 = supportReg.test(col4)
+            // let supportReg = /[✔√]/
+            // let isV2 = supportReg.test(col3)
+            // let isV3 = supportReg.test(col4)
+            let isV2 = false, isV3 = true;
             // 判断是否是已删除的插件
             title = title ? title.trim() : '未知'
             let deletedReg = /^~~(.+)~~$/
@@ -322,7 +323,7 @@ async function parsePluginsIndex() {
               link: link ? link.trim() : '',
               author: author,
               authorLink: authorLink,
-              description: col5 ? col5.trim() : null,
+              description: col3 ? col3.trim() : null,
             })
           } else {
             // 如果匹配失败，则认为是结束
