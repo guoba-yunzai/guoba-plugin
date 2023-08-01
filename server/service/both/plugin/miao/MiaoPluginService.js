@@ -157,7 +157,7 @@ export default class MiaoPluginService extends IMiaoPluginService {
     if (!fs.existsSync(themeConfigPath)) {
       themeName = 'default'
     }
-    return (await Data.importModule(`resources/help/theme/${themeName}/config.js`)).style || {}
+    return (await Data.importModule(`resources/help/theme/${themeName}/config.js`, 'miao')).style || {}
   }
 
   async saveHelpThemeConfig(params) {
