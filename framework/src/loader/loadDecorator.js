@@ -1,7 +1,7 @@
 import path from "path";
 import chalk from "chalk";
-import {Decorator} from "#guoba.framework";
-import {loadClass} from "#guoba.framework.utils";
+import Decorator from "../core/Decorator.js";
+import {loadClass} from "../utils/common.js";
 
 /**
  * 加载全局装饰器

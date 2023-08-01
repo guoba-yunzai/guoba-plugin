@@ -1,5 +1,5 @@
 import {autowired, Result, RestController} from '#guoba.framework';
-import {PluginsMap} from '#guoba.utils'
+import {PluginsMap} from '#guoba.platform'
 
 export default class MiaoPluginController extends RestController {
 

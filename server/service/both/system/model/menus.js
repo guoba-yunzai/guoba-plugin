@@ -1,4 +1,5 @@
-import {isV2, PluginsMap} from '#guoba.utils'
+import {PluginsMap} from '#guoba.platform'
+import {isV2} from '#guoba.utils'
 
 // 首页菜单
 const homeMenu = {

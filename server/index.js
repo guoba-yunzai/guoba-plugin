@@ -1,11 +1,14 @@
 import path from "path";
 import {GuobaApplication} from "#guoba.framework";
-import {cfg, _paths} from '#guoba.platform';
+import {cfg, _paths, PluginsMap, GuobaSupportMap} from '#guoba.platform';
 import {isV3, getWebAddress} from "#guoba.utils";
 import {listen} from './helper/listen.js'
 
 export async function createServer({isInit}) {
   const begin = Date.now()
+  // 初始化
+  PluginsMap.clear()
+  GuobaSupportMap.clear()
   // 启动服务
   const application = await GuobaApplication.run({
     port: cfg.get('server.port'),

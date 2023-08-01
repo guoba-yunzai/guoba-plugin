@@ -1,5 +1,5 @@
 import {autowired, Result, RestController} from '#guoba.framework';
-import {GuobaSupportMap} from '#guoba.utils'
+import {GuobaSupportMap} from '#guoba.platform'
 
 export default class PluginController extends RestController {
 

@@ -20,6 +20,7 @@ import {useComponents} from './loader/loadComponents.js'
 
 /**
  * @typedef GuobaAppArgs
+ * @property {Boolean} hotReload TODO 是否热加载
  * @property {Number} port 服务端口
  * @property {String} basePath 项目根路径
  * @property {String} staticPath 静态资源路径

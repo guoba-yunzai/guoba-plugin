@@ -4,8 +4,7 @@ import path from 'path'
 import lodash from 'lodash'
 import fetch from 'node-fetch'
 import {Service} from '#guoba.framework';
-import {Constant} from "#guoba.platform";
-import {GuobaSupportMap, PluginsMap} from '#guoba.utils'
+import {Constant, GuobaSupportMap, PluginsMap} from "#guoba.platform";
 
 export default class IPluginService extends Service {
   constructor(app) {

@@ -7,11 +7,10 @@ import path from 'path'
 // console.log('pluginName 3:', path.basename(path.dirname(path.dirname(import.meta.url))))
 
 /** Guoba实际所在的目录名 */
-const pluginName = path.basename(path.join(import.meta.url, '../../'))
+export const pluginName = path.basename(path.join(import.meta.url, '../../'))
 
 export const yunzaiPackage = JSON.parse(fs.readFileSync('./package.json', 'utf8'))
 export const pluginPackage = JSON.parse(fs.readFileSync(`./plugins/${pluginName}/package.json`, 'utf8'))
 
-export {
-  pluginName,
-}
+/** Guoba当前版本 */
+export const _version = pluginPackage.version
