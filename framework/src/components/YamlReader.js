@@ -3,10 +3,11 @@ import YAML from 'yaml'
 import lodash from 'lodash'
 import chokidar from 'chokidar'
 
-// 配置文件数字key
-const CONFIG_INTEGER_KEY = 'INTEGER__';
-
 export default class YamlReader {
+
+  // 配置文件数字key
+  static CONFIG_INTEGER_KEY = 'INTEGER__'
+
   /**
    * 读写yaml文件
    *
@@ -92,8 +93,8 @@ export default class YamlReader {
   // 将数字key转为number类型，防止出现引号
   mapParentKeys(parentKeys) {
     return parentKeys.map((k) => {
-      if (k.startsWith(CONFIG_INTEGER_KEY)) {
-        return Number.parseInt(k.replace(CONFIG_INTEGER_KEY, ''))
+      if (k.startsWith(YamlReader.CONFIG_INTEGER_KEY)) {
+        return Number.parseInt(k.replace(YamlReader.CONFIG_INTEGER_KEY, ''))
       }
       return k
     })

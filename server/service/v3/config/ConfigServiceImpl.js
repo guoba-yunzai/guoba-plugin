@@ -1,4 +1,4 @@
-import {Constant} from "#guoba.platform";
+import {YamlReader} from "#guoba.framework";
 
 // 创建可使用相对路径的import方法
 const {GI, GID} = Guoba.createImport(import.meta.url)
@@ -27,7 +27,7 @@ export default class ConfigServiceImpl extends IConfigService {
       let field = key
       // 此处特殊处理，因为前端form的field不能是纯数字，只处理一层
       if (/^\d+$/.test(key)) {
-        field = Constant.CONFIG_INTEGER_KEY + key
+        field = YamlReader.CONFIG_INTEGER_KEY + key
       }
       obj[field] = value
     }
