@@ -7,7 +7,8 @@ export async function reload() {
   if (!isInit) {
     incrVersion()
   }
-  let flag = await new Promise((resolve) => {
+  // 首先关闭服务器
+  let isClosed = await new Promise((resolve) => {
     if (!Guoba.server) {
       resolve(true)
       return
@@ -21,7 +22,7 @@ export async function reload() {
       }
     })
   })
-  if (flag) {
+  if (isClosed) {
     delete Guoba.app
     delete Guoba.server
     // 创建服务器

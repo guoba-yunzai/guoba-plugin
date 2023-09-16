@@ -2,8 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
 import moment from 'moment'
-import {_paths} from '../../../../../utils/paths.js'
-import {moveFile} from "../../../../../utils/common.js";
+import {_paths} from '#guoba.platform'
+import {moveFile} from "#guoba.utils";
 
 const {GID} = Guoba.createImport(import.meta.url)
 

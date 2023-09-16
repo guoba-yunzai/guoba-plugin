@@ -1,7 +1,7 @@
 if (!global.segment) {
   global.segment = (await import("oicq")).segment
 }
-import {isV3} from './utils/adapter.js'
+import {isV3} from '#guoba.utils'
 import {checkPackage} from './utils/adapter/check.js'
 import {createImport, GI, GID} from './utils/guobaImport.js'
 

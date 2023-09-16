@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import {_paths} from '../../../../../utils/paths.js'
+import {_paths} from '#guoba.platform'
 
 // 资源Set
 export const RES_SET = {

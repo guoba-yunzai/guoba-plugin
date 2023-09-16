@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import {isV3} from '../adapter.js'
+import {isV3} from '#guoba.utils'
 
 export const needPackage = [
   'yaml',

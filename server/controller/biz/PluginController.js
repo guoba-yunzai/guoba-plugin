@@ -1,8 +1,5 @@
-const {autowired} = await Guoba.GI('#/loader/injection.js')
-const RestController = await Guoba.GID('#/components/RestController.js')
-const Result = await Guoba.GID('#/components/Result.js')
-const Constant = await Guoba.GID('#/constant/Constant.js')
-const {GuobaSupportMap} = await Guoba.GI('@/utils/common.js')
+import {autowired, Result, RestController} from '#guoba.framework';
+import {GuobaSupportMap} from '#guoba.platform'
 
 export default class PluginController extends RestController {
 
@@ -61,7 +58,7 @@ export default class PluginController extends RestController {
       return Result.error('该插件没有配置iconPath')
     }
     res.sendFile(pluginInfo.iconPath)
-    return Constant.VOID
+    return Result.VOID
   }
 
   // 获取插件配置数据（如果有）

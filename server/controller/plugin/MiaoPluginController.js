@@ -1,10 +1,5 @@
-/** @type {GuobaResult} */
-const Result = await Guoba.GID('#/components/Result.js')
-/** @type {GuobaConstant} */
-const Constant = await Guoba.GID('#/constant/Constant.js')
-const RestController = await Guoba.GID('#/components/RestController.js')
-const {autowired} = await Guoba.GI('#/loader/injection.js')
-const {PluginsMap} = await Guoba.GI('@/utils/common.js')
+import {autowired, Result, RestController} from '#guoba.framework';
+import {PluginsMap} from '#guoba.platform'
 
 export default class MiaoPluginController extends RestController {
 
@@ -76,12 +71,12 @@ export default class MiaoPluginController extends RestController {
 
   getHelpThemeBg(req, res) {
     res.sendFile(this.miaoService.getThemeBgPath(req.query))
-    return Constant.VOID
+    return Result.VOID
   }
 
   getHelpThemeMain(req, res) {
     res.sendFile(this.miaoService.getThemeMainPath(req.query))
-    return Constant.VOID
+    return Result.VOID
   }
 
   async getHelpThemeList() {
@@ -116,7 +111,7 @@ export default class MiaoPluginController extends RestController {
 
   getHelpIcon(req, res) {
     res.sendFile(this.miaoService.miaoPath.iconPath)
-    return Constant.VOID
+    return Result.VOID
   }
 
   getBackupList() {

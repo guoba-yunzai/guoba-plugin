@@ -1,10 +1,7 @@
-/*
-* 更改此文件需要重启
-*/
 import os from 'os'
 import path from 'path'
 import lodash from 'lodash'
-import {_paths} from './paths.js'
+import {_paths} from '#guoba.platform'
 
 let instanceVersion = ''
 
@@ -38,9 +35,6 @@ const pathPrefix = [
  */
 export async function GI(u, relative) {
   let url = u
-  if (/^cfg$/.test(u)) {
-    return await import('./cfg.js')
-  }
   // . 开头的路径，是相对路径
   if (/^\./.test(u) && relative) {
     url = path.join(relative, u)

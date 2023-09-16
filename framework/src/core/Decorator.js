@@ -1,5 +1,5 @@
 /**
- * 装饰器（伪）
+ * 装饰器（伪）基类
  */
 export default class Decorator {
 
@@ -8,6 +8,6 @@ export default class Decorator {
   }
 
   execute() {
-
   }
+
 }

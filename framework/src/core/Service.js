@@ -1,3 +1,6 @@
+/**
+ * 服务基类
+ */
 export default class Service {
   constructor(app) {
     this.app = app

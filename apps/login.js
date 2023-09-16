@@ -1,6 +1,5 @@
-import {makeForwardMsg} from '../utils/common.js'
-
-const {autowired} = await Guoba.GI('#/loader/injection.js')
+import {autowired} from "#guoba.framework";
+import {makeForwardMsg} from '#guoba.utils'
 
 export class GuobaLogin extends plugin {
 

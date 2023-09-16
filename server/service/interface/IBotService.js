@@ -1,5 +1,4 @@
-const Service = await Guoba.GID('#/components/Service.js')
-const Constant = await Guoba.GID('#/constant/Constant.js')
+import {Result, Service} from '#guoba.framework';
 
 export default class IBotService extends Service {
   constructor(app) {
@@ -8,7 +7,7 @@ export default class IBotService extends Service {
 
   /** 获取全部用户cookie */
   getUserCookies() {
-    throw Constant.ERROR_501
+    throw Result.ERR_CODE_501
   }
 
 }

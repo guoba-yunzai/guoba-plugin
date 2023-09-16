@@ -2,9 +2,12 @@ import fs from 'fs'
 import YAML from 'yaml'
 import lodash from 'lodash'
 import chokidar from 'chokidar'
-import Constant from '../server/constant/Constant.js'
 
 export default class YamlReader {
+
+  // 配置文件数字key
+  static CONFIG_INTEGER_KEY = 'INTEGER__'
+
   /**
    * 读写yaml文件
    *
@@ -90,8 +93,8 @@ export default class YamlReader {
   // 将数字key转为number类型，防止出现引号
   mapParentKeys(parentKeys) {
     return parentKeys.map((k) => {
-      if (k.startsWith(Constant.CONFIG_INTEGER_KEY)) {
-        return Number.parseInt(k.replace(Constant.CONFIG_INTEGER_KEY, ''))
+      if (k.startsWith(YamlReader.CONFIG_INTEGER_KEY)) {
+        return Number.parseInt(k.replace(YamlReader.CONFIG_INTEGER_KEY, ''))
       }
       return k
     })

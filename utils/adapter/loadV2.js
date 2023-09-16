@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
-import {_paths} from '../paths.js'
+import {_paths} from '#guoba.platform'
 
 let v2Apps = []
 

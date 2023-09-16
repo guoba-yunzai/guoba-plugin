@@ -1,14 +1,13 @@
 import os from 'os'
 import fs from 'fs'
 import path from 'path'
+import {Service, GuobaError} from '#guoba.framework';
+import {mkdirSync} from '#guoba.utils'
+import {diskInfo} from '#guoba.libs'
 import {liteToken} from './model/tokens.js'
-import {getDrives} from '../../../../lib/diskinfo.js'
-import {mkdirSync} from '../../../../utils/common.js'
 
-const {GI, GID} = Guoba.createImport(import.meta.url)
-const Service = await GID('#/components/Service.js')
+const {GI} = Guoba.createImport(import.meta.url)
 const {useMenus} = await GI('./model/menus.js')
-const GuobaError = await Guoba.GID('@/components/GuobaError.js')
 
 export class SystemService extends Service {
 
@@ -48,7 +47,7 @@ export class SystemService extends Service {
         {title: '/', path: '/', isLeaf: false, children: null},
       ]
     } else {
-      let drives = await getDrives()
+      let drives = await diskInfo.getDrives()
       return drives.map(drive => {
         let title = drive.volumeName ? `${drive.volumeName}（${drive.mounted}）` : drive.mounted
         return {

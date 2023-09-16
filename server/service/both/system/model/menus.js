@@ -1,6 +1,5 @@
-import {isV2} from '../../../../../utils/adapter.js'
-
-const {PluginsMap} = await Guoba.GI('@/utils/common.js')
+import {PluginsMap} from '#guoba.platform'
+import {isV2} from '#guoba.utils'
 
 // 首页菜单
 const homeMenu = {

@@ -1,7 +1,5 @@
 import fetch from 'node-fetch'
-import {sleep} from '../../utils/common.js'
-
-const cfg = await Guoba.GID('cfg')
+import {sleep} from '#guoba.utils'
 
 export function listen(app, port) {
   return new Promise((resolve, reject) => {

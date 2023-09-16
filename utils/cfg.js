@@ -1,9 +1,9 @@
 import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
-import {_paths} from './paths.js'
-import {randomString} from './common.js'
-import YamlReader from '../components/YamlReader.js'
+import {YamlReader} from '#guoba.framework'
+import {_paths} from '#guoba.platform'
+import {randomString} from '#guoba.utils'
 
 /** 配置文件 */
 class GuobaConfig {
@@ -89,4 +89,5 @@ class GuobaConfig {
 
 }
 
+/** Guoba配置 */
 export default new GuobaConfig()

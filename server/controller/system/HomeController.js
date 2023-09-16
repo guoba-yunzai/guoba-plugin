@@ -1,12 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
-import {_paths} from '../../../utils/paths.js'
-
-const Result = await Guoba.GID('#/components/Result.js')
-const {autowired} = await Guoba.GI('#/loader/injection.js')
-const RestController = await Guoba.GID('#/components/RestController.js')
-const Constant = await Guoba.GID('#/constant/Constant.js')
+import {_paths} from '#guoba.platform'
+import {autowired, Result, RestController} from '#guoba.framework';
 
 /**
  * 首页相关查询
@@ -42,7 +38,7 @@ export class HomeController extends RestController {
     } else {
       res.sendFile(path.join(_paths.pluginResources, 'images/no-miao.png'))
     }
-    return Constant.VOID
+    return Result.VOID
   }
 
   // 安装了喵喵插件后，获取随机角色图片

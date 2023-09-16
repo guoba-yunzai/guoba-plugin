@@ -1,6 +1,6 @@
 import path from 'path'
+import {_paths} from "#guoba.platform";
 
-const {_paths} = await Guoba.GI('@/utils/common.js')
 const IPluginService = await Guoba.GID('#/service/interface/IPluginService.js')
 
 export default class PluginService extends IPluginService {

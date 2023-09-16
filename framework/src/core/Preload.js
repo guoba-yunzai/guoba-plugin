@@ -1,26 +1,34 @@
-import fs from 'fs'
-import path from 'path'
-
 /**
- * preload
+ * preload：预加载js
  */
 export default class Preload {
-  constructor(app, preloadName) {
+  constructor(app, preloadName, scriptSrc) {
     this.app = app
     this.preloadName = preloadName
-    this.scriptSrc = `/preload/${this.preloadName}`
+    this.scriptSrc = scriptSrc
     this.created()
   }
 
   created() {
   }
 
-  async writeScript(dirPath) {
-    const preloadPath = path.join(dirPath, this.preloadName)
-    const preloadContent = `(function(){try{${await this.generateContent()}}`
+  contentCache = null
+
+  async getPreloadContent() {
+    if (this.contentCache) {
+      return this.contentCache
+    }
+    return await this.regenerateContent()
+  }
+
+  async regenerate() {
+    this.contentCache = this.regenerateContent();
+  }
+
+  async regenerateContent() {
+    this.contentCache = `(function(){try{${await this.generateContent()}}`
       + `catch(e){console.warn('[Guoba] preload "${this.preloadName}" error',e)}})()`
-    fs.writeFileSync(preloadPath, preloadContent, 'utf8')
-    return this.createScriptTag()
+    return this.contentCache
   }
 
   createScriptTag() {
@@ -35,8 +43,5 @@ export default class Preload {
   async generateContent() {
     return '/* TODO: 请重写 generateContent 方法 */'
   }
-
-  /** 加载优先级 */
-  static priority = 1000
 
 }
