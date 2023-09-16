@@ -23,14 +23,19 @@
 
 #### 第 1 步：下载插件
 
-在云崽根目录下打开终端，运行
+在云崽根目录下打开终端，运行：
 
-```
-// 使用gitee
+* 使用 Gitee
+``` bash
 git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/
-// 使用github
+```
+
+* 使用 Github
+``` bash
 git clone --depth=1 https://github.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/
 ```
+
+> 注：根据你的网络情况选择不同的仓库地址，在国内使用Gitee相对稳定
 
 #### 第 2 步：安装依赖
 
