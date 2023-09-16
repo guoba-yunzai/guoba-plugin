@@ -26,7 +26,10 @@
 在云崽根目录下打开终端，运行
 
 ```
+// 使用gitee
 git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/
+// 使用github
+git clone --depth=1 https://github.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/
 ```
 
 #### 第 2 步：安装依赖
