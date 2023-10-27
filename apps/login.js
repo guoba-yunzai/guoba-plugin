@@ -47,6 +47,17 @@ export class GuobaLogin extends plugin {
       message.push(`外网地址：\n` + hosts)
     }
     message.push(`临时令牌3分钟内有效（请勿轻易告知他人哦），使用过后会立即失效，若登录成功将会在使用者的浏览器上生成个24小时内有效的令牌，过期后需要重新登录~`)
+
+
+    if(this.e?.platform) {
+      message.push('[请在后台查看地址]')
+      for(const item of message){
+        console.log(item)
+        this.e.reply(item)
+      }
+      return 
+    }
+
     return this.reply(await makeForwardMsg(this.e, message))
   }
 
