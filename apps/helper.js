@@ -36,6 +36,16 @@ export class GuobaHelp extends plugin {
       '锅巴帮助：\n' +
       'https://gitee.com/guoba-yunzai/guoba-plugin/wikis/Home'
     ]
+
+    if(this.e?.platform) {
+      msg.push('[请在后台查看地址]')
+      for(const item of msg){
+        console.log(item)
+        this.e.reply(item)
+      }
+      return 
+    }
+
     return this.e.reply(msg)
   }
 
