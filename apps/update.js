@@ -39,16 +39,20 @@ export class GuobaUpdate extends plugin {
       ],
     })
     // 创建定时任务
+    /* TODO 暂时禁用自动更新功能
     this.task = {
       // 每天的凌晨4点执行
       cron: '0 0 4 * * ?',
       name: '锅巴自动更新任务',
       fnc: this.doUpdateTask.bind(this),
     }
+    */
     // 立即执行一次检查更新
     if (!isChecked) {
       isChecked = true
+      /* TODO 暂时禁用自动更新功能
       setTimeout(this.doCheckUpdate.bind(this, true), 1500)
+       */
     }
   }
 
@@ -58,6 +62,8 @@ export class GuobaUpdate extends plugin {
 
   async doUpdate() {
     let isForce = this.e.msg.includes('强制')
+    let response = await this.doGitPull(isForce)
+    /*  TODO 暂时禁用检查更新功能
     let response
     if (!isForce) {
       this.reply(`[Guoba] 正在检查更新，请稍候……`)
@@ -66,6 +72,7 @@ export class GuobaUpdate extends plugin {
       this.reply(`[Guoba] 正在检查强制更新，请稍候……`)
       response = await this.doGitPull(true)
     }
+    */
     let {status, message} = response
     if (status === _STATUS.NO_UPDATE || status === _STATUS.GIT_NO_UPDATE) {
       return this.reply(`[Guoba] 已经是最新版本啦`)
@@ -149,6 +156,8 @@ export class GuobaUpdate extends plugin {
    * @param tell 是否给master发送消息
    */
   async doCheckUpdate(tell = false) {
+    return {status: _STATUS.FAIL, message: '暂时禁用检查更新功能'}
+
     if (!this.allowCheckUpdate) {
       return {status: _STATUS.CANCEL, message: '已取消'}
     }
