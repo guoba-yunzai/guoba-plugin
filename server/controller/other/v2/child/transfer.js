@@ -372,7 +372,7 @@ async function doMoveConfig(config) {
     temp = BotConfig.group.default
     let defGroup = {
       default: {
-        groupCD: temp.groupCD,
+        groupGlobalCD: temp.groupGlobalCD,
         singleCD: temp.singleCD,
         onlyReplyAt: temp.onlyReplyAt,
         botAlias: Array.isArray(temp.botAlias) ? temp.botAlias : !!temp.botAlias ? [temp.botAlias] : [],
@@ -393,8 +393,8 @@ async function doMoveConfig(config) {
       if (/^\d+$/.test(gid)) {
         gid = Number(gid)
         let tempCfg = {}
-        if (groupCfg.groupCD) {
-          tempCfg.groupCD = groupCfg.groupCD
+        if (groupCfg.groupGlobalCD) {
+          tempCfg.groupGlobalCD = groupCfg.groupGlobalCD
         }
         if (groupCfg.singleCD) {
           tempCfg.singleCD = groupCfg.singleCD

@@ -196,7 +196,7 @@ const groupConfig = () => {
         promptProps: addGroupPromptProps,
         schemas: [
           {
-            field: 'groupCD',
+            field: 'groupGlobalCD',
             label: '整体冷却时间',
             component: 'InputNumber',
             bottomHelpMessage: '群聊中所有指令操作冷却时间，单位毫秒,0 则无限制',
