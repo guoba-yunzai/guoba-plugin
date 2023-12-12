@@ -8,3 +8,5 @@ export {default as Constant} from '../server/constant/Constant.js'
 export const PluginsMap = new Map()
 /** 哪些插件支持Guoba */
 export const GuobaSupportMap = new Map()
+/** git仓库工具类 */
+export const GitRepoMap = new Map()

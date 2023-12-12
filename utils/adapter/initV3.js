@@ -1,13 +1,15 @@
 import path from 'path'
 import {loadClasses} from '#guoba.framework.utils'
 import {_version, _paths} from '#guoba.platform'
-import {isDev} from '#guoba.utils'
+import {isDev, GitUtils} from '#guoba.utils'
 import {createHotLoad} from '../hotLoad.js'
 import {reload} from './common.js'
 import {loadV2Apps} from './loadV2.js'
 
 export async function init(apps) {
   let appsPath = path.join(_paths.pluginRoot, 'apps')
+  // 初始化 git 仓库
+  GitUtils.initRepos()
   // 加载 apps 下的所有类
   await loadClasses(appsPath, plugin, apps)
   // 加载 v2 插件
