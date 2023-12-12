@@ -5,6 +5,7 @@ export {autowired, instancesMap} from './src/helper/injection.js';
 export {default as Result} from './src/components/Result.js';
 export {default as Pager} from './src/components/Pager.js'
 export {default as YamlReader} from './src/components/YamlReader.js'
+export {default as GitTools} from './src/components/GitTools.js'
 export {default as GuobaError} from './src/components/GuobaError.js'
 
 /* -------------- 框架核心 -------------- */
