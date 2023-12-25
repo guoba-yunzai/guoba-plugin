@@ -1,6 +1,6 @@
 {
   "name": "guoba-plugin",
-  "version": "1.2.0-beta.1",
+  "version": "1.2.1",
   "description": "Yunzai-Bot插件",
   "type": "module",
   "module": "index.js",
@@ -23,9 +23,11 @@
   },
   "devDependencies": {},
   "keywords": [
+    "喵崽",
+    "Miao-Yunzai",
     "云崽",
-    "原神",
     "Yunzai-Bot",
+    "原神",
     "Genshin"
   ],
   "author": "zolay",
