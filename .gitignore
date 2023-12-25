@@ -117,6 +117,7 @@ dist
 /.idea/
 
 # Guoba Ingored
+/data/*
 /lib/test.js
 /lib/v2-js/*
 /config/*

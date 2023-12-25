@@ -7,20 +7,17 @@ import {exec} from 'child_process'
  */
 export default class GitTools {
 
-  static CHECK_STATUS = {
+  static STATUS = {
     ERROR: -1,
     OK: 0,
+  }
+
+  static CHECK_STATUS = {
     NOT_EXIST: 1,
     NOT_MATCH: 2,
   }
 
-  static CLONE_STATUS = {
-    ERROR: -1,
-    OK: 0,
-  }
-
   static PULL_STATUS = {
-    ERROR: -1,
     UP_TO_DATE: 0,
   }
 
@@ -49,7 +46,7 @@ export default class GitTools {
     }, options)
 
     if (this.options.immediateClone) {
-      this.init()
+      this.initPromise = this.init()
     }
   }
 
@@ -60,7 +57,7 @@ export default class GitTools {
     if (checkRes === GitTools.CHECK_STATUS.NOT_EXIST) {
       // console.log('仓库不存在，开始克隆')
       const res = await this.cloneRepo()
-      if (res.status === GitTools.CLONE_STATUS.ERROR) {
+      if (res.status === GitTools.STATUS.ERROR) {
         logger.error(`[Guoba] 执行 "${this.name}" 仓库的clone操作时出现错误；stderr: ${res.stderr}`)
       }
       // console.log('克隆完成，耗时：' + res.timeMs + 'ms')
@@ -72,9 +69,9 @@ export default class GitTools {
         logger.error(`[Guoba] 检测到 "${this.name}" 仓库损坏，非严格模式下不执行任何操作`)
         this.repoIsError = true
       }
-    } else if (checkRes === GitTools.CHECK_STATUS.OK) {
+    } else if (checkRes === GitTools.STATUS.OK) {
       const res = await this.pull()
-      if (res.status === GitTools.PULL_STATUS.ERROR) {
+      if (res.status === GitTools.STATUS.ERROR) {
         if (this.options.strictMode) {
           logger.warn(`[Guoba] 检测到 "${this.name}" 仓库损坏，执行删除并重新克隆操作`)
           await this.forceReClone()
@@ -89,7 +86,7 @@ export default class GitTools {
     const rmSync = fs.rmSync || fs.rmdirSync
     rmSync(this.directory, {recursive: true})
     const res = await this.cloneRepo()
-    if (res.status !== GitTools.CLONE_STATUS.ERROR) {
+    if (res.status !== GitTools.STATUS.ERROR) {
       this.repoIsError = false
     } else {
       logger.warn(`[Guoba] 执行 "${this.name}" 仓库的强制重新Clone操作时出现错误，请手动删除 "${this.directory}" 目录并重启；stderr: ${res.stderr}`)
@@ -114,7 +111,7 @@ export default class GitTools {
       throw new Error(res.stderr)
     }
     if (res.stdout.includes(this.repository)) {
-      return GitTools.CHECK_STATUS.OK
+      return GitTools.STATUS.OK
     }
     return GitTools.CHECK_STATUS.NOT_MATCH
   }
@@ -124,12 +121,29 @@ export default class GitTools {
     if (res.error) {
       return {
         ...res,
-        status: GitTools.CLONE_STATUS.ERROR,
+        status: GitTools.STATUS.ERROR,
       }
     }
     return {
       ...res,
-      status: GitTools.CLONE_STATUS.OK,
+      status: GitTools.STATUS.OK,
+    }
+  }
+
+  /**
+   * 重置仓库，一般用于强制更新
+   */
+  async reset() {
+    const res = await this.execSingle('reset', `git -C ${this.directory} reset --hard`)
+    if (res.error) {
+      return {
+        ...res,
+        status: GitTools.STATUS.ERROR,
+      }
+    }
+    return {
+      ...res,
+      status: GitTools.STATUS.OK,
     }
   }
 
@@ -138,7 +152,7 @@ export default class GitTools {
     if (res.error) {
       return {
         ...res,
-        status: GitTools.PULL_STATUS.ERROR,
+        status: GitTools.STATUS.ERROR,
       }
     }
     return {

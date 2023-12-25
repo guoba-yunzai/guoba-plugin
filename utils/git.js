@@ -10,8 +10,9 @@ const repos = [
   // {name: 'GuobaTest', url: 'https://gitee.com/guoba-yunzai/test.git'},
 ]
 
+export const repoPath = path.join(_paths.pluginRoot, 'data/repo')
+
 export function initRepos() {
-  const repoPath = path.join(_paths.pluginRoot, 'data/repo')
   mkdirSync(repoPath)
   for (let {name, url} of repos) {
     const directory = path.join(repoPath, name)
@@ -21,4 +22,21 @@ export function initRepos() {
     })
     GitRepoMap.set(name, tools)
   }
+}
+
+/**
+ *
+ * @param key
+ * @return {Promise<GitTools>}
+ */
+export async function get(key) {
+  const repo = GitRepoMap.get(key)
+  if (repo?.initPromise) {
+    await repo.initPromise
+  }
+  return repo
+}
+
+export function getPluginsIndex() {
+  return get('PluginsIndex')
 }
