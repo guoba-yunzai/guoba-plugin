@@ -7,9 +7,7 @@ const addGroupPromptProps = {
   okText: '添加',
   rules: [
     {required: true, message: '群号得填上才行哦~'},
-    {pattern: '^\\d+$', message: '群号应该是纯数字的吧'},
     {min: 5, message: '真的有这么短的群号吗？'},
-    {max: 10, message: '太…太长了……'},
   ],
 }
 // 添加QQ号 prompt
@@ -19,9 +17,7 @@ const addUserPromptProps = {
   okText: '添加',
   rules: [
     {required: true, message: 'QQ号得填上才行哦~'},
-    {pattern: '^\\d+$', message: 'QQ号应该是纯数字的吧'},
     {min: 5, message: '真的有这么短的QQ号吗？'},
-    {max: 10, message: '太…太长了……'},
   ],
 }
 
@@ -117,6 +113,30 @@ const baseConfig = {
             placeholder: '请输入冷却时间，单位秒',
           },
         },
+        {
+          field: 'skip_login',
+          label: '跳过登录ICQQ',
+          bottomHelpMessage: '是否跳过登录ICQQ',
+          component: 'Switch',
+        },
+        {
+          field: 'sign_api_addr',
+          label: '签名API地址',
+          bottomHelpMessage: '签名API地址(如:http://127.0.0.1:8080/sign?key=114514)',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入如:http://127.0.0.1:8080/sign?key=114514',
+          },
+        },
+        {
+          field: 'ver',
+          label: '传入QQ版本',
+          bottomHelpMessage: '传入的QQ版本(如:8.9.63、8.9.68)',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入传入的QQ版本(如:8.9.63、8.9.68)',
+          },
+        }
       ],
     },
     {
@@ -216,11 +236,14 @@ const groupConfig = () => {
           {
             field: 'onlyReplyAt',
             label: '只关注At',
-            component: 'Switch',
+            component: 'RadioGroup',
             bottomHelpMessage: '是否只仅关注主动@机器人的消息',
             componentProps: {
-              checkedValue: 1,
-              unCheckedValue: 0,
+              options: [
+                { label: '关闭', value: 0 },
+                { label: '开启', value: 1 },
+                { label: '开启、主人关闭', value: 2 },
+              ],
             },
           },
           {
