@@ -78,10 +78,11 @@ export default class ConfigServiceImpl extends IConfigService {
     }
 
     if (key === 'system.group') {
-      for (let [oKey, oVal] of Object.entries(data)) {
-        data[oKey] = handler(oVal)
+      let obj = handler(data)
+      for (let [oKey, oVal] of Object.entries(obj)) {
+        obj[oKey] = handler(oVal)
       }
-      return data
+      return obj
     }
     return handler(data)
   }
