@@ -36,6 +36,12 @@ export function supportGuoba() {
           bottomHelpMessage: '是否自动检查更新，并发送消息提醒',
           component: 'Switch',
         },
+        {
+          field: 'base.loginInGroup',
+          label: '允许群聊登录',
+          bottomHelpMessage: '允许在群聊里使用`#锅巴登录`，有一定风险，酌情开启',
+          component: 'Switch',
+        },
         // {
         //   field: 'base.city',
         //   label: '天气城市',
@@ -49,6 +55,10 @@ export function supportGuoba() {
         //     placeholder: '请输入天气城市',
         //   },
         // },
+        {
+          label: '服务器配置',
+          component: 'Divider',
+        },
         {
           field: 'server.host',
           label: '服务器地址',

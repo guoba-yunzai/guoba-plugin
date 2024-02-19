@@ -5,6 +5,8 @@ base:
   guide: true
   # 是否要自动检查更新
   checkUpdate: true
+  # 是否允许群聊登录
+  loginInGroup: false
 
 # 服务器配置
 server:

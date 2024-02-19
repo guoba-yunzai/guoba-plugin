@@ -1,5 +1,6 @@
 import {autowired} from "#guoba.framework";
 import {makeForwardMsg} from '#guoba.utils'
+import {cfg} from '#guoba.platform'
 
 export class GuobaLogin extends plugin {
 
@@ -22,7 +23,7 @@ export class GuobaLogin extends plugin {
 
   async login() {
     if (!this.e.isMaster) return false
-    if (this.e.isGroup) {
+    if (this.e.isGroup && cfg.get('base.loginInGroup') !== true) {
       this.e.reply('请私聊使用锅巴~')
       return true
     }
