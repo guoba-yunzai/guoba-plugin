@@ -21,7 +21,7 @@ export async function parsePluginsIndexByLocal() {
   await repo.reset()
   await repo.pull()
   // 读取插件列表
-  const mdNames = ['README.md', 'Function-Plugin.md', 'Game-Plugin.md']
+  const mdNames = ['README.md', 'indices/Function-Plugin.md', 'indices/Game-Plugin.md']
   for (let mdName of mdNames) {
     const mdPath = path.join(repo.directory, mdName)
     if (!fs.existsSync(repo.directory)) {
