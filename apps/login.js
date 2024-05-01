@@ -45,26 +45,25 @@ export class GuobaLogin extends plugin {
     }
     message.push(`临时令牌3分钟内有效（请勿轻易告知他人哦），使用过后会立即失效，若登录成功将会在使用者的浏览器上生成个24小时内有效的令牌，过期后需要重新登录~`)
 
-
-    if(this.e?.platform) {
+    if (this.e?.platform) {
       message.push('[请在后台查看地址]')
-      for(const item of message){
+      for (const item of message) {
         console.log(item)
         this.e.reply(item)
       }
-      return 
+      return
     }
-    if (this.e.isGroup && !cfg.get('base.loginInGroup')){
-      try{
-     await Bot.pickUser(this.e.user_id).sendMsg(await this.e.runtime.common.makeForwardMsg(this.e, message))
-     await this.reply('地址已发送至主人的私信了~')
-      }catch(e){
+    if (this.e.isGroup && !cfg.get('base.loginInGroup')) {
+      try {
+        await Bot.pickUser(this.e.user_id).sendMsg(await this.e.runtime.common.makeForwardMsg(this.e, message))
+        await this.reply('地址已发送至主人的私信了~')
+      } catch (e) {
         logger.error(e)
-       await this.reply('消息发送失败~请加Bot的好友或者私聊发送#锅巴登录')
+        await this.reply('消息发送失败~请加Bot的好友或者私聊发送#锅巴登录')
       }
-    }else{
-     await this.reply(await makeForwardMsg(this.e, message))
+    } else {
+      await this.reply(await makeForwardMsg(this.e, message))
     }
-return 
+    return
   }
 }
