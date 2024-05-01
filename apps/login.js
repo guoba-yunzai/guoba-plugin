@@ -23,10 +23,6 @@ export class GuobaLogin extends plugin {
 
   async login() {
     if (!this.e.isMaster) return false
-    if (this.e.isGroup && cfg.get('base.loginInGroup') !== true) {
-      this.e.reply('请私聊使用锅巴~')
-      return true
-    }
     let webAddress
     try {
       webAddress = await this.loginService.setQuickLogin(this.e.user_id)
@@ -58,8 +54,17 @@ export class GuobaLogin extends plugin {
       }
       return 
     }
-
-    return this.reply(await makeForwardMsg(this.e, message))
+    if (this.e.isGroup && !cfg.get('base.loginInGroup')){
+      try{
+     await Bot.pickUser(this.e.user_id).sendMsg(await this.e.runtime.common.makeForwardMsg(this.e, message))
+     await this.reply('地址已发送至主人的私信了~')
+      }catch(e){
+        logger.error(e)
+       await this.reply('消息发送失败~请加Bot的好友或者私聊发送#锅巴登录')
+      }
+    }else{
+     await this.reply(await makeForwardMsg(this.e, message))
+    }
+return 
   }
-
 }
