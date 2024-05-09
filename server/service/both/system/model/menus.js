@@ -33,36 +33,6 @@ const configMenu = {
   },
 }
 
-const pluginsMenu = {
-  path: 'plugins',
-  name: 'Plugins',
-  component: '/guoba/plugins/index',
-  meta: {
-    title: '插件管理',
-    icon: 'clarity:plugin-line',
-  },
-}
-
-const miaoV1Menu = {
-  path: 'plugins/miao-plugin',
-  name: 'MiaoPlugin',
-  component: '/guoba/plugins/extra-config/miao-plugin-v1/index',
-  meta: {
-    title: '喵喵帮助',
-    icon: 'twemoji:heart-with-ribbon',
-  },
-}
-
-const miaoMenu = {
-  path: 'plugins/miao-plugin',
-  name: 'MiaoPlugin',
-  component: '/guoba/plugins/extra-config/miao-plugin/index',
-  meta: {
-    title: '喵喵帮助',
-    icon: 'twemoji:heart-with-ribbon',
-  },
-}
-
 const aboutMenu = {
   path: 'about',
   name: 'about',
@@ -104,10 +74,6 @@ const pluginsIndexMenu = {
   },
 }
 
-const dividerMenu = {
-  type: 'divider',
-}
-
 // 插件的菜单
 async function usePluginsMenu() {
   const pluginMenus = []
@@ -127,7 +93,6 @@ async function usePluginsMenu() {
       return
     }
     pluginMenus.push({
-      // path: `/plugin/:name`,
       path: `/plugin/${name}`,
       name: 'PluginDetail_' + name,
       component: `/guoba/plugins/plugin-detail/index`,
