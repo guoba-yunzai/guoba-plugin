@@ -1,6 +1,6 @@
 import path from 'path'
 import lodash from 'lodash'
-import {cfg, _paths} from "#guoba.platform";
+import {_paths, cfg} from "#guoba.platform";
 
 // 支持锅巴
 export function supportGuoba() {
@@ -9,14 +9,29 @@ export function supportGuoba() {
     // 如果你的插件没有在插件库里，那么需要填上补充信息
     // 如果存在的话，那么填不填就无所谓了，填了就以你的信息为准
     pluginInfo: {
+      // name 为插件唯一标识，尽量不要与其他插件重复
       name: 'guoba-plugin',
+      // title 为显示名称
       title: 'Guoba-Plugin',
-      author: '@zolay-poi',
-      authorLink: 'https://github.com/zolay-poi',
+      // 插件描述
+      description: '主要提供后台管理界面',
+      // 作者可以为字符串也可以为数组，当有多个作者时建议使用数组
+      author: [
+        '@zolay-poi',
+        '@Guoba-Yunzai',
+      ],
+      // 作者主页地址。若author为数组，则authorLink也需要为数组，且需要与author一一对应
+      authorLink: [
+        'https://github.com/zolay-poi',
+        'https://github.com/guoba-yunzai',
+      ],
+      // 仓库地址
       link: 'https://github.com/guoba-yunzai/guoba-plugin',
       isV3: true,
       isV2: false,
-      description: '主要提供后台管理界面',
+      // 是否显示在左侧菜单，可选值：auto、true、false
+      // 当为 auto 时，如果配置项大于等于 3 个，则显示在左侧菜单
+      showInMenu: 'auto',
       // 显示图标，此为个性化配置
       // 图标可在 https://icon-sets.iconify.design 这里进行搜索
       icon: 'mdi:stove',
