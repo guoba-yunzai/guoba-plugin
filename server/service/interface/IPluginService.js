@@ -94,7 +94,11 @@ export default class IPluginService extends Service {
           // 判断是否支持锅巴
           if (fs.existsSync(jsPath)) {
             try {
-              let {supportGuoba} = await Guoba.GI(jsPath, null, Date.now())
+              // 判断是否是windows系统
+              if (os.platform() === 'win32') {
+                jsPath = 'file:///' + jsPath
+              }
+              let {supportGuoba} = await import(jsPath + '?' + Date.now())
               if (typeof supportGuoba === 'function') {
                 // TODO 传什么参数？待定
                 let supportObject = supportGuoba()
