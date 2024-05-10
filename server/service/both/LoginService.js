@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
-import {Service, GuobaError} from '#guoba.framework';
+import {GuobaError, Service} from '#guoba.framework';
 import {cfg, Constant} from "#guoba.platform";
-import {randomString, getAllWebAddress} from '#guoba.utils'
+import {getAllWebAddress, randomString} from '#guoba.utils'
 
 export class LoginService extends Service {
   constructor(app) {
@@ -56,6 +56,28 @@ export class LoginService extends Service {
       code,
       redisKey: `${Constant.REDIS_PREFIX}login-quick:${code}`,
     }
+  }
+
+  async codeLoginRequest() {
+    let redisKey = `${Constant.REDIS_PREFIX}login-code`
+    let code = await redis.get(redisKey)
+    if (code) {
+      throw new GuobaError('当前验证码还未失效，请稍后再试')
+    } else {
+      code = randomString(16)
+    }
+    await redis.set(redisKey, code, {EX: 300})
+    return code
+  }
+
+  async codeLoginCheck(code) {
+    let redisKey = `${Constant.REDIS_PREFIX}login-code`
+    let redisCode = await redis.get(redisKey)
+    if (redisCode === code) {
+      await redis.del(redisKey)
+      return await this.signToken('admin')
+    }
+    return false
   }
 
   getRedisKey(token) {

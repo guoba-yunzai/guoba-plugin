@@ -1,7 +1,7 @@
 import path from "path";
 import {GuobaApplication} from "#guoba.framework";
-import {cfg, _paths, PluginsMap, GuobaSupportMap} from '#guoba.platform';
-import {isV3, getWebAddress} from "#guoba.utils";
+import {_paths, cfg, GuobaSupportMap, PluginsMap} from '#guoba.platform';
+import {getWebAddress, isV3} from "#guoba.utils";
 import {listen} from './helper/listen.js'
 
 export async function createServer({isInit}) {
@@ -44,9 +44,11 @@ export async function createServer({isInit}) {
     logger.mark(`--------- >_< ---------`)
     logger.mark(`锅巴服务启动成功~ 耗时:${Date.now() - begin}ms`)
     const hosts = getWebAddress(true)
+    console.group('[Guoba] 访问地址：')
     for (let host of hosts) {
-      logger.mark(host)
+      console.log(host)
     }
+    console.groupEnd()
     logger.mark(`-----------------------`)
   }
   return {app, server}
