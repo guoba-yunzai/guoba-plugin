@@ -6,6 +6,7 @@ import fetch from 'node-fetch'
 import {Service} from '#guoba.framework';
 import {Constant, GuobaSupportMap, PluginsMap} from "#guoba.platform";
 import {parsePluginsIndexByLocal, parseReadmeLink} from '../../helper/pluginsIndex.js'
+import {getPluginIconPath, parseShowInMenu} from '../../utils/pluginUtils.js'
 
 export default class IPluginService extends Service {
   constructor(app) {
@@ -43,9 +44,7 @@ export default class IPluginService extends Service {
     // 处理config等信息
     for (let plugin of remotePlugins) {
       // 判断是否配置了 iconPath
-      if (plugin.iconPath) {
-        plugin.iconPath = `/api/plugin/s/${plugin.name}/icon`
-      }
+      plugin.iconPath = getPluginIconPath(plugin)
       // 判断是否支持guoba
       let supportObject = GuobaSupportMap.get(plugin.name)
       if (!supportObject) {
@@ -56,6 +55,7 @@ export default class IPluginService extends Service {
       if (configInfo && configInfo.schemas && typeof configInfo.getConfigData === 'function') {
         plugin.hasConfig = true
         plugin.schemas = configInfo.schemas
+        plugin.showInMenu = parseShowInMenu(supportObject)
       }
     }
     // 已安装的插件，排在前面
@@ -94,11 +94,7 @@ export default class IPluginService extends Service {
           // 判断是否支持锅巴
           if (fs.existsSync(jsPath)) {
             try {
-              // 判断是否是windows系统
-              if (os.platform() === 'win32') {
-                jsPath = 'file:///' + jsPath
-              }
-              let {supportGuoba} = await import(jsPath)
+              let {supportGuoba} = await Guoba.GI(jsPath, null, Date.now())
               if (typeof supportGuoba === 'function') {
                 // TODO 传什么参数？待定
                 let supportObject = supportGuoba()

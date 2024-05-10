@@ -44,13 +44,13 @@ export function supportGuoba() {
     configInfo: {
       // 配置项 schemas
       schemas: [
-        {
-          field: 'base.checkUpdate',
-          label: '检查更新',
-          helpMessage: '启动时和每天凌晨4点自动检查更新，并发送消息提醒（每个版本只提醒一次）',
-          bottomHelpMessage: '是否自动检查更新，并发送消息提醒',
-          component: 'Switch',
-        },
+        // {
+        //   field: 'base.checkUpdate',
+        //   label: '检查更新',
+        //   helpMessage: '启动时和每天凌晨4点自动检查更新，并发送消息提醒（每个版本只提醒一次）',
+        //   bottomHelpMessage: '是否自动检查更新，并发送消息提醒',
+        //   component: 'Switch',
+        // },
         {
           field: 'base.loginInGroup',
           label: '允许群聊登录',

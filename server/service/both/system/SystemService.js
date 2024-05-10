@@ -7,7 +7,7 @@ import {diskInfo} from '#guoba.libs'
 import {liteToken} from './model/tokens.js'
 
 const {GI} = Guoba.createImport(import.meta.url)
-const {useMenus} = await GI('./model/menus.js')
+const {useMenuList} = await GI('./model/menus/index.js')
 
 export class SystemService extends Service {
 
@@ -16,7 +16,7 @@ export class SystemService extends Service {
   }
 
   async queryMenus() {
-    return await useMenus()
+    return await useMenuList()
   }
 
   getLiteToken() {

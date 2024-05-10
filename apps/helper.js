@@ -16,6 +16,7 @@ export class GuobaHelp extends plugin {
           fnc: 'getHelp',
           permission: 'master',
         },
+        // 可通过`#锅巴重启`重载`guoba.support.js`
         {
           reg: '^#锅巴重启$',
           fnc: 'restart',
