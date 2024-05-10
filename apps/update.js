@@ -239,7 +239,8 @@ export class GuobaUpdate extends plugin {
         }
         resolve({
           status: _STATUS.SUCCESS,
-          message: '更新成功' + (isForce ? '，由于是强制更新，本次更新需要重启才能生效' : '')
+          // message: '更新成功' + (isForce ? '，由于是强制更新，本次更新需要重启才能生效' : '')
+          message: '更新成功，请您手动重启以生效更新。'
         });
       })
     })

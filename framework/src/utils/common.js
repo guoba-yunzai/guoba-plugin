@@ -58,8 +58,8 @@ export async function loadClass(filePath, clazz, onlyDefault = false) {
  * 获取某个目录下的所有文件（返回的是绝对路径）
  *
  * @param rootPath
- * @param include 文件名过滤器
- * @param exclude 排除器
+ * @param include {boolean | Function} 文件名过滤器
+ * @param exclude {Function} 排除器
  */
 export function readdirRecursiveSync(rootPath, include = () => true, exclude = () => false) {
   let files = fs.readdirSync(rootPath)
