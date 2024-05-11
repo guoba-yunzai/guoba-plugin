@@ -24,5 +24,5 @@ export function parseShowInMenu(supportObject) {
  * @return {string|*}
  */
 export function getPluginIconPath(pluginInfo) {
-  return pluginInfo.iconPath ? `/api/plugin/s/${pluginInfo.name}/icon` : void 0
+  return pluginInfo?.iconPath ? `/api/plugin/s/${pluginInfo.name}/icon` : void 0
 }
