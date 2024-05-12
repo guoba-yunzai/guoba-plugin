@@ -14,6 +14,10 @@ export default class PluginController extends RestController {
     this.get('/list', this.getPlugins)
     // 获取plugin readme
     this.get('/readme', this.getPluginReadme)
+    // 安装plugin
+    this.get('/install', this.installPlugin)
+    // 卸载plugin
+    this.get('/uninstall', this.uninstallPlugin)
     // 获取plugin icon（直接显示图片）
     this.get('/s/:pluginName/icon', this.getPluginIcon)
     // 获取plugin配置数据
@@ -38,6 +42,18 @@ export default class PluginController extends RestController {
     let {link, force} = req.query
     force = force === 'true'
     let text = await this.pluginService.getReadmeText(link, force)
+    return Result.ok(text)
+  }
+
+  async installPlugin(req) {
+    let {link} = req.query
+    let text = await this.pluginService.installPlugin(link)
+    return Result.ok(text)
+  }
+
+  async uninstallPlugin(req) {
+    let {name} = req.query
+    let text = await this.pluginService.uninstallPlugin(name)
     return Result.ok(text)
   }
 

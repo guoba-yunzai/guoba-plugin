@@ -7,6 +7,7 @@ import {Service} from '#guoba.framework';
 import {Constant, GuobaSupportMap, PluginsMap} from "#guoba.platform";
 import {parsePluginsIndexByLocal, parseReadmeLink} from '../../helper/pluginsIndex.js'
 import {getPluginIconPath, parseShowInMenu} from '../../utils/pluginUtils.js'
+import {Restart} from "../../../../other/restart.js"
 
 export default class IPluginService extends Service {
   constructor(app) {
@@ -192,4 +193,60 @@ export default class IPluginService extends Service {
     return ''
   }
 
+  async installPlugin(link) {
+    if (!Bot.fsStat || !Bot.exec) {
+      return { status: 'error', message: '该功能暂未开放，敬请期待' };
+    }
+    const name = link.split('/').pop().replace(/\.git$/, '');
+    const pluginPath = `plugins/${name}`;
+    const e = {
+      reply(msg) {
+        logger.info(msg);
+      }
+    };
+    if (await Bot.fsStat(pluginPath)) {
+      return { status: 'error', message: `插件 ${name} 已安装` };
+    } else {
+      let result = await Bot.exec(`git clone --depth 1 --single-branch ${link} ${pluginPath}`);
+      if (result.error) {
+        logger.error(`[Guoba] 插件安装失败：${result.error}`);
+        return { status: 'error', message: `插件 ${name} 安装失败\n${result.error}` };
+      } else {
+        if (await Bot.fsStat(`${pluginPath}/package.json`)) {
+          let result = await Bot.exec(`cd ${pluginPath} && pnpm install`);
+          if (result.error) {
+            logger.error(`[Guoba] 插件安装失败：${result.error}`);
+            return { status: 'error', message: `插件安装失败：${result.error}` };
+          }
+        }
+        new Restart(e).restart()
+        return { status: 'success', message: `插件 ${name} 安装成功` };
+      }
+    }
+  }
+
+  async uninstallPlugin(name) {
+    if (!Bot.fsStat || !Bot.rm) {
+      return { status: 'error', message: '该功能暂未开放，敬请期待' };
+    }
+    const pluginPath = `plugins/${name}`;
+    const e = {
+      reply(msg) {
+        logger.info(msg);
+      }
+    };
+    if (await Bot.fsStat(pluginPath)) {
+      let result = await Bot.rm(pluginPath)
+      if (!result) {
+        logger.error(`[Guoba] 插件卸载失败`);
+        return { status: 'error', message: `插件 ${name} 卸载失败` };
+      } else {
+        new Restart(e).restart()
+        logger.info(`[Guoba] 插件 ${name} 卸载成功`);
+        return { status: 'success', message: `插件 ${name} 卸载成功` };
+      }
+    } else {
+      return { status: 'error', message: `插件 ${name} 不存在` };
+    }
+  }
 }
