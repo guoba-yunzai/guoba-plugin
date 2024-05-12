@@ -8,6 +8,7 @@ import {Constant, GuobaSupportMap, PluginsMap} from "#guoba.platform";
 import {parsePluginsIndexByLocal, parseReadmeLink} from '../../helper/pluginsIndex.js'
 import {getPluginIconPath, parseShowInMenu} from '../../utils/pluginUtils.js'
 import {Restart} from "../../../../other/restart.js"
+import {exec} from 'child_process'
 
 export default class IPluginService extends Service {
   constructor(app) {
@@ -194,15 +195,15 @@ export default class IPluginService extends Service {
   }
 
   async installPlugin(link) {
-    if (!Bot.fsStat || !Bot.exec) {
-      return { status: 'error', message: '该功能暂未开放，敬请期待' };
-    }
+    await this.initBotMethods();
     const name = link.split('/').pop().replace(/\.git$/, '');
     const pluginPath = `plugins/${name}`;
     const e = {
-      reply(msg) {
-        logger.info(msg);
-      }
+      reply: (msg) => logger.info(msg),
+      bot: {
+        uin: 'stdin'
+      },
+      logFnc: '[Guoba]'
     };
     if (await Bot.fsStat(pluginPath)) {
       return { status: 'error', message: `插件 ${name} 已安装` };
@@ -226,14 +227,14 @@ export default class IPluginService extends Service {
   }
 
   async uninstallPlugin(name) {
-    if (!Bot.fsStat || !Bot.rm) {
-      return { status: 'error', message: '该功能暂未开放，敬请期待' };
-    }
+    await this.initBotMethods();
     const pluginPath = `plugins/${name}`;
     const e = {
-      reply(msg) {
-        logger.info(msg);
-      }
+      reply: (msg) => logger.info(msg),
+      bot: {
+        uin: 'stdin'
+      },
+      logFnc: '[Guoba]'
     };
     if (await Bot.fsStat(pluginPath)) {
       let result = await Bot.rm(pluginPath)
@@ -248,5 +249,47 @@ export default class IPluginService extends Service {
     } else {
       return { status: 'error', message: `插件 ${name} 不存在` };
     }
+  }
+
+  async initBotMethods() {
+    Bot.fsStat = Bot.fsStat || ((path) => {
+      return new Promise((resolve) => {
+        fs.stat(path, (err, stats) => {
+          if (err) {
+            logger.trace(`[Guoba] 获取${path}状态错误：${err}`);
+            resolve(false);
+          } else {
+            resolve(stats);
+          }
+        });
+      });
+    });
+  
+    Bot.exec = Bot.exec || ((cmd, opts = {}) => {
+      return new Promise((resolve) => {
+        if (!opts.quiet) {
+          logger.info(`[Guoba] 执行命令：${cmd}`);
+        }
+        exec(cmd, opts, (error, stdout, stderr) => {
+          resolve({ error, stdout, stderr });
+          if (opts.quiet) return;
+          logger.info(`[Guoba] 执行命令完成：${logger.blue(cmd)}${stdout?`\n${String(stdout).trim()}`:""}${stderr?logger.red(`\n${String(stderr).trim()}`):""}`);
+          if (error) logger.error(`[Guoba] 执行命令错误：${logger.blue(cmd)}\n${logger.red(this.Loging(error).trim())}`);
+        });
+      });
+    });
+  
+    Bot.rm = Bot.rm || ((file) => {
+      return new Promise((resolve) => {
+        fs.rm(file, { force: true, recursive: true }, (err) => {
+          if (err) {
+            logger.trace(`[Guoba] 删除${file}错误：${err}`);
+            resolve(false);
+          } else {
+            resolve(true);
+          }
+        });
+      });
+    });
   }
 }
