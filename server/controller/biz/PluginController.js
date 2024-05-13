@@ -1,4 +1,4 @@
-import {autowired, Result, RestController} from '#guoba.framework';
+import {autowired, RestController, Result} from '#guoba.framework';
 import {GuobaSupportMap} from '#guoba.platform'
 
 export default class PluginController extends RestController {
@@ -14,10 +14,12 @@ export default class PluginController extends RestController {
     this.get('/list', this.getPlugins)
     // 获取plugin readme
     this.get('/readme', this.getPluginReadme)
+
     // 安装plugin
-    this.get('/install', this.installPlugin)
+    this.put('/install', this.installPlugin)
     // 卸载plugin
-    this.get('/uninstall', this.uninstallPlugin)
+    this.put('/uninstall', this.uninstallPlugin)
+
     // 获取plugin icon（直接显示图片）
     this.get('/s/:pluginName/icon', this.getPluginIcon)
     // 获取plugin配置数据
@@ -46,13 +48,23 @@ export default class PluginController extends RestController {
   }
 
   async installPlugin(req) {
-    let {link} = req.query
-    let text = await this.pluginService.installPlugin(link)
+    let {link, autoRestart = true, autoNpmInstall = true} = req.body
+    if (!link) {
+      return Result.error('link不能为空')
+    }
+    let text = await this.pluginService.installPlugin(link, autoRestart, autoNpmInstall)
     return Result.ok(text)
   }
 
   async uninstallPlugin(req) {
-    let {name} = req.query
+    let {name} = req.body
+    name = name?.trim?.()
+    if (!name) {
+      return Result.error('name不能为空')
+    }
+    if (name === 'miao-plugin') {
+      return Result.error('抱歉，由于miao-plugin是重要插件，不能卸载！')
+    }
     let text = await this.pluginService.uninstallPlugin(name)
     return Result.ok(text)
   }

@@ -194,7 +194,14 @@ export default class IPluginService extends Service {
     return ''
   }
 
-  async installPlugin(link) {
+  /**
+   * 安装插件
+   * @param link 插件链接
+   * @param autoRestart 是否自动重启
+   * @param autoNpmInstall 是否自动安装依赖
+   * @return {Promise<{message: string, status: string}>}
+   */
+  async installPlugin(link, autoRestart, autoNpmInstall) {
     await this.initBotMethods();
     const name = link.split('/').pop().replace(/\.git$/, '');
     const pluginPath = `plugins/${name}`;
@@ -213,14 +220,16 @@ export default class IPluginService extends Service {
         logger.error(`[Guoba] 插件安装失败：${result.error}`);
         return { status: 'error', message: `插件 ${name} 安装失败\n${result.error}` };
       } else {
-        if (await Bot.fsStat(`${pluginPath}/package.json`)) {
+        if (autoNpmInstall && await Bot.fsStat(`${pluginPath}/package.json`)) {
           let result = await Bot.exec(`cd ${pluginPath} && pnpm install`);
           if (result.error) {
             logger.error(`[Guoba] 插件安装失败：${result.error}`);
             return { status: 'error', message: `插件安装失败：${result.error}` };
           }
         }
-        new Restart(e).restart()
+        if (autoRestart) {
+          new Restart(e).restart()
+        }
         return { status: 'success', message: `插件 ${name} 安装成功` };
       }
     }
