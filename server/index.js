@@ -3,6 +3,7 @@ import {GuobaApplication} from "#guoba.framework";
 import {_paths, cfg, GuobaSupportMap, PluginsMap} from '#guoba.platform';
 import {getWebAddress, isV3} from "#guoba.utils";
 import {listen} from './helper/listen.js'
+import chalk from 'chalk'
 
 export async function createServer({isInit}) {
   const begin = Date.now()
@@ -44,11 +45,14 @@ export async function createServer({isInit}) {
     logger.mark(`--------- >_< ---------`)
     logger.mark(`锅巴服务启动成功~ 耗时:${Date.now() - begin}ms`)
     const hosts = getWebAddress(true)
-    console.group('[Guoba] 访问地址：')
+    const maxLength = Math.max(34, ...hosts.map(host => host.length + 4));
+    console.log('#'.repeat(maxLength))
+    console.log('# ' + chalk.green('[Guoba] 登录地址') + ' '.repeat(maxLength - 20) + ' #')
     for (let host of hosts) {
-      console.log(host)
+      console.log('# ' + chalk.cyan(host) + ' '.repeat(maxLength - host.length - 4) + ' #')
     }
-    console.groupEnd()
+    console.log('# ' + chalk.magenta('请妥善保管登陆地址，避免泄露！') + ' '.repeat(maxLength - 34) + ' #')
+    console.log('#'.repeat(maxLength))
     logger.mark(`-----------------------`)
   }
   return {app, server}

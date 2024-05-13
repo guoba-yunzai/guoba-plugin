@@ -268,13 +268,13 @@ export default class IPluginService extends Service {
     Bot.exec = Bot.exec || ((cmd, opts = {}) => {
       return new Promise((resolve) => {
         if (!opts.quiet) {
-          logger.info(`[Guoba] 执行命令：${cmd}`);
+          logger.info(`[Guoba] 执行命令：${logger.blue(cmd)}`);
         }
         exec(cmd, opts, (error, stdout, stderr) => {
           resolve({ error, stdout, stderr });
           if (opts.quiet) return;
-          logger.info(`[Guoba] 执行命令完成：${logger.blue(cmd)}${stdout?`\n${String(stdout).trim()}`:""}${stderr?logger.red(`\n${String(stderr).trim()}`):""}`);
-          if (error) logger.error(`[Guoba] 执行命令错误：${logger.blue(cmd)}\n${logger.red(this.Loging(error).trim())}`);
+          logger.mark(`[Guoba] 执行命令完成：${logger.blue(cmd)}${stdout?`\n${String(stdout).trim()}`:""}${stderr?logger.red(`\n${String(stderr).trim()}`):""}`);
+          if (error) logger.mark(`[Guoba] 执行命令错误：${logger.blue(cmd)}\n${logger.red(this.Loging(error).trim())}`);
         });
       });
     });
