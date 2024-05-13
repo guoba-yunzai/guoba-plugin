@@ -279,6 +279,7 @@ export default class IPluginService extends Service {
         if (!opts.quiet) {
           logger.info(`[Guoba] 执行命令：${logger.blue(cmd)}`);
         }
+        opts.windowsHide = opts.windowsHide ?? true;
         exec(cmd, opts, (error, stdout, stderr) => {
           resolve({ error, stdout, stderr });
           if (opts.quiet) return;
