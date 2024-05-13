@@ -1,12 +1,13 @@
 import {GuobaSupportMap, PluginsMap} from '#guoba.platform'
 import {getPluginIconPath, parseShowInMenu} from '../../../../../utils/pluginUtils.js'
 
-const pluginsMenu = {
+const pluginsStoreMenu = {
   path: '/plugins',
-  name: 'Plugins',
+  name: 'PluginsStore',
   component: '/guoba/plugins/index',
   meta: {
-    title: '插件管理',
+    title: '插件商店',
+    // icon: 'uil:store',
     icon: 'clarity:plugin-line',
   },
 }
@@ -66,18 +67,27 @@ export async function usePluginsMenu() {
 
   if (pluginMenus.length > 0) {
     return [
+      pluginsStoreMenu,
       {
-        ...pluginsMenu,
+        path: '/plugin/@',
+        name: 'PluginDetailParent',
+        component: '/guoba/plugins/index',
+        meta: {
+          title: '插件配置',
+          // icon: 'clarity:plugin-line',
+          // icon: 'arcticons:game-plugins',
+          icon: 'ion:settings-outline',
+        },
         // 重定向到
         redirect: pluginsIndexMenu.path,
         children: [
-          pluginsIndexMenu,
+          // pluginsIndexMenu,
           ...pluginMenus,
         ],
       }
     ]
   } else {
-    return [pluginsMenu]
+    return [pluginsStoreMenu]
   }
 }
 
