@@ -9,11 +9,12 @@
 ## 已实现的功能
 
 - [x] 主人登录
-- [x] 更新插件
-- [x] 自动升级
+    - [x] #锅巴登录
+    - [x] 控制台验证码登录
 - [x] 配置文件管理
 - [x] plugin插件管理
     - [x] plugin插件配置
+    - [x] 安装、卸载插件 [@0卡苏打水](https://github.com/CikeyQi)
 - [x] 编辑喵喵帮助 [@realhuhu](https://github.com/realhuhu)
 - [x] V2云崽丝滑迁移至V3（[视频教程](https://www.bilibili.com/video/BV1fP411T7KM)）
 
