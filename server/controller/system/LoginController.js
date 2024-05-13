@@ -1,4 +1,5 @@
 import {autowired, RestController, Result} from '#guoba.framework';
+import chalk from 'chalk';
 
 export class LoginController extends RestController {
 
@@ -42,11 +43,12 @@ export class LoginController extends RestController {
   async codeLoginRequest() {
     const code = await this.loginService.codeLoginRequest()
     if (code) {
-      console.group('[Guoba] 验证码登录请求')
-      console.log('您正在请求登录，验证码为：' + code)
-      console.log('验证码五分钟内有效且失效前不会再次打印，请尽快输入')
-      console.log('若非本人操作请忽略并考虑是否泄露了登录地址')
-      console.groupEnd()
+      console.log('#'.repeat(54))
+      console.log('# ' + chalk.green('[Guoba] 验证码登录请求') + '                             #')
+      console.log('# 您正在请求登录，验证码为：' + chalk.yellow(code) + '         #')
+      console.log('# 验证码五分钟内有效且失效前不会再次打印，请尽快输入 #')
+      console.log('# ' + chalk.red('若非本人操作请忽略并考虑是否泄露了登录地址') + '         #')
+      console.log('#'.repeat(54))
       return Result.ok({}, 'code generated')
     }
     return Result.error('code generate failed')
