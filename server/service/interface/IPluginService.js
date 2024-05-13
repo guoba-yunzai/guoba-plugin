@@ -213,24 +213,24 @@ export default class IPluginService extends Service {
       logFnc: '[Guoba]'
     };
     if (await Bot.fsStat(pluginPath)) {
-      return { status: 'error', message: `插件 ${name} 已安装` };
+      return {status: 'error', message: `插件 ${name} 已安装`};
     } else {
       let result = await Bot.exec(`git clone --depth 1 --single-branch ${link} ${pluginPath}`);
       if (result.error) {
         logger.error(`[Guoba] 插件安装失败：${result.error}`);
-        return { status: 'error', message: `插件 ${name} 安装失败\n${result.error}` };
+        return {status: 'error', message: `插件 ${name} 安装失败\n${result.error}`};
       } else {
         if (autoNpmInstall && await Bot.fsStat(`${pluginPath}/package.json`)) {
           let result = await Bot.exec(`cd ${pluginPath} && pnpm install`);
           if (result.error) {
             logger.error(`[Guoba] 插件安装失败：${result.error}`);
-            return { status: 'error', message: `插件安装失败：${result.error}` };
+            return {status: 'error', message: `插件安装失败：${result.error}`};
           }
         }
         if (autoRestart) {
           new Restart(e).restart()
         }
-        return { status: 'success', message: `插件 ${name} 安装成功` };
+        return {status: 'success', message: `插件 ${name} 安装成功`};
       }
     }
   }
@@ -249,14 +249,14 @@ export default class IPluginService extends Service {
       let result = await Bot.rm(pluginPath)
       if (!result) {
         logger.error(`[Guoba] 插件卸载失败`);
-        return { status: 'error', message: `插件 ${name} 卸载失败` };
+        return {status: 'error', message: `插件 ${name} 卸载失败`};
       } else {
         new Restart(e).restart()
         logger.info(`[Guoba] 插件 ${name} 卸载成功`);
-        return { status: 'success', message: `插件 ${name} 卸载成功` };
+        return {status: 'success', message: `插件 ${name} 卸载成功`};
       }
     } else {
-      return { status: 'error', message: `插件 ${name} 不存在` };
+      return {status: 'error', message: `插件 ${name} 不存在`};
     }
   }
 
@@ -273,7 +273,7 @@ export default class IPluginService extends Service {
         });
       });
     });
-  
+
     Bot.exec = Bot.exec || ((cmd, opts = {}) => {
       return new Promise((resolve) => {
         if (!opts.quiet) {
@@ -281,17 +281,21 @@ export default class IPluginService extends Service {
         }
         opts.windowsHide = opts.windowsHide ?? true;
         exec(cmd, opts, (error, stdout, stderr) => {
-          resolve({ error, stdout, stderr });
-          if (opts.quiet) return;
-          logger.mark(`[Guoba] 执行命令完成：${logger.blue(cmd)}${stdout?`\n${String(stdout).trim()}`:""}${stderr?logger.red(`\n${String(stderr).trim()}`):""}`);
-          if (error) logger.mark(`[Guoba] 执行命令错误：${logger.blue(cmd)}\n${logger.red(this.Loging(error).trim())}`);
+          resolve({error, stdout, stderr});
+          if (opts.quiet) {
+            return
+          }
+          logger.mark(`[Guoba] 执行命令完成：${logger.blue(cmd)}${stdout ? `\n${String(stdout).trim()}` : ""}${stderr ? logger.red(`\n${String(stderr).trim()}`) : ""}`);
+          if (error) {
+            logger.mark(`[Guoba] 执行命令错误：${logger.blue(cmd)}\n${logger.red((error?.message || error)?.trim?.() ?? '未知错误')}`);
+          }
         });
       });
     });
-  
+
     Bot.rm = Bot.rm || ((file) => {
       return new Promise((resolve) => {
-        fs.rm(file, { force: true, recursive: true }, (err) => {
+        fs.rm(file, {force: true, recursive: true}, (err) => {
           if (err) {
             logger.trace(`[Guoba] 删除${file}错误：${err}`);
             resolve(false);
