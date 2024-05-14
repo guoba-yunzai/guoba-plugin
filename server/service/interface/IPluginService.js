@@ -235,7 +235,7 @@ export default class IPluginService extends Service {
     }
   }
 
-  async uninstallPlugin(name) {
+  async uninstallPlugin(name, autoRestart = true) {
     await this.initBotMethods();
     const pluginPath = `plugins/${name}`;
     const e = {
@@ -251,13 +251,31 @@ export default class IPluginService extends Service {
         logger.error(`[Guoba] 插件卸载失败`);
         return {status: 'error', message: `插件 ${name} 卸载失败`};
       } else {
-        new Restart(e).restart()
+        if (autoRestart) {
+          new Restart(e).restart()
+        }
         logger.info(`[Guoba] 插件 ${name} 卸载成功`);
         return {status: 'success', message: `插件 ${name} 卸载成功`};
       }
     } else {
       return {status: 'error', message: `插件 ${name} 不存在`};
     }
+  }
+
+  /**
+   * 批量卸载插件
+   * @param {string[]} nameArr
+   */
+  async uninstallPluginBatch(nameArr) {
+    let texts = []
+    for (let i = 0; i < nameArr.length; i++) {
+      const name = nameArr[i]
+      // 最后一个插件卸载时自动重启
+      const autoRestart = i === nameArr.length - 1
+      let {message} = await this.uninstallPlugin(name, autoRestart)
+      texts.push(message)
+    }
+    return {status: 'success', message: texts.join('\n')}
   }
 
   async initBotMethods() {

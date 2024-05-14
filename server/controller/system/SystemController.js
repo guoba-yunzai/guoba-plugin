@@ -1,4 +1,5 @@
-import {autowired, Result, RestController} from '#guoba.framework';
+import {autowired, RestController, Result} from '#guoba.framework';
+import {sleep} from '#guoba.utils'
 
 /**
  * 系统相关
@@ -12,9 +13,20 @@ export class SystemController extends RestController {
   }
 
   registerRouters() {
+    this.post('/restart-guoba', this.doRestartGuoba)
+
     this.put('/fs/create-dir', this.putCreateDir)
     this.get('/fs/tree/root', this.getFsTreeRoot)
     this.get('/fs/tree/children', this.getFsTreeChildren)
+  }
+
+  async doRestartGuoba() {
+    if (Guoba && Guoba.reload) {
+      await Promise.any([Guoba.reload(), sleep(500)])
+      return Result.ok({}, '锅巴重启成功~')
+    } else {
+      return Result.error({}, '锅巴服务异常，请手动重启！')
+    }
   }
 
   async putCreateDir(req) {

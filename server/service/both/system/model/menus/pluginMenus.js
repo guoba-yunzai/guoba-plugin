@@ -6,7 +6,7 @@ const pluginsStoreMenu = {
   name: 'PluginsStore',
   component: '/guoba/plugins/index',
   meta: {
-    title: '插件商店',
+    title: '插件管理',
     // icon: 'uil:store',
     icon: 'clarity:plugin-line',
   },

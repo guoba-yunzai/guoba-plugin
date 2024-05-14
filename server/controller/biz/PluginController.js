@@ -58,14 +58,18 @@ export default class PluginController extends RestController {
 
   async uninstallPlugin(req) {
     let {name} = req.body
-    name = name?.trim?.()
+    name = name?.toString?.()?.trim?.()
     if (!name) {
       return Result.error('name不能为空')
     }
-    if (name === 'miao-plugin') {
+    let nameArr = name.split(',')
+    if (nameArr.length === 0) {
+      return Result.error('name不能为空')
+    }
+    if (nameArr.includes('miao-plugin')) {
       return Result.error('抱歉，由于miao-plugin是重要插件，不能卸载！')
     }
-    let text = await this.pluginService.uninstallPlugin(name)
+    let text = await this.pluginService.uninstallPluginBatch(nameArr)
     return Result.ok(text)
   }
 
