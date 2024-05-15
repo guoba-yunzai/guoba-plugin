@@ -43,12 +43,17 @@ export class LoginController extends RestController {
   async codeLoginRequest() {
     const code = await this.loginService.codeLoginRequest()
     if (code) {
-      console.log('#'.repeat(54))
-      console.log('# ' + chalk.green('[Guoba] 验证码登录请求') + '                             #')
-      console.log('# 您正在请求登录，验证码为：' + chalk.yellow(code) + '         #')
-      console.log('# 验证码五分钟内有效且失效前不会再次打印，请尽快输入 #')
-      console.log('# ' + chalk.red('若非本人操作请忽略并考虑是否泄露了登录地址') + '         #')
-      console.log('#'.repeat(54))
+      logger.mark('[Guoba] '
+        + chalk.yellow('您正在请求验证码登录，若没有输出验证码，请将日志级别调整为 ')
+        + chalk.green('info')
+        + chalk.yellow(' 或以上')
+      )
+      logger.info('#'.repeat(54))
+      logger.info('# ' + chalk.green('[Guoba] 验证码登录请求') + '                             #')
+      logger.info('# 您的登录验证码为：' + chalk.yellow(code) + '                 #')
+      logger.info('# 验证码五分钟内有效且失效前不会再次打印，请尽快输入 #')
+      logger.info('# ' + chalk.red('若非本人操作请忽略并考虑是否泄露了登录地址') + '         #')
+      logger.info('#'.repeat(54))
       return Result.ok({}, 'code generated')
     }
     return Result.error('code generate failed')
@@ -58,6 +63,7 @@ export class LoginController extends RestController {
     let {code} = req.body
     const token = await this.loginService.codeLoginCheck(code)
     if (token) {
+      logger.mark('[Guoba] 验证码登录成功')
       return Result.ok({token})
     }
     return Result.error('验证码错误或已失效')

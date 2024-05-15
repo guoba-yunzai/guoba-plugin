@@ -42,18 +42,17 @@ export async function createServer({isInit}) {
   const server = application.server
   // 首次启动输出提示信息
   if (isInit) {
-    logger.mark(`--------- >_< ---------`)
-    logger.mark(`锅巴服务启动成功~ 耗时:${Date.now() - begin}ms`)
+    const tipText = `[Guoba] 启动成功 >_< 耗时: ${Date.now() - begin}ms`
     const hosts = getWebAddress(true)
-    const maxLength = Math.max(34, ...hosts.map(host => host.length + 4));
-    console.log('#'.repeat(maxLength))
-    console.log('# ' + chalk.green('[Guoba] 登录地址') + ' '.repeat(maxLength - 20) + ' #')
+    const maxLength = Math.max(30, ...hosts.map(host => host.length), tipText.length + 6) + 4;
+    logger.mark('#'.repeat(maxLength))
+    logger.mark(`# ${chalk.green(tipText)} #`)
+    logger.info('# ' + chalk.green('登录地址：') + ' '.repeat(maxLength - 14) + ' #')
     for (let host of hosts) {
-      console.log('# ' + chalk.cyan(host) + ' '.repeat(maxLength - host.length - 4) + ' #')
+      logger.info('# ' + chalk.cyan(host) + ' '.repeat(maxLength - host.length - 4) + ' #')
     }
-    console.log('# ' + chalk.magenta('请妥善保管登陆地址，避免泄露！') + ' '.repeat(maxLength - 34) + ' #')
-    console.log('#'.repeat(maxLength))
-    logger.mark(`-----------------------`)
+    logger.info('# ' + chalk.magenta('请妥善保管登陆地址，避免泄露！') + ' '.repeat(maxLength - 34) + ' #')
+    logger.mark('#'.repeat(maxLength))
   }
   return {app, server}
 }
