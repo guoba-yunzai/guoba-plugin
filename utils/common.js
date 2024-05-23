@@ -57,7 +57,7 @@ export async function sendToMaster(msg, all = false, idx = 0) {
  * @param msg 消息
  */
 async function replyPrivate(userId, msg) {
-  userId = Number(userId)
+  userId = Number(userId) || userId
   let friend = Bot.fl.get(userId)
   if (friend) {
     logger.mark(`发送好友消息[${friend.nickname}](${userId})`)
@@ -262,13 +262,14 @@ export function readJson(filePath) {
  * @returns {Promise<boolean|*>}
  */
 export async function makeForwardMsg(e, msg = [], dec = '') {
-  let nickname = Bot.nickname
-  if (e.isGroup) {
-    let info = await Bot.getGroupMemberInfo(e.group_id, Bot.uin)
+  const bot = e.bot || Bot
+  let nickname = bot.nickname
+  if (e.isGroup && bot.getGroupMemberInfo) try {
+    const info = await bot.getGroupMemberInfo(e.group_id, bot.uin)
     nickname = info.card || info.nickname
-  }
+	} catch {}
   let userInfo = {
-    user_id: Bot.uin,
+    user_id: bot.uin,
     nickname,
   }
 
@@ -281,21 +282,28 @@ export async function makeForwardMsg(e, msg = [], dec = '') {
   })
 
   /** 制作转发内容 */
-  if (e.isGroup) {
+  if (e.group?.makeForwardMsg) {
     forwardMsg = await e.group.makeForwardMsg(forwardMsg)
-  } else if (e.friend) {
+  } else if (e.friend?.makeForwardMsg) {
     forwardMsg = await e.friend.makeForwardMsg(forwardMsg)
   } else {
-    return false
+    forwardMsg = await Bot.makeForwardMsg(forwardMsg)
   }
 
   if (dec) {
-    /** 处理描述 */
-    forwardMsg.data = forwardMsg.data
-      .replace(/\n/g, '')
-      .replace(/<title color="#777777" size="26">(.+?)<\/title>/g, '___')
-      .replace(/___+/, `<title color="#777777" size="26">${dec}</title>`)
-  }
+      /** 处理描述 */
+      if (typeof (forwardMsg.data) === 'object') {
+        let detail = forwardMsg.data?.meta?.detail
+        if (detail) {
+          detail.news = [{ text: dec }]
+        }
+      } else {
+        forwardMsg.data = forwardMsg.data
+          .replace(/\n/g, '')
+          .replace(/<title color="#777777" size="26">(.+?)<\/title>/g, '___')
+          .replace(/___+/, `<title color="#777777" size="26">${dec}</title>`)
+      }
+    }
 
   return forwardMsg
 }

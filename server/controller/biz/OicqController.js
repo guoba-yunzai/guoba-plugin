@@ -45,7 +45,7 @@ export class OicqController extends RestController {
     pageNo = !pageNo ? 1 : Number.parseInt(pageNo)
     pageSize = !pageSize ? 10 : Number.parseInt(pageSize)
 
-    let groupList = Bot.getGroupList()
+    let groupList = Bot.getGroupMap?.() || Bot.getGroupList()
     let list = []
     let filter = (_) => true
     // 根据 group_id 模糊查询
@@ -63,7 +63,7 @@ export class OicqController extends RestController {
       }
     }
     // 根据group_id过滤
-    let groupId = group_id ? group_id.split(',').map(u => Number.parseInt(u)) : null
+    let groupId = group_id ? group_id.split(',').map(u => Number(u) || u) : null
     if (groupId && groupId.length > 0) {
       pageNo = 1
       pageSize = groupId.length
@@ -85,7 +85,7 @@ export class OicqController extends RestController {
     pageNo = !pageNo ? 1 : Number.parseInt(pageNo)
     pageSize = !pageSize ? 10 : Number.parseInt(pageSize)
 
-    let friendList = Bot.getFriendList()
+    let friendList = Bot.getFriendMap?.() || Bot.getFriendList()
     let list = []
     let filter = (_) => true
     // 根据 qq 模糊查询
@@ -103,7 +103,7 @@ export class OicqController extends RestController {
       }
     }
     // 根据user_id过滤
-    let userId = user_id ? user_id.split(',').map(u => Number.parseInt(u)) : null
+    let userId = user_id ? user_id.split(',').map(u => Number(u) || u) : null
     if (userId && userId.length > 0) {
       pageNo = 1
       pageSize = userId.length

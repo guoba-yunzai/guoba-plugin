@@ -40,7 +40,7 @@ export default class ConfigServiceImpl extends IConfigService {
   ]
   needHandleFieldKey = [
     'masterQQ', 'disableAdopt', 'whiteGroup', 'blackGroup', 'blackQQ',
-    'botAlias', 'enable', 'disable',
+    'whiteQQ', 'blackUser', 'whiteUser', 'botAlias', 'enable', 'disable',
   ]
 
   /**
@@ -52,7 +52,7 @@ export default class ConfigServiceImpl extends IConfigService {
     }
     const handler = (itemData) => {
       let newData = {}
-      for (let [oKey, oVal] of Object.entries(itemData)) {
+      for (let [oKey, oVal] of Object.entries(itemData || {})) {
         let field = oKey
         let value = oVal
 

@@ -7,37 +7,38 @@ export class OicqService extends Service {
   }
 
   /** 获取一个QQ用户信息 */
-  async pickUser(qq) {
-    let user = Bot.pickUser(qq)
+  async pickUser(userId) {
+    userId = Number(userId) || userId
+    const user = Bot.pickUser(userId)
     return {
-      userId: user.uid,
-      simpleInfo: await user.getSimpleInfo(),
+      userId,
+      simpleInfo: user.info || await user.getInfo?.() || await user.getSimpleInfo?.(),
     }
   }
 
   /** 获取一个QQ群组信息 */
   async pickGroup(groupId) {
-    let group = Bot.pickGroup(Number.parseInt(groupId))
+    groupId = Number(groupId) || groupId
+    const group = Bot.pickGroup(groupId)
     return {
-      groupId: group.gid,
-      info: group.info,
+      groupId,
+      info: group.info || await group.getInfo?.(),
     }
   }
 
   getFriendList() {
-    return toPairsMap(Bot.getFriendList())
+    return toPairsMap(Bot.getFriendMap?.() || Bot.getFriendList())
   }
 
   getFriendCount() {
-    return Bot.getFriendList().size
+    return (Bot.getFriendMap?.() || Bot.getFriendList()).size
   }
 
   getGroupList() {
-    return toPairsMap(Bot.getGroupList())
+    return toPairsMap(Bot.getGroupMap?.() || Bot.getGroupList())
   }
 
   getGroupCount() {
-    return Bot.getGroupList().size
+    return (Bot.getGroupMap?.() || Bot.getGroupList()).size
   }
-
 }
