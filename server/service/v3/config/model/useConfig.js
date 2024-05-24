@@ -1,4 +1,6 @@
 import loader from '../../../../../../../lib/plugins/loader.js'
+import { yunzaiPackage } from '../../../../../utils/package.js'
+const isTRSS = yunzaiPackage.name == 'trss-yunzai'
 
 // 添加群号 prompt
 const addGroupPromptProps = {
@@ -7,19 +9,26 @@ const addGroupPromptProps = {
   okText: '添加',
   rules: [
     {required: true, message: '群号得填上才行哦~'},
-    {min: 5, message: '真的有这么短的群号吗？'},
+    ...(isTRSS ? [] : [{min: 5, message: '真的有这么短的群号吗？'}]),
   ],
 }
-// 添加QQ号 prompt
-const addUserPromptProps = {
-  content: '请输入QQ号：',
+// 添加账号 prompt
+const addUserPromptProps = isTRSS ? i => ({
+  content: `请输入${i}账号：`,
+  placeholder: '请输入账号',
+  okText: '添加',
+  rules: [
+    {required: true, message: '账号得填上才行哦~'},
+  ],
+}) : i => ({
+  content: `请输入${i}QQ号：`,
   placeholder: '请输入QQ号',
   okText: '添加',
   rules: [
     {required: true, message: 'QQ号得填上才行哦~'},
     {min: 5, message: '真的有这么短的QQ号吗？'},
   ],
-}
+})
 
 // 基础配置
 const baseConfig = {
@@ -49,7 +58,87 @@ const baseConfig = {
             ],
             placeholder: '请选择日志等级',
           },
+        }, ...(isTRSS ? [
+        {
+          field: 'log_length',
+          label: '单条日志长度',
+          component: 'InputNumber',
+          componentProps: {
+            min: 0,
+            placeholder: '请输入单条日志长度',
+          },
         },
+        {
+          field: 'log_object',
+          label: '对象日志格式',
+          bottomHelpMessage: '是否显示详细对象日志',
+          component: 'Switch',
+        },
+        {
+          field: 'url',
+          label: '服务器地址',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入服务器地址',
+          },
+        },
+        {
+          field: 'port',
+          label: '服务器端口',
+          component: 'InputNumber',
+          componentProps: {
+            placeholder: '0-65535',
+            min: 0,
+            max: 65535,
+          },
+        },
+        {
+          field: 'update_time',
+          label: '自动更新时间',
+          component: 'InputNumber',
+          componentProps: {
+            min: 0,
+            placeholder: '（分钟）',
+          },
+        },
+        {
+          field: 'restart_time',
+          label: '自动重启时间',
+          component: 'InputNumber',
+          componentProps: {
+            min: 0,
+            placeholder: '（分钟）',
+          },
+        },
+        {
+          field: 'file_to_url_time',
+          label: '文件保存时间',
+          component: 'InputNumber',
+          componentProps: {
+            min: 1,
+            placeholder: '（分钟）',
+          },
+        },
+        {
+          field: 'file_to_url_times',
+          label: '文件访问次数',
+          component: 'InputNumber',
+          componentProps: {
+            min: 1,
+          },
+        },
+        {
+          field: 'msg_type_count',
+          label: '消息类型统计',
+          bottomHelpMessage: '收发消息记录详细类型统计',
+          component: 'Switch',
+        },
+        {
+          field: '/→#',
+          label: '/→#',
+          bottomHelpMessage: '收到的消息以/开头转为#处理',
+          component: 'Switch',
+        }] : [
         {
           field: 'ignore_self',
           label: '过滤自己',
@@ -81,37 +170,10 @@ const baseConfig = {
           },
         },
         {
-          field: 'chromium_path',
-          label: 'chromium路径',
-          bottomHelpMessage: 'chromium其他路径，默认无需填写，需要时可填写chromium的可执行文件绝对路径',
-          component: 'Input',
-          componentProps: {
-            placeholder: '请输入chromium路径',
-          },
-        },
-        {
-          field: 'proxyAddress',
-          label: '代理地址',
-          bottomHelpMessage: '米游社接口代理地址，国际服用',
-          component: 'Input',
-          componentProps: {
-            placeholder: '请输入米游社代理地址',
-          },
-        },
-        {
           field: 'online_msg',
           label: '推送帮助',
           bottomHelpMessage: '被上线时给首个主人QQ推送帮助',
           component: 'Switch',
-        },
-        {
-          field: 'online_msg_exp',
-          label: '推送帮助冷却',
-          bottomHelpMessage: '填上线推送通知的冷却时间',
-          component: 'Input',
-          componentProps: {
-            placeholder: '请输入冷却时间，单位秒',
-          },
         },
         {
           field: 'skip_login',
@@ -136,7 +198,53 @@ const baseConfig = {
           componentProps: {
             placeholder: '请输入传入的QQ版本(如:8.9.63、8.9.68)',
           },
-        }
+        }]),
+        {
+          field: 'online_msg_exp',
+          label: '推送帮助冷却',
+          bottomHelpMessage: '填上线推送通知的冷却时间',
+          component: 'InputNumber',
+          componentProps: {
+            placeholder: '（分钟）',
+          },
+        },
+        {
+          field: 'chromium_path',
+          label: 'chromium路径',
+          bottomHelpMessage: 'chromium其他路径，默认无需填写，需要时可填写chromium的可执行文件绝对路径',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入chromium路径',
+          },
+        },
+        {
+          field: 'puppeteer_ws',
+          label: 'puppeteer接口地址',
+          bottomHelpMessage: 'puppeteer接口地址，默认无需填写',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入puppeteer接口地址',
+          },
+        },
+        {
+          field: 'puppeteer_timeout',
+          label: 'puppeteer截图超时时间',
+          bottomHelpMessage: 'puppeteer截图超时时间，默认无需填写',
+          component: 'InputNumber',
+          componentProps: {
+            min: 0,
+            placeholder: '（毫秒）',
+          },
+        },
+        {
+          field: 'proxyAddress',
+          label: '代理地址',
+          bottomHelpMessage: '米游社接口代理地址，国际服用',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入米游社代理地址',
+          },
+        },
       ],
     },
     {
@@ -165,6 +273,15 @@ const baseConfig = {
           },
         },
         {
+          field: 'username',
+          label: 'Redis用户名',
+          bottomHelpMessage: '没有用户名可以为空',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入Redis用户名',
+          },
+        },
+        {
           field: 'password',
           label: 'Redis密码',
           bottomHelpMessage: '没有密码可以为空',
@@ -189,7 +306,7 @@ const baseConfig = {
 }
 
 const groupConfig = () => {
-  let funOptions = []
+  const funOptions = []
   for (let item of loader.priority) {
     if (item.hasOwnProperty('name') && item.name) {
       if (!funOptions.find(i => i.value === item.name)) {
@@ -197,7 +314,7 @@ const groupConfig = () => {
       }
     }
   }
-  let funComponent = funOptions.length === 0 ? 'GTags' : 'Select'
+  const funComponent = funOptions.length === 0 ? 'GTags' : 'Select'
   return {
     key: 'group',
     title: '群组配置',
@@ -216,7 +333,7 @@ const groupConfig = () => {
         promptProps: addGroupPromptProps,
         schemas: [
           {
-            field: 'groupGlobalCD',
+            field: isTRSS ? 'groupCD' : 'groupGlobalCD',
             label: '整体冷却时间',
             component: 'InputNumber',
             bottomHelpMessage: '群聊中所有指令操作冷却时间，单位毫秒,0 则无限制',
@@ -255,7 +372,50 @@ const groupConfig = () => {
               allowAdd: true,
               allowDel: true,
             },
+          }, ...(isTRSS ? [
+          {
+            field: 'addLimit',
+            label: '添加消息权限',
+            component: 'RadioGroup',
+            bottomHelpMessage: '添加消息是否限制权限',
+            componentProps: {
+              options: [
+                {label: '所有群员都可以添加', value: 0},
+                {label: '群主和管理员才能添加', value: 1},
+                {label: '只有主人才能添加', value: 2},
+              ],
+            },
           },
+          {
+            field: 'addReply',
+            label: '回复消息',
+            component: 'Switch',
+            bottomHelpMessage: '是否回复触发消息',
+            componentProps: {
+              checkedValue: 1,
+              unCheckedValue: 0,
+            },
+          },
+          {
+            field: 'addAt',
+            label: '提及用户',
+            component: 'Switch',
+            bottomHelpMessage: '是否提及触发用户',
+            componentProps: {
+              checkedValue: 1,
+              unCheckedValue: 0,
+            },
+          },
+          {
+            field: 'addRecall',
+            label: '撤回消息',
+            bottomHelpMessage: '是否撤回回复消息',
+            component: 'InputNumber',
+            componentProps: {
+              min: 0,
+              placeholder: '请输入撤回消息时间（秒）',
+            },
+          }] : [
           {
             field: 'imgAddLimit',
             label: '添加表情权限',
@@ -277,7 +437,7 @@ const groupConfig = () => {
             componentProps: {
               placeholder: '请输入添加表情图片大小限制',
             },
-          },
+          }]),
           {
             field: 'addPrivate',
             label: '私聊添加',
@@ -441,6 +601,101 @@ const otherConfig = {
       title: '其他配置',
       desc: '其他配置',
       schemas: [
+        ...(isTRSS ? [
+        {
+          field: 'master',
+          label: '主人账号',
+          bottomHelpMessage: '主人账号，功能不受限制，可以设置多个',
+          component: 'GTags',
+          componentProps: {
+            placeholder: '请输入Bot账号:主人账号',
+            allowAdd: true,
+            allowDel: true,
+            showPrompt: true,
+            promptProps: addUserPromptProps('Bot账号:主人'),
+          },
+        },
+        {
+          field: 'blackUser',
+          label: '黑名单用户',
+          bottomHelpMessage: '黑名单用户，可以设置多个，用英文逗号分隔',
+          component: 'GTags',
+          componentProps: {
+            placeholder: '请输入黑名单用户',
+            allowAdd: true,
+            allowDel: true,
+            showPrompt: true,
+            promptProps: addUserPromptProps('黑名单'),
+          },
+        },
+        {
+          field: 'whiteUser',
+          label: '白名单用户',
+          bottomHelpMessage: '白名单用户，可以设置多个，用英文逗号分隔',
+          component: 'GTags',
+          componentProps: {
+            placeholder: '请输入白名单用户',
+            allowAdd: true,
+            allowDel: true,
+            showPrompt: true,
+            promptProps: addUserPromptProps('白名单'),
+          },
+        }] : [
+        {
+          field: 'masterQQ',
+          label: '主人QQ',
+          bottomHelpMessage: '主人QQ号，功能不受限制，可以设置多个',
+          component: 'GSelectFriend',
+          componentProps: {
+            placeholder: '请选择主人QQ号',
+          },
+        },
+        {
+          field: 'blackQQ',
+          label: '黑名单QQ',
+          bottomHelpMessage: '黑名单QQ，可以设置多个，用英文逗号分隔',
+          component: 'GTags',
+          componentProps: {
+            placeholder: '请输入黑名单QQ',
+            allowAdd: true,
+            allowDel: true,
+            showPrompt: true,
+            promptProps: addUserPromptProps('黑名单'),
+            valueFormatter: ((value) => Number.parseInt(value)).toString(),
+          },
+        },
+        {
+          field: 'whiteQQ',
+          label: '白名单QQ',
+          bottomHelpMessage: '白名单QQ，可以设置多个，用英文逗号分隔',
+          component: 'GTags',
+          componentProps: {
+            placeholder: '请输入白名单QQ',
+            allowAdd: true,
+            allowDel: true,
+            showPrompt: true,
+            promptProps: addUserPromptProps('白名单'),
+            valueFormatter: ((value) => Number.parseInt(value)).toString(),
+          },
+        }]),
+        {
+          field: 'blackGroup',
+          label: '黑名单群',
+          bottomHelpMessage: '黑名单群，可以设置多个',
+          component: 'GSelectGroup',
+          componentProps: {
+            placeholder: '请选择黑名单群',
+          },
+        },
+        {
+          field: 'whiteGroup',
+          label: '白名单群',
+          bottomHelpMessage: '白名单群，可以设置多个',
+          component: 'GSelectGroup',
+          componentProps: {
+            placeholder: '请选择白名单群',
+          },
+        },
         {
           field: 'autoFriend',
           label: '添加好友',
@@ -459,15 +714,6 @@ const otherConfig = {
           componentProps: {
             placeholder: '请输入退群人数',
             min: 0,
-          },
-        },
-        {
-          field: 'masterQQ',
-          label: '主人QQ',
-          bottomHelpMessage: '主人QQ号，功能不受限制，可以设置多个',
-          component: 'GSelectFriend',
-          componentProps: {
-            placeholder: '请选择主人QQ号',
           },
         },
         {
@@ -493,38 +739,6 @@ const otherConfig = {
           componentProps: {
             allowAdd: true,
             allowDel: true,
-          },
-        },
-        {
-          field: 'whiteGroup',
-          label: '白名单群',
-          bottomHelpMessage: '白名单群，可以设置多个',
-          component: 'GSelectGroup',
-          componentProps: {
-            placeholder: '请选择白名单群',
-          },
-        },
-        {
-          field: 'blackGroup',
-          label: '黑名单群',
-          bottomHelpMessage: '黑名单群，可以设置多个',
-          component: 'GSelectGroup',
-          componentProps: {
-            placeholder: '请选择黑名单群',
-          },
-        },
-        {
-          field: 'blackQQ',
-          label: '黑名单QQ',
-          bottomHelpMessage: '黑名单QQ，可以设置多个，用英文逗号分隔',
-          component: 'GTags',
-          componentProps: {
-            placeholder: '请输入黑名单QQ',
-            allowAdd: true,
-            allowDel: true,
-            showPrompt: true,
-            promptProps: addUserPromptProps,
-            valueFormatter: ((value) => Number.parseInt(value)).toString(),
           },
         },
       ],
