@@ -113,7 +113,7 @@ export default class IPluginService extends Service {
                 throw 'supportGuoba必须要定义成一个方法！'
               }
             } catch (e) {
-              logger.error(`[Guoba] 载入guoba.support.js失败：` + (e.message || e))
+              logger.error(`[Guoba] 载入"${plugin.name}"插件的"guoba.support.js"失败：` + (e.message || e))
             }
           }
           PluginsMap.set(plugin.name, plugin)
