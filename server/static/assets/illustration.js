@@ -1,1 +1,1 @@
-var s="/assets/illustration.svg";export{s as _};
+var o="/guoba-plugin-mock-root/assets/illustration.svg";export{o as _};
