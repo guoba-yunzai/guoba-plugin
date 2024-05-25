@@ -1,13 +1,13 @@
 import lodash from "lodash";
 import {Preload} from "#guoba.framework";
-import {cfg, _version, Constant} from "#guoba.platform";
+import {cfg, _version, Constant, _paths} from "#guoba.platform";
 import {isV3, yunzaiVersion} from '#guoba.utils'
 
 // noinspection JSUnusedGlobalSymbols
 export default class ConfigPreload extends Preload {
   constructor(app) {
     const preloadName = '_app.guoba.preload.js'
-    const scriptSrc = `/preload/${preloadName}`
+    const scriptSrc = `${_paths.server.realMountPrefix}/preload/${preloadName}`
     super(app, preloadName, scriptSrc);
     this.watchDynamicCfg()
   }

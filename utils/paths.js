@@ -15,6 +15,7 @@ function initPaths() {
   const staticPath = path.join(pluginRoot, 'server/static')
   // 插件资源目录
   const pluginResources = path.join(pluginRoot, 'resources')
+
   return {
     // Bot根目录
     root: _path,
@@ -23,5 +24,10 @@ function initPaths() {
     pluginRoot,
     staticPath,
     pluginResources,
+
+    server: {
+      // 真实挂载路径前缀
+      realMountPrefix: "/guoba-plugin-mock-root"
+    },
   }
 }

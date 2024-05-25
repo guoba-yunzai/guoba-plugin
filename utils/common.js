@@ -71,8 +71,9 @@ async function replyPrivate(userId, msg) {
  * 获取所有web地址，包括内网、外网
  */
 export async function getAllWebAddress() {
-  let host = cfg.getServerHost()
-  let {port, splicePort} = cfg.get('server')
+  const {splicePort} = cfg.get('server')
+  let host = cfg.serverHost
+  let port = cfg.serverPort
   port = splicePort ? Number.parseInt(port) : null
   port = port === 80 ? null : port
   let custom = []
@@ -91,6 +92,13 @@ export async function getAllWebAddress() {
       }
     }
   }
+  let mountRoot = cfg.serverMountPath.mountRoot
+  mountRoot = mountRoot === '/' ? '' : mountRoot
+  if (mountRoot) {
+    custom = custom.map((i) => i + mountRoot)
+    local = local.map((i) => i + mountRoot)
+    remote = remote.map((i) => i + mountRoot)
+  }
   return {custom, local, remote}
 }
 
@@ -105,8 +113,9 @@ function joinHttpPort(ip, port) {
  * @param allIp 是否展示全部IP
  */
 export function getWebAddress(allIp = false) {
-  let host = cfg.getServerHost()
-  let {port, splicePort} = cfg.get('server')
+  const {splicePort} = cfg.get('server')
+  let host = cfg.serverHost
+  let port = cfg.serverPort
   port = splicePort ? Number.parseInt(port) : null
   port = port === 80 ? null : port
   let hosts = []
@@ -124,6 +133,11 @@ export function getWebAddress(allIp = false) {
         hosts.push(`${item}${port ? ':' + port : ''}`)
       }
     }
+  }
+  let mountRoot = cfg.serverMountPath.mountRoot
+  mountRoot = mountRoot === '/' ? '' : mountRoot
+  if (mountRoot) {
+    hosts = hosts.map((i) => i + mountRoot)
   }
   return hosts
 }

@@ -2,18 +2,18 @@ import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
 import {YamlReader} from '#guoba.framework'
-import {_paths} from '#guoba.platform'
+import {_paths, cfg} from '#guoba.platform'
 import {randomString} from '#guoba.utils'
 
 /** 配置文件 */
 class GuobaConfig {
   constructor() {
-    /** 默认设置 */
+    /** 默认配置 */
     this.defSet = {
       path: path.join(_paths.pluginRoot, 'defSet/application.yaml'),
       reader: null,
     }
-    /** 用户设置 */
+    /** 用户配置 */
     this.config = {
       path: path.join(_paths.pluginRoot, 'config/application.yaml'),
       reader: null,
@@ -64,7 +64,7 @@ class GuobaConfig {
     this.config.reader.set(keyPath, value)
   }
 
-  getServerHost() {
+  get serverHost() {
     let host = this.get('server.host')
     if (Array.isArray(host)) {
       if (host.length <= 1) {
@@ -74,6 +74,37 @@ class GuobaConfig {
       }
     }
     return host
+  }
+
+  get serverPort() {
+    const {port} = this.get('server')
+    return port
+  }
+
+  /**
+   * 服务器挂载路径
+   * @return {{mountRoot: string, mountPrefix: string, mountRootWithSlash: string}}
+   */
+  get serverMountPath() {
+    const mountPrefix = cfg.get('server.mountPrefix') || '/'
+
+    // 挂载路径（末尾不带斜杠）
+    let mountRoot
+    // 挂载路径（末尾带斜杠）
+    let mountRootWithSlash
+
+    if (mountPrefix === '/') {
+      mountRoot = mountPrefix
+      mountRootWithSlash = mountPrefix
+    } else if (mountPrefix.endsWith('/')) {
+      mountRoot = mountPrefix.slice(0, -1)
+      mountRootWithSlash = mountPrefix
+    } else {
+      mountRoot = mountPrefix
+      mountRootWithSlash = mountPrefix + '/'
+    }
+
+    return {mountPrefix, mountRoot, mountRootWithSlash}
   }
 
   getJwtSecret() {
