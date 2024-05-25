@@ -2,8 +2,15 @@
  * preload：预加载js
  */
 export default class Preload {
-  constructor(app, preloadName, scriptSrc) {
-    this.app = app
+  /**
+   *
+   * @param {GuobaApplication} guobaApp
+   * @param preloadName
+   * @param scriptSrc
+   */
+  constructor(guobaApp, preloadName, scriptSrc) {
+    this.guobaApp = guobaApp
+    this.app = this.guobaApp.app
     this.preloadName = preloadName
     this.scriptSrc = scriptSrc
     this.created()

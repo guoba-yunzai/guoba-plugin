@@ -6,7 +6,7 @@ import {useComponents} from './loader/loadComponents.js'
 
 /**
  * @typedef PreloadType
- * @property {Function} hook 预加载文件路径
+ * @property {Function} hook 预加载html钩子
  * @property {String} path 预加载文件路径
  * @property {String} code 预加载代码
  * @property {String} staticPath 静态资源路径
@@ -20,8 +20,15 @@ import {useComponents} from './loader/loadComponents.js'
 
 /**
  * @typedef GuobaAppArgs
+ * @property {Express} app
+ * @property {http.Server} server
+ * @property {string} prefix 路由前缀
  * @property {Boolean} hotReload TODO 是否热加载
  * @property {Number} port 服务端口
+ *
+ * @property {Function} created 生命周期函数：应用创建完成回调
+ * @property {Function} mounted 生命周期函数：应用挂载完成回调
+ *
  * @property {String} basePath 项目根路径
  * @property {String} staticPath 静态资源路径
  * @property {String[]} componentPaths 组件路径 - 包括 controller、service等
@@ -44,26 +51,36 @@ export default class GuobaApplication {
   /** @type http.Server */
   server
 
+  globalDecorators = []
+
   /**
    * 启动应用
    * @param {GuobaAppArgs} args 应用配置
    * @returns {GuobaApplication}
    */
   static async run(args) {
-    const app = express()
-    const server = await getListenFn(args)(app, args.port);
-    const application = new GuobaApplication(args, app, server);
+    const app = args?.app ? args.app : express()
+    const server = args?.server ? args.server : await getListenFn(args)(app, args.port);
+    const guobaApp = new GuobaApplication(args, app, server);
+
+    if (typeof args.created === 'function') {
+      args.created(guobaApp)
+    }
 
     // 预加载
-    await usePreload(app, args);
+    await usePreload(guobaApp);
     // 辅助工具
-    useHelper(app, args.staticPath);
+    useHelper(guobaApp);
     // 预装饰器配置
-    app.globalDecorators = await useDecorator(app, args);
+    await useDecorator(guobaApp);
     // 加载全部组件
-    await useComponents(app, args);
+    await useComponents(guobaApp);
 
-    return application
+    if (typeof args.mounted === 'function') {
+      args.mounted(guobaApp)
+    }
+
+    return guobaApp
   }
 
   /**
@@ -82,7 +99,11 @@ export default class GuobaApplication {
 
 }
 
-/** 获取实际的监听函数 */
+/**
+ * 获取实际的监听函数
+ * @param args
+ * @return {function(*, *): Promise<http.Server>}
+ */
 function getListenFn(args) {
   const listen = args?.overrides?.listen;
   if (typeof listen === "function") {

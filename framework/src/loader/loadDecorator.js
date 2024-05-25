@@ -5,12 +5,11 @@ import {loadClass} from "../utils/common.js";
 
 /**
  * 加载全局装饰器
- * @param app
- * @param {GuobaAppArgs} args
+ * @param {GuobaApplication} guobaApp
  * @return {Promise<*[]>}
  */
-export async function useDecorator(app, args) {
-  const {decorators} = args
+export async function useDecorator(guobaApp) {
+  const {_args: {decorators}} = guobaApp
   if (!Array.isArray(decorators) || decorators.length === 0) {
     return []
   }
@@ -26,5 +25,6 @@ export async function useDecorator(app, args) {
       logger.error(`[Guoba] load decorator error: ${chalk.red(path.basename(item.path))}`, e)
     }
   }
-  return instances;
+  guobaApp.globalDecorators = instances
+  return instances
 }

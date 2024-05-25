@@ -1,15 +1,14 @@
 import lodash from 'lodash'
-import {Interceptor, Service, Controller, instancesMap} from "../../index.js";
-import {loadClasses, instanceOf} from "../utils/common.js";
+import {Controller, instancesMap, Interceptor, Service} from "../../index.js"
+import {instanceOf, loadClasses} from "../utils/common.js"
 
 /**
  * 加载所有组件
- * @param app
- * @param {GuobaAppArgs} args
+ * @param {GuobaApplication} guobaApp
  * @return {Promise<void>}
  */
-export async function useComponents(app, args) {
-  const {componentPaths} = args
+export async function useComponents(guobaApp) {
+  const {_args: {componentPaths}} = guobaApp
   if (!Array.isArray(componentPaths) && componentPaths.length === 0) {
     return
   }
@@ -33,7 +32,7 @@ export async function useComponents(app, args) {
     while (i < entries.length) {
       const [name, clazz] = entries[i];
       if (instanceOf(clazz, type)) {
-        instancesMap.set(lodash.camelCase(name), new clazz(app))
+        instancesMap.set(lodash.camelCase(name), new clazz(guobaApp))
         entries.splice(i, 1);
       } else {
         i++

@@ -4,13 +4,15 @@ import bodyParser from 'body-parser'
 
 /**
  * 一些辅助工具
- * @param app
- * @param staticPath
+ * @param {GuobaApplication} guobaApp
  */
-export function useHelper(app, staticPath) {
-  // 静态资源
-  app.set('views', staticPath)
-  app.use(express.static(staticPath))
+export function useHelper(guobaApp) {
+  const {app, _args} = guobaApp
+  if (_args.staticPath) {
+    // 静态资源
+    app.set('views', _args.staticPath)
+    app.use(_args.prefix, express.static(_args.staticPath))
+  }
   // parse application/json
   app.use(bodyParser.json())
   // 上传文件

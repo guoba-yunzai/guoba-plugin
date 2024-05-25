@@ -2,9 +2,12 @@
  * 拦截器基类
  */
 export default class Interceptor {
-
-  constructor(app) {
-    this.app = app
+  /**
+   * @param {GuobaApplication} guobaApp
+   */
+  constructor(guobaApp) {
+    this.guobaApp = guobaApp
+    this.app = this.guobaApp.app
     this.app.use(this.handler.bind(this))
   }
 

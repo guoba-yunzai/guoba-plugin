@@ -2,8 +2,12 @@
  * 服务基类
  */
 export default class Service {
-  constructor(app) {
-    this.app = app
+  /**
+   * @param {GuobaApplication} guobaApp
+   */
+  constructor(guobaApp) {
+    this.guobaApp = guobaApp
+    this.app = this.guobaApp.app
   }
 
   static priority = 1000

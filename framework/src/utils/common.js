@@ -25,7 +25,7 @@ export async function loadClasses(rootPath, clazz, classes = {}) {
  *
  * @param filePath
  * @param clazz
- * @param onlyDefault? 是否只处理 default
+ * @param onlyDefault 是否只处理 default
  * @return Promise<*>
  */
 export async function loadClass(filePath, clazz, onlyDefault = false) {

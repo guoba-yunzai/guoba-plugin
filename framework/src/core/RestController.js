@@ -1,5 +1,5 @@
 import express from 'express'
-import {Result, GuobaError, Controller} from "../../index.js";
+import {Controller, GuobaError, Result} from "../../index.js"
 
 const DEFAULT_OPTIONS = {}
 
@@ -10,17 +10,27 @@ export default class RestController extends Controller {
   /**
    *
    * @param prefix
-   * @param app
+   * @param {GuobaApplication} guobaApp
    * @param options
    */
-  constructor(prefix = '/', app, options = {}) {
-    super(app)
+  constructor(prefix = '/', guobaApp, options = {}) {
+    super(guobaApp)
     this.options = Object.assign({}, DEFAULT_OPTIONS, options)
     // 创建路由
     this.router = express.Router()
     // 注册路由
     this.registerRouters()
-    this.app.use(`/api${prefix}`, this.router)
+    // 挂载路由
+    let argsPrefix = this.guobaApp._args.prefix
+    if (argsPrefix && argsPrefix !== '/') {
+      if (argsPrefix.endsWith('/')) {
+        argsPrefix = argsPrefix.slice(0, -1)
+      }
+    } else {
+      argsPrefix = ''
+    }
+    console.log('constructor - prefix :', `${argsPrefix}${prefix}`)
+    this.app.use(`${argsPrefix}${prefix}`, this.router)
   }
 
   /** 注册路由 */
@@ -94,11 +104,11 @@ export default class RestController extends Controller {
       if (!Array.isArray(decorators)) {
         decorators = []
       }
-      if (!Array.isArray(this.app.globalDecorators)) {
-        this.app.globalDecorators = []
+      if (!Array.isArray(this.guobaApp.globalDecorators)) {
+        this.guobaApp.globalDecorators = []
       }
       // 全局预装饰器
-      decorators = [...this.app.globalDecorators, ...decorators]
+      decorators = [...this.guobaApp.globalDecorators, ...decorators]
       // 执行装饰器
       for (const decorator of decorators) {
         let ret = await decorator.execute(pjp, req, res)

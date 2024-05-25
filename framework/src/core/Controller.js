@@ -2,8 +2,12 @@
  * 控制器基类
  */
 export default class Controller {
-  constructor(app) {
-    this.app = app
+  /**
+   * @param {GuobaApplication} guobaApp
+   */
+  constructor(guobaApp) {
+    this.guobaApp = guobaApp
+    this.app = this.guobaApp.app
     this.created()
   }
 

@@ -6,21 +6,20 @@ import {loadClass} from "../utils/common.js";
 
 /**
  * 依次创建页面预加载
- * @param app
- * @param {GuobaAppArgs} args
+ * @param {GuobaApplication} guobaApp
  */
-export async function usePreload(app, args) {
-  const {preloads} = args
+export async function usePreload(guobaApp) {
+  const {_args: {preloads}} = guobaApp
   for (const item of preloads) {
-    await hookAppPreloads(app, item)
+    await hookAppPreloads(guobaApp, item)
   }
 }
 
 /**
- * @param app
+ * @param {GuobaApplication} guobaApp
  * @param {PreloadType} preload
  */
-async function hookAppPreloads(app, preload) {
+async function hookAppPreloads(guobaApp, preload) {
   const importItem = await loadClass(preload.path, Preload, true);
   if (importItem == null) {
     return
@@ -28,13 +27,13 @@ async function hookAppPreloads(app, preload) {
   let instance = null
   try {
     // noinspection JSValidateTypes
-    instance = new importItem(app)
+    instance = new importItem(guobaApp)
   } catch (e) {
     logger.error(`[Guoba] load preload error: ${chalk.red(path.basename(preload.path))}`, e)
     return
   }
   const reg = new RegExp('<!--#GUO\\{' + preload.code + '}BA#-->');
-  app.use(async (req, res, next) => {
+  guobaApp.app.use(async (req, res, next) => {
     const flag = await preload.hook(req)
     if (flag) {
       // 替换tag
