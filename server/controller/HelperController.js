@@ -1,17 +1,17 @@
-import {autowired, Result, RestController} from '#guoba.framework';
-import {cfg} from '#guoba.platform';
+import {autowired, Result} from '#guoba.framework'
+import {ApiController, cfg} from '#guoba.platform'
 
 const RedisDecorator = await Guoba.GID('#/decorator/RedisDecorator.js')
 
 /**
  * 工具类Controller
  */
-export default class HelperController extends RestController {
+export default class HelperController extends ApiController {
 
   helperService = autowired('helperService')
 
-  constructor(app) {
-    super('/helper', app)
+  constructor(guobaApp) {
+    super('/helper', guobaApp)
   }
 
   registerRouters() {

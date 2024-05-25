@@ -1,8 +1,9 @@
-import {Result, RestController} from '#guoba.framework';
+import {Result} from '#guoba.framework'
+import {ApiController} from '#guoba.platform'
 
-export class UserController extends RestController {
-  constructor(app) {
-    super('/user', app)
+export class UserController extends ApiController {
+  constructor(guobaApp) {
+    super('/user', guobaApp)
   }
 
   registerRouters() {

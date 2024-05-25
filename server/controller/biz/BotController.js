@@ -1,11 +1,13 @@
-import {RestController, Result} from '#guoba.framework';
+import {Result} from '#guoba.framework'
+import {ApiController} from '#guoba.platform'
+
 import {Restart} from "../../../../other/restart.js"
 
 /** Bot相关操作 */
-export class BotController extends RestController {
+export class BotController extends ApiController {
 
-  constructor(app) {
-    super('/bot', app)
+  constructor(guobaApp) {
+    super('/bot', guobaApp)
   }
 
   registerRouters() {

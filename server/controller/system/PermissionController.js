@@ -1,11 +1,12 @@
-import {autowired, Result, RestController} from '#guoba.framework';
+import {autowired, Result} from '#guoba.framework'
+import {ApiController} from '#guoba.platform'
 
-export class PermissionController extends RestController {
+export class PermissionController extends ApiController {
 
   systemService = autowired('systemService')
 
-  constructor(app) {
-    super('', app)
+  constructor(guobaApp) {
+    super('', guobaApp)
   }
 
   registerRouters() {

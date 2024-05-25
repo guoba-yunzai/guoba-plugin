@@ -1,12 +1,13 @@
-import {autowired, RestController, Result} from '#guoba.framework';
 import chalk from 'chalk';
+import {autowired, Result} from '#guoba.framework';
+import {ApiController} from '#guoba.platform'
 
-export class LoginController extends RestController {
+export class LoginController extends ApiController {
 
   loginService = autowired('loginService')
 
-  constructor(app) {
-    super('', app)
+  constructor(guobaApp) {
+    super('', guobaApp)
   }
 
   registerRouters() {

@@ -1,19 +1,19 @@
 import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
-import {_paths} from '#guoba.platform'
-import {autowired, Result, RestController} from '#guoba.framework';
+import {_paths, ApiController} from '#guoba.platform'
+import {autowired, Result} from '#guoba.framework'
 
 /**
  * 首页相关查询
  */
-export class HomeController extends RestController {
+export class HomeController extends ApiController {
 
   botService = autowired('botService')
   oicqService = autowired('oicqService')
 
-  constructor(app) {
-    super('/home', app)
+  constructor(guobaApp) {
+    super('/home', guobaApp)
   }
 
   registerRouters() {

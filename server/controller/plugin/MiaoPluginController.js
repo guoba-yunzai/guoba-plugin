@@ -1,10 +1,10 @@
-import {autowired, Result, RestController} from '#guoba.framework';
-import {PluginsMap} from '#guoba.platform'
+import {autowired, Result} from '#guoba.framework';
+import {ApiController, PluginsMap} from '#guoba.platform'
 
-export default class MiaoPluginController extends RestController {
+export default class MiaoPluginController extends ApiController {
 
-  constructor(app) {
-    super('/plugin/miao', app)
+  constructor(guobaApp) {
+    super('/plugin/miao', guobaApp)
   }
 
   async registerRouters() {

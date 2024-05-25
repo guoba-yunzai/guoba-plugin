@@ -1,12 +1,13 @@
-import {autowired, Result, RestController, Pager} from '#guoba.framework';
+import {autowired, Pager, Result} from '#guoba.framework'
+import {ApiController} from '#guoba.platform'
 
 /** QQ相关操作 */
-export class OicqController extends RestController {
+export class OicqController extends ApiController {
 
   oicqService = autowired('oicqService')
 
-  constructor(app) {
-    super('/oicq', app)
+  constructor(guobaApp) {
+    super('/oicq', guobaApp)
   }
 
   registerRouters() {

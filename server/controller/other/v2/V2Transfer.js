@@ -1,15 +1,15 @@
 import path from 'path'
 import moment from 'moment'
 import child from 'child_process'
-import {Result, RestController} from '#guoba.framework';
-import {_paths} from '#guoba.platform'
+import {Result} from '#guoba.framework'
+import {_paths, ApiController} from '#guoba.platform'
 import {isV2, sleep} from '#guoba.utils'
-import {ACTION_CODE, examplePath, checkJsCompatibility} from './child/constant.js'
+import {ACTION_CODE, checkJsCompatibility, examplePath} from './child/constant.js'
 
 /**
  * V2迁移
  */
-export default class V2Transfer extends RestController {
+export default class V2Transfer extends ApiController {
 
   constructor(app) {
     super('/v2-transfer', app)
