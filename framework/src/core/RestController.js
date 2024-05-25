@@ -29,7 +29,6 @@ export default class RestController extends Controller {
     } else {
       argsPrefix = ''
     }
-    console.log('constructor - prefix :', `${argsPrefix}${prefix}`)
     this.app.use(`${argsPrefix}${prefix}`, this.router)
   }
 

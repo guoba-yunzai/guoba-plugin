@@ -66,6 +66,12 @@ function appCreated(guobaApp) {
   const {app} = guobaApp
   // 重定向根路径，用于自定义挂载路径路径
   app.use((req, res, next) => {
+
+    if (req.originalUrl.startsWith(realRoot)) {
+      next()
+      return
+    }
+
     // 1. 请求的是挂载根路径
     if (req.path === mountRoot) {
       if (req.path !== '/') {
