@@ -1,7 +1,7 @@
 import path from "path";
 import {GuobaApplication} from "#guoba.framework";
 import {_paths, cfg, GuobaSupportMap, PluginsMap} from '#guoba.platform';
-import {getWebAddress, isV3} from "#guoba.utils";
+import {getWebAddress, isTRSS, isV3} from "#guoba.utils";
 import {listen} from './helper/listen.js'
 import chalk from 'chalk'
 
@@ -13,9 +13,27 @@ export async function createServer({isInit}) {
   // 初始化
   PluginsMap.clear()
   GuobaSupportMap.clear()
+
+  const serverPort = cfg.serverPort
+
+  const args = {
+    app: null,
+    server: null,
+    port: serverPort,
+  }
+
+  if (isTRSS && cfg.get('server.helloTRSS') && Bot.express) {
+    args.app = Bot.express
+    args.server = Bot.server
+    logger.mark(`[Guoba] 当前运行在TRSS环境，已共享端口号`)
+    if (Array.isArray(Bot.express.quiet)) {
+      Bot.express.quiet.push(cfg.serverMountPath, _paths.server.realMountPrefix)
+    }
+  }
+
   // 启动服务
   const application = await GuobaApplication.run({
-    port: cfg.get('server.port'),
+    ...args,
     prefix: _paths.server.realMountPrefix,
     staticPath: _paths.staticPath,
     created: appCreated,

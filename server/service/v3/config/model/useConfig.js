@@ -1,6 +1,5 @@
 import loader from '../../../../../../../lib/plugins/loader.js'
-import { yunzaiPackage } from '../../../../../utils/package.js'
-const isTRSS = yunzaiPackage.name == 'trss-yunzai'
+import {isTRSS} from '#guoba.utils'
 
 // 添加群号 prompt
 const addGroupPromptProps = {

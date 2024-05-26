@@ -2,12 +2,13 @@ import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
 import {YamlReader} from '#guoba.framework'
-import {_paths, cfg} from '#guoba.platform'
-import {randomString} from '#guoba.utils'
+import {_paths} from '#guoba.platform'
+import {isTRSS, randomString} from '#guoba.utils'
 
 /** 配置文件 */
 class GuobaConfig {
-  constructor() {
+  constructor(options) {
+    this.trssCfg = options.trssCfg
     /** 默认配置 */
     this.defSet = {
       path: path.join(_paths.pluginRoot, 'defSet/application.yaml'),
@@ -77,7 +78,10 @@ class GuobaConfig {
   }
 
   get serverPort() {
-    const {port} = this.get('server')
+    const {port, helloTRSS} = this.get('server')
+    if (isTRSS && helloTRSS) {
+      return this.trssCfg.bot.port
+    }
     return port
   }
 
@@ -86,7 +90,13 @@ class GuobaConfig {
    * @return {{mountRoot: string, mountPrefix: string, mountRootWithSlash: string}}
    */
   get serverMountPath() {
-    const mountPrefix = cfg.get('server.mountPrefix') || '/'
+    let {mountPrefix, helloTRSS} = this.get('server')
+    mountPrefix = mountPrefix ? mountPrefix : '/'
+
+    // 集成trss下默认前缀为 /guoba
+    if (isTRSS && helloTRSS && mountPrefix === '/') {
+      mountPrefix = "/guoba"
+    }
 
     // 挂载路径（末尾不带斜杠）
     let mountRoot
@@ -120,5 +130,11 @@ class GuobaConfig {
 
 }
 
+const options = {}
+
+if (isTRSS) {
+  options['trssCfg'] = (await import('../../../lib/config/config.js')).default
+}
+
 /** Guoba配置 */
-export default new GuobaConfig()
+export default new GuobaConfig(options)

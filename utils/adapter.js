@@ -1,7 +1,7 @@
 import {yunzaiPackage} from './package.js'
 
 // 检查yunzai版本
-export const {isV2, isV3, yunzaiVersion} = checkVersion();
+export const {isV2, isV3, isTRSS, yunzaiVersion} = checkVersion();
 // 是否开发模式
 export const isDev = (process.argv || []).includes('dev')
 
@@ -19,9 +19,12 @@ function checkVersion() {
     }
   }
 
+  const isTRSS = yunzaiPackage.name === 'trss-yunzai'
+
   return {
     isV2,
     isV3,
+    isTRSS,
     yunzaiVersion: version,
   }
 }

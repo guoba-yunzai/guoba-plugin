@@ -21,6 +21,8 @@ server:
   splicePort: true
   # 网站ICP备案号
   ICPNo: ''
+  # 是否整合trss，若开启则会和trss共享端口号，并且默认挂载到 /guoba 路径下
+  helloTRSS: true
 
 # jwt配置
 jwt:
