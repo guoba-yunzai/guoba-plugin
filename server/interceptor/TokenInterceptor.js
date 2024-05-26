@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
-import {autowired, Result, Interceptor} from "#guoba.framework";
-import {cfg, Constant} from "#guoba.platform";
+import {autowired, Interceptor, Result} from "#guoba.framework";
+import {_paths, cfg, Constant} from "#guoba.platform";
 
 // 弱令牌（只能用来访问静态资源等）
 const liteInclude = [
@@ -34,9 +34,9 @@ export default class TokenInterceptor extends Interceptor {
   }
 
   async handler(req, res, next) {
-    if (!include.find(reg => reg.test(req.path))) {
+    if (!include.find(reg => this.check(reg, req))) {
       next()
-    } else if (exclude.find(reg => reg.test(req.path))) {
+    } else if (exclude.find(reg => this.check(reg, req))) {
       next()
     } else {
       // 从query里获取token
@@ -67,6 +67,20 @@ export default class TokenInterceptor extends Interceptor {
       let result = Result.noLogin()
       res.status(result.httpStatus).json(result.toJSON())
     }
+  }
+
+  /**
+   * 检查是否reg是否通过校验，兼容自定义前缀
+   * @param {RegExp} reg
+   * @param {Request} req
+   */
+  check(reg, req) {
+    const {realMountPrefix} = _paths.server
+    let {path} = req
+    if (path.startsWith(realMountPrefix)) {
+      path = path.substring(realMountPrefix.length)
+    }
+    return reg.test(path)
   }
 
   static priority = 100

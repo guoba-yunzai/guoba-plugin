@@ -1,3 +1,5 @@
+import {_paths} from '#guoba.platform'
+
 /**
  * 判断插件是否显示在菜单中
  * @param supportObject
@@ -24,5 +26,5 @@ export function parseShowInMenu(supportObject) {
  * @return {string|*}
  */
 export function getPluginIconPath(pluginInfo) {
-  return pluginInfo?.iconPath ? `/guoba-plugin-mock-root/api/plugin/s/${pluginInfo.name}/icon` : void 0
+  return pluginInfo?.iconPath ? `${_paths.server.realMountPrefix}/api/plugin/s/${pluginInfo.name}/icon` : void 0
 }
