@@ -47,7 +47,7 @@ export default class TokenInterceptor extends Interceptor {
       if (token) {
         // 判断是否是弱令牌
         if (token.length === 8 && token === this.systemService.getLiteToken()) {
-          if (liteInclude.find(reg => reg.test(req.path))) {
+          if (liteInclude.find(reg => this.check(reg, req))) {
             next()
             return
           }

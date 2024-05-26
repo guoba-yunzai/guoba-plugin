@@ -1,6 +1,6 @@
 {
   "name": "guoba-plugin",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Yunzai-Bot插件",
   "type": "module",
   "module": "index.js",
@@ -19,14 +19,18 @@
     "multer": "^1.4.5-lts.1",
     "body-parser": "^1.20.0",
     "socket.io": "^4.5.1",
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^9.0.0"
   },
   "devDependencies": {},
   "keywords": [
+    "锅巴",
+    "Guoba",
+    "Guoba-Plugin",
     "喵崽",
     "Miao-Yunzai",
     "云崽",
     "Yunzai-Bot",
+    "TRSS-Yunzai",
     "原神",
     "Genshin"
   ],

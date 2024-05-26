@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import fetch from 'node-fetch'
 import {GitUtils} from '#guoba.utils'
+import {_paths} from '#guoba.platform'
 
 /**
  * 通过本地仓库解析插件列表
@@ -217,7 +218,7 @@ export function parseReadmeLink(text, baseUrl) {
   let fn = ($0, $1) => {
     let url = ''
     if (checkUrl($1)) {
-      url = `/api/helper/transit?url=${encodeURIComponent($1)}`
+      url = `${_paths.server.realMountPrefix}/api/helper/transit?url=${encodeURIComponent($1)}`
       return $0.replace($1, url)
     }
     if (/^https?/i.test($1)) {
@@ -225,7 +226,7 @@ export function parseReadmeLink(text, baseUrl) {
     }
     url = `${baseUrl}/${$1.replace(/^\//, '')}`
     if (checkUrl(url)) {
-      url = `/api/helper/transit?url=${encodeURIComponent(url)}`
+      url = `${_paths.server.realMountPrefix}/api/helper/transit?url=${encodeURIComponent(url)}`
     }
     return $0.replace($1, url)
   }

@@ -13,9 +13,9 @@ server:
   # 启动地址（仅用于控制台输出）
   # auto 为自动获取IP地址
   host: auto
-  # 启动端口号
+  # 启动端口号（修改完需要重启）
   port: 50831
-  # 项目部署路径
+  # 项目部署路径（修改完需要重启）
   mountPrefix: "/"
   # 是否需要拼接端口号
   splicePort: true

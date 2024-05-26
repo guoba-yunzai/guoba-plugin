@@ -1,5 +1,6 @@
 import fetch from 'node-fetch'
 import {sleep} from '#guoba.utils'
+import {_paths} from '#guoba.platform'
 
 export function listen(app, port) {
   return new Promise((resolve, reject) => {
@@ -20,7 +21,7 @@ export function listen(app, port) {
         logger.mark(`[Guoba] 端口号 ${port} 已被占用，正在进行第 ${num++} 次重试…`)
         try {
           await Promise.race([
-            fetch(`http://localhost:${port}/api/helper/release_port`, {method: 'DELETE'}),
+            fetch(`http://localhost:${port}${_paths.server.realMountPrefix}/api/helper/release_port`, {method: 'DELETE'}),
             sleep(8000),
           ]).catch(() => 0)
           await sleep(duration)
