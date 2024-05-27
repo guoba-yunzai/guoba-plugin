@@ -27,7 +27,10 @@ export async function createServer({isInit}) {
     args.server = Bot.server
     logger.mark(`[Guoba] 当前运行在TRSS环境，已共享端口号`)
     if (Array.isArray(Bot.express.quiet)) {
-      Bot.express.quiet.push(cfg.serverMountPath, _paths.server.realMountPrefix)
+      Bot.express.quiet.push(_paths.server.realMountPrefix)
+      if (mountRoot !== '/') {
+        Bot.express.quiet.push(mountRoot)
+      }
     }
   }
 
