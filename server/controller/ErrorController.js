@@ -1,4 +1,4 @@
-import {Result, RestController} from '#guoba.framework'
+import {RestController, Result} from '#guoba.framework'
 
 /** 错误处理 */
 export default class ErrorController extends RestController {
@@ -6,11 +6,12 @@ export default class ErrorController extends RestController {
     super('', app)
   }
 
-  created() {
-    this.app.all('*', function (req, res) {
-      let result = Result.notFound()
-      res.status(result.httpStatus).json(result.toJSON())
-    })
+  registerRouters() {
+    this.all('*', this.handle404)
+  }
+
+  handle404(req, res) {
+    return Result.notFound()
   }
 
   /** 加载优先级 */
