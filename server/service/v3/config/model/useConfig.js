@@ -110,6 +110,38 @@ const baseConfig = {
           },
         },
         {
+          field: 'update_cron',
+          label: '定时更新cron表达式',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入cron表达式'
+          }
+        },
+        {
+          field: 'restart_cron',
+          label: '定时重启cron表达式',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入cron表达式'
+          }
+        },
+        {
+          field: 'stop_cron',
+          label: '定时关机cron表达式',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入cron表达式'
+          }
+        },
+        {
+          field: 'start_cron',
+          label: '定时开机cron表达式',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入cron表达式'
+          }
+        },
+        {
           field: 'file_to_url_time',
           label: '文件保存时间',
           component: 'InputNumber',
