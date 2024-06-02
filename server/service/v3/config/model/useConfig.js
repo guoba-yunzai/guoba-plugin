@@ -115,40 +115,40 @@ const baseConfig = {
           field: 'update_cron',
           label: '定时更新cron',
           bottomHelpMessage: '在指定的时间更新',
-          component: 'GTags',
+          component: 'EasyCron',
           componentProps: {
-            allowAdd: true,
-            allowDel: true,
+            multiple: true,
+            placeholder: '请输入或选择Cron表达式',
           },
         },
         {
           field: 'restart_cron',
           label: '定时重启cron',
           bottomHelpMessage: '在指定的时间重启',
-          component: 'GTags',
+          component: 'EasyCron',
           componentProps: {
-            allowAdd: true,
-            allowDel: true,
+            multiple: true,
+            placeholder: '请输入或选择Cron表达式',
           },
         },
         {
           field: 'stop_cron',
           label: '定时关机cron',
           bottomHelpMessage: '在指定的时间关机',
-          component: 'GTags',
+          component: 'EasyCron',
           componentProps: {
-            allowAdd: true,
-            allowDel: true,
+            multiple: true,
+            placeholder: '请输入或选择Cron表达式',
           },
         },
         {
           field: 'start_cron',
           label: '定时开机cron',
           bottomHelpMessage: '在指定的时间开机',
-          component: 'GTags',
+          component: 'EasyCron',
           componentProps: {
-            allowAdd: true,
-            allowDel: true,
+            multiple: true,
+            placeholder: '请输入或选择Cron表达式',
           },
         },
         {
@@ -560,7 +560,9 @@ const genshinConfig = {
           label: '签到定时任务',
           component: 'EasyCron',
           bottomHelpMessage: '米游社原神签到定时任务，Cron表达式，默认00:02开始执行，每10s签到一个',
-          componentProps: {},
+          componentProps: {
+            placeholder: '请输入或选择Cron表达式',
+          },
         },
         {
           field: 'abbrSetAuth',
