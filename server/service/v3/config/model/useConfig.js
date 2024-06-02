@@ -94,7 +94,6 @@ const baseConfig = {
         {
           field: 'update_time',
           label: '自动更新时间',
-          bottomHelpMessage: '启动超过指定时间后更新',
           component: 'InputNumber',
           componentProps: {
             min: 0,
@@ -104,7 +103,6 @@ const baseConfig = {
         {
           field: 'restart_time',
           label: '自动重启时间',
-          bottomHelpMessage: '启动超过指定时间后重启',
           component: 'InputNumber',
           componentProps: {
             min: 0,
@@ -113,43 +111,35 @@ const baseConfig = {
         },
         {
           field: 'update_cron',
-          label: '定时更新cron',
-          bottomHelpMessage: '在指定的时间更新',
-          component: 'GTags',
+          label: '定时更新cron表达式',
+          component: 'Input',
           componentProps: {
-            allowAdd: true,
-            allowDel: true,
-          },
+            placeholder: '请输入cron表达式'
+          }
         },
         {
           field: 'restart_cron',
-          label: '定时重启cron',
-          bottomHelpMessage: '在指定的时间重启',
-          component: 'GTags',
+          label: '定时重启cron表达式',
+          component: 'Input',
           componentProps: {
-            allowAdd: true,
-            allowDel: true,
-          },
+            placeholder: '请输入cron表达式'
+          }
         },
         {
           field: 'stop_cron',
-          label: '定时关机cron',
-          bottomHelpMessage: '在指定的时间关机',
-          component: 'GTags',
+          label: '定时关机cron表达式',
+          component: 'Input',
           componentProps: {
-            allowAdd: true,
-            allowDel: true,
-          },
+            placeholder: '请输入cron表达式'
+          }
         },
         {
           field: 'start_cron',
-          label: '定时开机cron',
-          bottomHelpMessage: '在指定的时间开机',
-          component: 'GTags',
+          label: '定时开机cron表达式',
+          component: 'Input',
           componentProps: {
-            allowAdd: true,
-            allowDel: true,
-          },
+            placeholder: '请输入cron表达式'
+          }
         },
         {
           field: 'file_to_url_time',
