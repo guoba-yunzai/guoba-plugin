@@ -5,11 +5,9 @@ try {
   Restart = (await import('./mock/system/apps.js')).Restart
 }
 
-const MysInfo = await Guoba.GID('/plugins/genshin/model/mys/mysInfo.js')
-const MysUser = await Guoba.GID('/plugins/genshin/model/mys/MysUser.js')
+export const MysInfo = (await import('../../../genshin/model/mys/mysInfo.js')).default
+export const MysUser = (await import('../../../genshin/model/mys/MysUser.js')).default
 
 export {
   Restart,
-  MysInfo,
-  MysUser,
 }
