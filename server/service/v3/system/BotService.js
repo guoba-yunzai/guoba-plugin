@@ -1,6 +1,6 @@
+import { MysInfo, MysUser } from '#guoba.adapter'
+
 const IBotService = await Guoba.GID('#/service/interface/IBotService.js')
-const MysInfo = await Guoba.GID('/plugins/genshin/model/mys/mysInfo.js')
-const MysUser = await Guoba.GID('/plugins/genshin/model/mys/MysUser.js')
 
 export class BotService extends IBotService {
   constructor(app) {

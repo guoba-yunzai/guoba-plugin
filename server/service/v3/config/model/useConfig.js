@@ -1,5 +1,6 @@
+// todo adapter
 import loader from '../../../../../../../lib/plugins/loader.js'
-import {isTRSS} from '#guoba.utils'
+import {hasGenshin, isTRSS} from '#guoba.adapter'
 
 // 添加群号 prompt
 const addGroupPromptProps = {
@@ -793,7 +794,9 @@ export function getConfigTabs() {
   let tabs = []
   tabs.push(baseConfig)
   tabs.push(groupConfig())
-  tabs.push(genshinConfig)
+  if (hasGenshin) {
+    tabs.push(genshinConfig)
+  }
   tabs.push(otherConfig)
   return tabs
 }

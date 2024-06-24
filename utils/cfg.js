@@ -3,7 +3,8 @@ import path from 'path'
 import lodash from 'lodash'
 import {YamlReader} from '#guoba.framework'
 import {_paths} from '#guoba.platform'
-import {isTRSS, randomString} from '#guoba.utils'
+import {isTRSS} from '#guoba.adapter'
+import {randomString} from '#guoba.utils'
 
 /** 配置文件 */
 class GuobaConfig {

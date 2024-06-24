@@ -3,7 +3,8 @@ import moment from 'moment'
 import child from 'child_process'
 import {Result} from '#guoba.framework'
 import {_paths, ApiController} from '#guoba.platform'
-import {isV2, sleep} from '#guoba.utils'
+import {isV2} from '#guoba.adapter'
+import {sleep} from '#guoba.utils'
 import {ACTION_CODE, checkJsCompatibility, examplePath} from './child/constant.js'
 
 /**

@@ -1,5 +1,5 @@
 export {_paths} from '../utils/paths.js'
-export {_version, pluginName, pluginPackage, yunzaiPackage} from '../utils/package.js';
+export {_version, pluginName, pluginPackage} from '../utils/package.js';
 
 export {default as cfg} from '../utils/cfg.js'
 

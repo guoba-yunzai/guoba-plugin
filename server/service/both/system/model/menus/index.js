@@ -1,4 +1,4 @@
-import {isV2} from '#guoba.utils'
+import {isV2} from '#guoba.adapter'
 
 const {GI} = Guoba.createImport(import.meta.url)
 const {SystemMenus} = await GI('./systemMenus.js')

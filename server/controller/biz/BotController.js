@@ -1,7 +1,6 @@
 import {Result} from '#guoba.framework'
 import {ApiController} from '#guoba.platform'
-
-import {Restart} from "../../../../other/restart.js"
+import {BotActions} from '#guoba.utils'
 
 /** Bot相关操作 */
 export class BotController extends ApiController {
@@ -15,14 +14,7 @@ export class BotController extends ApiController {
   }
 
   async doRestart() {
-    const e = {
-      reply: (msg) => logger.info(msg),
-      bot: {
-        uin: 'stdin'
-      },
-      logFnc: '[Guoba]'
-    };
-    await new Restart(e).restart()
+    await BotActions.doRestart()
     return Result.ok({}, '重启成功~')
   }
 

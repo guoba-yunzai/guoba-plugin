@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import {isV3} from '#guoba.utils'
+import {isV3, isV4} from '#guoba.adapter'
 
 export const needPackage = [
   'yaml',
@@ -25,7 +25,7 @@ export function packageTips(error) {
   logger.mark('---- 锅巴启动失败 ----')
   let pack = error.stack.match(/'(.+?)'/g)[0].replace(/'/g, '')
   logger.mark(`缺少依赖：${chalk.red(pack)}`)
-  let cmd = isV3 ? 'pnpm add $s -w' : 'npm install $s'
+  let cmd = (isV3 || isV4) ? 'pnpm add $s -w' : 'npm install $s'
   logger.mark(`请执行安装依赖命令：${chalk.red(cmd.replace('$s', pack))}`)
   logger.mark('---------------------')
 }

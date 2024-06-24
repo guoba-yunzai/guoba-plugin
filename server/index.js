@@ -1,7 +1,8 @@
 import path from "path";
 import {GuobaApplication} from "#guoba.framework";
 import {_paths, cfg, GuobaSupportMap, PluginsMap} from '#guoba.platform';
-import {getWebAddress, isTRSS, isV3} from "#guoba.utils";
+import {isTRSS, isV3, isV4} from '#guoba.adapter'
+import {getWebAddress} from '#guoba.utils'
 import {listen} from './helper/listen.js'
 import chalk from 'chalk'
 
@@ -43,7 +44,7 @@ export async function createServer({isInit}) {
     componentPaths: [
       path.join(_paths.pluginRoot, 'server/interceptor'),
       path.join(_paths.pluginRoot, 'server/service', 'both'),
-      path.join(_paths.pluginRoot, 'server/service', isV3 ? 'v3' : 'v2'),
+      path.join(_paths.pluginRoot, 'server/service', (isV3 || isV4) ? 'v3' : 'v2'),
       path.join(_paths.pluginRoot, 'server/controller'),
     ],
     preloads: [

@@ -9,7 +9,6 @@ import path from 'path'
 /** Guoba实际所在的目录名 */
 export const pluginName = path.basename(path.join(import.meta.url, '../../'))
 
-export const yunzaiPackage = JSON.parse(fs.readFileSync('./package.json', 'utf8'))
 export const pluginPackage = JSON.parse(fs.readFileSync(`./plugins/${pluginName}/package.json`, 'utf8'))
 
 /** Guoba当前版本 */

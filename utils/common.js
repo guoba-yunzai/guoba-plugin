@@ -4,8 +4,8 @@ import path from 'path'
 import moment from 'moment'
 import lodash from 'lodash'
 import fetch from 'node-fetch'
-import {cfg, Constant} from "#guoba.platform";
-import {isV3} from '#guoba.utils'
+import {cfg, Constant} from "#guoba.platform"
+import {isV3, isV4} from '#guoba.adapter'
 
 /**
  * 随机生成指定长度的字符串
@@ -30,7 +30,7 @@ export function toPairsMap(arg) {
 }
 
 async function getMasterQQ() {
-  if (isV3) {
+  if (isV3 || isV4) {
     return (await import( '../../../lib/config/config.js')).default.masterQQ
   } else {
     return BotConfig.masterQQ

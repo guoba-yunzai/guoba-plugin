@@ -3,12 +3,12 @@ import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
 import fetch from 'node-fetch'
+import {exec} from 'child_process'
 import {Service} from '#guoba.framework';
 import {Constant, GuobaSupportMap, PluginsMap} from "#guoba.platform";
+import {BotActions} from '#guoba.utils'
 import {parsePluginsIndexByLocal, parseReadmeLink} from '../../helper/pluginsIndex.js'
 import {getPluginIconPath, parseShowInMenu} from '../../utils/pluginUtils.js'
-import {Restart} from "../../../../other/restart.js"
-import {exec} from 'child_process'
 
 export default class IPluginService extends Service {
   constructor(app) {
@@ -205,13 +205,6 @@ export default class IPluginService extends Service {
     await this.initBotMethods();
     const name = link.split('/').pop().replace(/\.git$/, '');
     const pluginPath = `plugins/${name}`;
-    const e = {
-      reply: (msg) => logger.info(msg),
-      bot: {
-        uin: 'stdin'
-      },
-      logFnc: '[Guoba]'
-    };
     if (await Bot.fsStat(pluginPath)) {
       return {status: 'error', message: `插件 ${name} 已安装`};
     } else {
@@ -228,7 +221,7 @@ export default class IPluginService extends Service {
           }
         }
         if (autoRestart) {
-          new Restart(e).restart()
+          BotActions.doRestart()
         }
         return {status: 'success', message: `插件 ${name} 安装成功`};
       }
@@ -238,13 +231,6 @@ export default class IPluginService extends Service {
   async uninstallPlugin(name, autoRestart = true) {
     await this.initBotMethods();
     const pluginPath = `plugins/${name}`;
-    const e = {
-      reply: (msg) => logger.info(msg),
-      bot: {
-        uin: 'stdin'
-      },
-      logFnc: '[Guoba]'
-    };
     if (await Bot.fsStat(pluginPath)) {
       let result = await Bot.rm(pluginPath)
       if (!result) {
@@ -252,7 +238,7 @@ export default class IPluginService extends Service {
         return {status: 'error', message: `插件 ${name} 卸载失败`};
       } else {
         if (autoRestart) {
-          new Restart(e).restart()
+          BotActions.doRestart()
         }
         logger.info(`[Guoba] 插件 ${name} 卸载成功`);
         return {status: 'success', message: `插件 ${name} 卸载成功`};
