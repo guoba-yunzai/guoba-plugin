@@ -106,7 +106,7 @@ export default class GitTools {
     if (!gitIsExist) {
       return GitTools.CHECK_STATUS.NOT_MATCH
     }
-    const res = await this.exec(`git -C ${this.directory} remote -v`)
+    const res = await this.exec(`git -C "${this.directory}" remote -v`)
     if (res.error) {
       throw new Error(res.stderr)
     }
@@ -134,7 +134,7 @@ export default class GitTools {
    * 重置仓库，一般用于强制更新
    */
   async reset() {
-    const res = await this.execSingle('reset', `git -C ${this.directory} reset --hard`)
+    const res = await this.execSingle('reset', `git -C "${this.directory}" reset --hard`)
     if (res.error) {
       return {
         ...res,
@@ -148,7 +148,7 @@ export default class GitTools {
   }
 
   async pull() {
-    const res = await this.execSingle('pull', `git -C ${this.directory} pull`)
+    const res = await this.execSingle('pull', `git -C "${this.directory}" pull`)
     if (res.error) {
       return {
         ...res,
