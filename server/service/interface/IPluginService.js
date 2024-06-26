@@ -208,7 +208,7 @@ export default class IPluginService extends Service {
     if (await Bot.fsStat(pluginPath)) {
       return {status: 'error', message: `插件 ${name} 已安装`};
     } else {
-      let result = await Bot.exec(`git clone --depth 1 --single-branch ${link} ${pluginPath}`);
+      let result = await Bot.exec(`git clone --depth 1 --single-branch ${link} "${pluginPath}"`);
       if (result.error) {
         logger.error(`[Guoba] 插件安装失败：${result.error}`);
         return {status: 'error', message: `插件 ${name} 安装失败\n${result.error}`};
