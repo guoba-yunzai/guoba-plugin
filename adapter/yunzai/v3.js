@@ -18,7 +18,7 @@ if (isTRSS) {
   if (hasGenshin) {
     await importMys()
   } else {
-    const mys = (await import('./mock/genshen/mys.js'))
+    const mys = (await import('./mock/genshin/mys.js'))
     MysInfo = mys.MysInfo
     MysUser = mys.MysUser
   }

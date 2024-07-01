@@ -9,7 +9,7 @@ if (isV4) {
 } else {
   // 不支持的版本
   V = {
-    ...(await import('./mock/genshen/mys.js')),
+    ...(await import('./mock/genshin/mys.js')),
   }
 }
 
