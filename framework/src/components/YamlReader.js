@@ -94,7 +94,7 @@ export default class YamlReader {
   mapParentKeys(parentKeys) {
     return parentKeys.map((k) => {
       if (k.startsWith(YamlReader.CONFIG_INTEGER_KEY)) {
-        return Number.parseInt(k.replace(YamlReader.CONFIG_INTEGER_KEY, ''))
+        return Number(k.replace(YamlReader.CONFIG_INTEGER_KEY, '')) || String(k.replace(YamlReader.CONFIG_INTEGER_KEY, ''))
       }
       return k
     })
