@@ -92,15 +92,15 @@ function parsePluginList(text) {
   const parseConfig = {
     topPlugins: {
       ...commonRegs,
-      identifyReg: /^##\s*置顶(内容)?(（.+）)?\s*$/,
+      identifyReg: /^##\s*⭐️ 推荐插件\s*$/,
     },
     plugins: {
       ...commonRegs,
-      identifyReg: /^##\s*功能插件(（plugin）)?\s*$/,
+      identifyReg: /^##\s*功能类插件索引\s*$/,
     },
     gamePlugins: {
       ...commonRegs,
-      identifyReg: /^##\s*游戏插件(（plugin）)?\s*$/,
+      identifyReg: /^##\s*游戏类插件索引\s*$/,
     },
   }
   const lines = text.split(/\n/)
