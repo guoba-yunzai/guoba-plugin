@@ -9,4 +9,4 @@ export {
   Restart
 }
 
-export const {MysInfo, MysUser} = await import('yunzai/mys')
+export const {MysInfo, MysUser} = await import('yunzai-mys')
