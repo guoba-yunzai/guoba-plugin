@@ -7,7 +7,10 @@ base:
   checkUpdate: true
   # 是否允许群聊登录
   loginInGroup: false
-
+  # 是否启用Github反代
+  githubReverseProxy: false
+  # Github反代地址
+  githubProxyUrl: ""
 # 服务器配置
 server:
   # 启动地址（仅用于控制台输出）
