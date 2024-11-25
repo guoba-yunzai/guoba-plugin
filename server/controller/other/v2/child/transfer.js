@@ -3,12 +3,11 @@ import path from 'path'
 import lodash from 'lodash'
 import moment from 'moment'
 import child from 'child_process'
-import {YamlReader} from '#guoba.framework'
-import {_paths} from '#guoba.platform'
-import {pluginName, AdapterCheck} from '#guoba.utils'
-import {dateDiff, mkdirSync, sleep} from '#guoba.utils'
+import { YamlReader } from '#guoba.framework'
+import { _paths } from '#guoba.platform'
+import { pluginName, AdapterCheck, dateDiff, mkdirSync, sleep } from '#guoba.utils'
 
-import {ACTION_CODE, checkJsCompatibility, examplePath, RES_SET} from './constant.js'
+import { ACTION_CODE, checkJsCompatibility, examplePath, RES_SET } from './constant.js'
 
 /*
  * 迁移子进程。
@@ -23,7 +22,7 @@ let BotConfig = {}
 const RedisCaller = {}
 
 if (typeof process.send === 'function') {
-  process.send({type: 'mounted'})
+  process.send({ type: 'mounted' })
   process.on('message', (e) => {
     if (e.type === 'start') {
       BotConfig = e.BotConfig
@@ -41,7 +40,7 @@ if (typeof process.send === 'function') {
   })
 }
 
-async function doTransferV2(config) {
+async function doTransferV2 (config) {
   let beginTime = moment()
   try {
     updatePercent(2)
@@ -104,7 +103,7 @@ async function doTransferV2(config) {
 }
 
 // 克隆Git仓库
-function doGitClone({installMode, gitAddress, installPath}) {
+function doGitClone ({ installMode, gitAddress, installPath }) {
   if (installMode !== 'new') {
     log('使用现有V3目录：' + installPath)
     log('注：如选择的目录并非V3目录，则有可能会报错！')
@@ -114,7 +113,7 @@ function doGitClone({installMode, gitAddress, installPath}) {
   return new Promise((resolve, reject) => {
     let repoURL = RES_SET.git[gitAddress]
     if (!repoURL) {
-      return reject('gitAddress error')
+      return reject(new Error('gitAddress error'))
     }
     log(`正在通过${gitAddress}克隆仓库……`)
     mkdirSync(installPath)
@@ -148,22 +147,22 @@ const dirMapping = {
     // v2 path
     path.join('data/NoteCookie'),
     // v3 path
-    path.join('data/NoteCookie'),
+    path.join('data/NoteCookie')
   ],
   // 用户抽卡数据
   userGacha: [
     path.join('data/html/genshin/gachaJson'),
-    path.join('data/gachaJson'),
+    path.join('data/gachaJson')
   ],
   // 用户札记数据
   userNote: [
     path.join('data/NoteData'),
-    path.join('data/NoteData'),
+    path.join('data/NoteData')
   ],
   // 添加的表情
   groupFace: [
     path.join('data/face'),
-    path.join('data/face'),
+    path.join('data/face')
   ],
   groupTextJson: [
     path.join('data/textJson'),
@@ -174,18 +173,18 @@ const dirMapping = {
   // 喵喵用户数据
   miao_userData: [
     path.join('data/UserData'),
-    path.join('data/UserData'),
+    path.join('data/UserData')
   ],
   // 成就用户数据
   ach_userData: [
     path.join('data/achievements-plugin'),
-    path.join('data/achievements-plugin'),
-  ],
+    path.join('data/achievements-plugin')
+  ]
 }
 
 // 移动data文件夹
-async function doMoveData(config) {
-  let {mode, installPath, rubbishClean} = config
+async function doMoveData (config) {
+  let { mode, installPath, rubbishClean } = config
   let v3Path = path.join(installPath)
   mkdirSync(v3Path)
   if (mode === 'full') {
@@ -197,13 +196,13 @@ async function doMoveData(config) {
     await sleep(1000)
     log('已开启清理垃圾文件')
   }
-  await recursiveDir(['data'], ({dirPaths, filePath, fileName}) => {
+  await recursiveDir(['data'], ({ dirPaths, filePath, fileName }) => {
     if (rubbishClean && !filterJunkFiles(filePath)) {
       return
     }
     try {
       let toPath = path.join(v3Path, ...dirPaths, fileName)
-      let fined = false, currKey = ''
+      let fined = false; let currKey = ''
       // 特殊处理变更的目录
       for (const [key, mapping] of Object.entries(dirMapping)) {
         let [v2Map, v3Map] = mapping
@@ -244,7 +243,7 @@ async function doMoveData(config) {
 }
 
 // 迁移 plugins
-async function doMovePlugin({installPath}) {
+async function doMovePlugin ({ installPath }) {
   log('开始迁移 plugins')
   let v2Path = path.join(_paths.root, 'plugins')
   let v3Path = path.join(installPath, 'plugins')
@@ -258,18 +257,18 @@ async function doMovePlugin({installPath}) {
     if (stat.isDirectory()) {
       log('正在迁移' + item)
       let toPath = path.join(v3Path, item)
-      fs.cpSync(itemPath, toPath, {recursive: true})
+      fs.cpSync(itemPath, toPath, { recursive: true })
       await sleep(1000)
     }
   }
 }
 
 // 迁移配置文件
-async function doMoveConfig(config) {
+async function doMoveConfig (config) {
   /** @return YamlReader */
   const gcr = (k) => getConfigRender(k, config)
 
-  let cfg, temp, blackGroup = []
+  let cfg; let temp; let blackGroup = []
 
   for (let [gid, groupCfg] of Object.entries(BotConfig.group)) {
     if (/^\d+$/.test(gid)) {
@@ -375,9 +374,9 @@ async function doMoveConfig(config) {
         groupGlobalCD: temp.groupGlobalCD,
         singleCD: temp.singleCD,
         onlyReplyAt: temp.onlyReplyAt,
-        botAlias: Array.isArray(temp.botAlias) ? temp.botAlias : !!temp.botAlias ? [temp.botAlias] : [],
+        botAlias: Array.isArray(temp.botAlias) ? temp.botAlias : temp.botAlias ? [temp.botAlias] : [],
         imgAddLimit: temp.imgAddLimit,
-        imgMaxSize: temp.imgMaxSize,
+        imgMaxSize: temp.imgMaxSize
       }
     }
     cfg.setData(defGroup)
@@ -422,41 +421,41 @@ async function doMoveConfig(config) {
 const configFileMapping = {
   bot: [
     path.join('/config/config/bot.yaml'),
-    path.join('/config/default_config/bot.yaml'),
+    path.join('/config/default_config/bot.yaml')
   ],
   qq: [
     path.join('/config/config/qq.yaml'),
-    path.join('/config/default_config/qq.yaml'),
+    path.join('/config/default_config/qq.yaml')
   ],
   group: [
     path.join('/config/config/group.yaml'),
-    path.join('/config/default_config/group.yaml'),
+    path.join('/config/default_config/group.yaml')
   ],
   redis: [
     path.join('/config/config/redis.yaml'),
-    path.join('/config/default_config/redis.yaml'),
+    path.join('/config/default_config/redis.yaml')
   ],
   other: [
     path.join('/config/config/other.yaml'),
-    path.join('/config/default_config/other.yaml'),
+    path.join('/config/default_config/other.yaml')
   ],
   mysSet: [
     path.join('/plugins/genshin/config/mys.set.yaml'),
-    path.join('/plugins/genshin/defSet/mys/set.yaml'),
+    path.join('/plugins/genshin/defSet/mys/set.yaml')
   ],
   mysPubCk: [
     path.join('/plugins/genshin/config/mys.pubCk.yaml'),
-    path.join('/plugins/genshin/defSet/mys/pubCk.yaml'),
+    path.join('/plugins/genshin/defSet/mys/pubCk.yaml')
   ],
   pushNews: [
     path.join('/plugins/genshin/config/mys.pushNews.yaml'),
-    path.join('/plugins/genshin/defSet/mys/pushNews.yaml'),
-  ],
+    path.join('/plugins/genshin/defSet/mys/pushNews.yaml')
+  ]
 }
 
 const configRenders = {}
 
-function getConfigRender(key, {installPath}) {
+function getConfigRender (key, { installPath }) {
   let render = configRenders[key]
   if (!render) {
     let [configPath, defaultPath] = configFileMapping[key]
@@ -473,7 +472,7 @@ function getConfigRender(key, {installPath}) {
 }
 
 // 迁移Redis
-async function doMoveRedis({groupBind, redisClean}) {
+async function doMoveRedis ({ groupBind, redisClean }) {
   if (groupBind) {
     log('正在迁移redis')
     await sleep(1000)
@@ -505,9 +504,9 @@ async function doMoveRedis({groupBind, redisClean}) {
 }
 
 // 迁移JS插件
-async function doTransferJs({transferJsMode, installPath}) {
+async function doTransferJs ({ transferJsMode, installPath }) {
   if (transferJsMode !== 'none') {
-    log(`正在迁移JS单文件插件`)
+    log('正在迁移JS单文件插件')
     let passed = null
     if (transferJsMode !== 'force') {
       let res = parseCheckRes(checkJsCompatibility(examplePath))
@@ -517,7 +516,7 @@ async function doTransferJs({transferJsMode, installPath}) {
       }
       passed = res.passed
     } else {
-      log(`未启用兼容性检测，将会迁移所有插件`)
+      log('未启用兼容性检测，将会迁移所有插件')
     }
     await sleep(1000)
     let i = 0
@@ -525,8 +524,8 @@ async function doTransferJs({transferJsMode, installPath}) {
       let toPath = path.join(installPath, 'plugins', pluginName, 'lib/v2-js')
       let fileList = fs.readdirSync(examplePath)
         .filter(i => path.extname(i) === '.js')
-        .map((fileName) => ({filePath: path.join(examplePath, fileName), fileName}))
-      for (let {fileName, filePath} of fileList) {
+        .map((fileName) => ({ filePath: path.join(examplePath, fileName), fileName }))
+      for (let { fileName, filePath } of fileList) {
         if (passed != null) {
           if (passed.find((i) => i.file === fileName) == null) {
             continue
@@ -540,7 +539,7 @@ async function doTransferJs({transferJsMode, installPath}) {
   }
 }
 
-function parseCheckRes({passed, noPass}) {
+function parseCheckRes ({ passed, noPass }) {
   passed = Array.isArray(passed) ? passed : []
   noPass = Array.isArray(noPass) ? noPass : []
   let total = passed.length + noPass.length
@@ -548,21 +547,21 @@ function parseCheckRes({passed, noPass}) {
   if (total !== 0) {
     text = `检测到 ${total} 个JS插件，`
     if (noPass.length === 0) {
-      text += `全部可以迁移。`
+      text += '全部可以迁移。'
     } else if (passed.length === 0) {
-      text += `全部不兼容。`
+      text += '全部不兼容。'
     } else {
       text += `其中 ${noPass.length} 个不兼容， ${passed.length} 个可以迁移。`
     }
   }
-  return {total, passed, noPass, text}
+  return { total, passed, noPass, text }
 }
 
 const tbMirror = 'https://registry.npmmirror.com'
 const npmTools = {
   npm: {
     install: 'npm install',
-    add: 'npm install $pkg',
+    add: 'npm install $pkg'
   },
   pnpm: {
     install: 'pnpm install',
@@ -576,11 +575,11 @@ const npmTools = {
   },
   cnpm: {
     install: 'cnpm install',
-    add: 'cnpm install $pkg',
+    add: 'cnpm install $pkg'
   }
 }
 
-async function doInstallModules({moduleTool, installPath}) {
+async function doInstallModules ({ moduleTool, installPath }) {
   let tool = npmTools[moduleTool]
   if (!tool) {
     log(`不支持的npm包管理工具：${moduleTool}`)
@@ -592,32 +591,32 @@ async function doInstallModules({moduleTool, installPath}) {
     return false
   }
   const execTo = (cmd) => new Promise((resolve) => {
-    childIns.npm = child.exec(cmd, {windowsHide: true, cwd: installPath}, (error) => {
+    childIns.npm = child.exec(cmd, { windowsHide: true, cwd: installPath }, (error) => {
       resolve(error == null)
     })
   })
   // 安装依赖
   let flag = await execTo(tool.install)
   if (!flag) return false
-  log(`依赖安装成功！`)
+  log('依赖安装成功！')
   await sleep(1000)
   // 非pnpm，需要单独安装锅巴的依赖
   if (moduleTool !== 'pnpm') {
-    log(`正在安装 Guoba-Plugin 所需依赖`)
+    log('正在安装 Guoba-Plugin 所需依赖')
     flag = await execTo(tool.add.replace('$pkg', AdapterCheck.needPackage.join(' ')))
     if (!flag) return false
-    log(`Guoba-Plugin 依赖安装成功！`)
+    log('Guoba-Plugin 依赖安装成功！')
     await sleep(1000)
   }
-  log(`正在安装 miao-plugin 所需依赖`)
+  log('正在安装 miao-plugin 所需依赖')
   flag = await execTo(tool.add.replace('$pkg', 'image-size'))
   if (!flag) return false
-  log(`miao-plugin 依赖安装成功！`)
+  log('miao-plugin 依赖安装成功！')
   return true
 }
 
 /** 检查并按照包管理工具 */
-function autoInstallNpm(tool) {
+function autoInstallNpm (tool) {
   let v = npmVersion(tool)
   if (v == null) {
     log(`检测到 ${tool} 未安装，正在尝试安装……`)
@@ -640,7 +639,7 @@ function autoInstallNpm(tool) {
 }
 
 // 递归遍历目录
-async function recursiveDir(dirPaths = [], cb, level = 0) {
+async function recursiveDir (dirPaths = [], cb, level = 0) {
   let dirPath = path.join(_paths.root, ...dirPaths)
   if (level <= 1) {
     log('正在迁移目录：' + dirPath)
@@ -653,13 +652,13 @@ async function recursiveDir(dirPaths = [], cb, level = 0) {
     if (stat.isDirectory()) {
       await recursiveDir(dirPaths.concat(item), cb, level + 1)
     } else {
-      cb({fileName: item, filePath: itemPath, stat, dirPaths})
+      cb({ fileName: item, filePath: itemPath, stat, dirPaths })
     }
   }
 }
 
 // 过滤垃圾文件
-function filterJunkFiles(filePath) {
+function filterJunkFiles (filePath) {
   let extname = path.extname(filePath)
   if (extname === '.html') {
     return false
@@ -669,36 +668,36 @@ function filterJunkFiles(filePath) {
   return true
 }
 
-function log(t, reason = false) {
-  process.send({type: 'log', text: t, reason})
+function log (t, reason = false) {
+  process.send({ type: 'log', text: t, reason })
 }
 
-function updateState(state) {
-  process.send({type: 'state', state})
+function updateState (state) {
+  process.send({ type: 'state', state })
 }
 
-function updatePercent(percent) {
-  process.send({type: 'percent', percent})
+function updatePercent (percent) {
+  process.send({ type: 'percent', percent })
 }
 
-function selfExit() {
+function selfExit () {
   setTimeout(() => process.exit(), 100)
 }
 
-async function execRedis(fn, ...args) {
+async function execRedis (fn, ...args) {
   return new Promise(resolve => {
     let id = lodash.uniqueId('guoba-transfer-redis-')
     RedisCaller[id] = {
       callback: (ret) => resolve(ret)
     }
-    process.send({type: 'redis-execute', id, fn, args})
+    process.send({ type: 'redis-execute', id, fn, args })
   })
 }
 
 /** 获取包管理工具的版本号 */
-function npmVersion(tool = 'npm') {
+function npmVersion (tool = 'npm') {
   try {
-    let res = child.execSync(`${tool} -v`, {encoding: 'utf-8', windowsHide: true})
+    let res = child.execSync(`${tool} -v`, { encoding: 'utf-8', windowsHide: true })
     if (/\d{1,2}\.\d{1,2}(\.\d{1,2})?/) {
       if (tool === 'cnpm') {
         res = res.match(/cnpm@(\d{1,2}\.\d{1,2}(\.\d{1,2})?)/)[1]
@@ -712,8 +711,8 @@ function npmVersion(tool = 'npm') {
 }
 
 /** 安装包管理工具 */
-function installNpmTool(tool) {
+function installNpmTool (tool) {
   let registry = 'https://registry.npmmirror.com'
   let cmd = `npm install ${tool} -g --registry=${registry}`
-  return child.execSync(cmd, {encoding: 'utf-8', windowsHide: true})
+  return child.execSync(cmd, { encoding: 'utf-8', windowsHide: true })
 }
