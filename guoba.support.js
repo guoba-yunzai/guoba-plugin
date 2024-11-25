@@ -1,6 +1,6 @@
 import path from 'path'
 import lodash from 'lodash'
-import {_paths, cfg} from "#guoba.platform";
+import {_paths, cfg} from '#guoba.platform';
 
 // 支持锅巴
 export function supportGuoba() {
@@ -56,6 +56,21 @@ export function supportGuoba() {
           label: '允许群聊登录',
           bottomHelpMessage: '允许在群聊里使用`#锅巴登录`，有一定风险，酌情开启',
           component: 'Switch',
+        },
+        {
+          field: 'base.githubReverseProxy',
+          label: 'Github反代',
+          bottomHelpMessage: '安装插件时是否使用Github反代',
+          component: 'Switch'
+        },
+        {
+          field: 'base.githubProxyUrl',
+          label: 'Github反代地址',
+          bottomHelpMessage: 'Github反代地址，例如：https://ghproxy.com',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入Github反代地址'
+          }
         },
         // {
         //   field: 'base.city',

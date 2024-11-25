@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import {exec} from 'child_process'
+import {cfg} from '#guoba.platform'
 
 /**
  * git工具类
@@ -117,17 +118,28 @@ export default class GitTools {
   }
 
   async cloneRepo() {
-    const res = await this.execSingle('cloneRepo', `git clone --single-branch --depth=1 "${this.repository}" "${this.directory}"`)
-    if (res.error) {
-      return {
-        ...res,
-        status: GitTools.STATUS.ERROR,
-      }
+    const githubReverseProxy = cfg.get('base.githubReverseProxy');
+    let githubProxyUrl = cfg.get('base.githubProxyUrl');
+
+    if (githubProxyUrl && !githubProxyUrl.endsWith('/')) {
+      githubProxyUrl += '/';
     }
+
+    const isGithubRepo = /github\.com/.test(this.repository);
+
+    const repositoryUrl = isGithubRepo && githubReverseProxy && githubProxyUrl
+      ? `${githubProxyUrl}${this.repository}`
+      : this.repository;
+
+    const res = await this.execSingle(
+      'cloneRepo',
+      `git clone --single-branch --depth=1 "${repositoryUrl}" "${this.directory}"`
+    );
+
     return {
       ...res,
-      status: GitTools.STATUS.OK,
-    }
+      status: res.error ? GitTools.STATUS.ERROR : GitTools.STATUS.OK,
+    };
   }
 
   /**

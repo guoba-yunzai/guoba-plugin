@@ -5,7 +5,7 @@ import lodash from 'lodash'
 import fetch from 'node-fetch'
 import {exec} from 'child_process'
 import {Service} from '#guoba.framework';
-import {Constant, GuobaSupportMap, PluginsMap} from "#guoba.platform";
+import {cfg, Constant, GuobaSupportMap, PluginsMap} from '#guoba.platform';
 import {BotActions} from '#guoba.utils'
 import {parsePluginsIndexByLocal, parseReadmeLink} from '../../helper/pluginsIndex.js'
 import {getPluginIconPath, parseShowInMenu} from '../../utils/pluginUtils.js'
@@ -36,10 +36,17 @@ export default class IPluginService extends Service {
     if (localPlugins.length > 0) {
       for (let plugin of localPlugins) {
         remotePlugins.push({
-          isV2: false, isV3: false, isDeleted: false,
-          title: plugin.name, name: plugin.name,
-          link: '', author: '未知', authorLink: '', description: '',
-          installed: true, ...plugin,
+          isV2: false,
+          isV3: false,
+          isDeleted: false,
+          title: plugin.name,
+          name: plugin.name,
+          link: '',
+          author: '未知',
+          authorLink: '',
+          description: '',
+          installed: true,
+          ...plugin,
         })
       }
     }
@@ -205,27 +212,44 @@ export default class IPluginService extends Service {
     await this.initBotMethods();
     const name = link.split('/').pop().replace(/\.git$/, '');
     const pluginPath = `plugins/${name}`;
+
     if (await Bot.fsStat(pluginPath)) {
       return {status: 'error', message: `插件 ${name} 已安装`};
-    } else {
-      let result = await Bot.exec(`git clone --depth 1 --single-branch ${link} "${pluginPath}"`);
+    }
+
+    const githubReverseProxy = cfg.get('base.githubReverseProxy')
+    let githubProxyUrl = cfg.get('base.githubProxyUrl')
+
+    if (githubProxyUrl && !githubProxyUrl.endsWith('/')) {
+      githubProxyUrl += '/'
+    }
+
+    const isGithubRepo = /github\.com/.test(link)
+
+    const cloneUrl = isGithubRepo && githubReverseProxy && githubProxyUrl
+      ? `${githubProxyUrl}${link}`
+      : link;
+
+    let result = await Bot.exec(`git clone --depth 1 --single-branch ${cloneUrl} "${pluginPath}"`);
+
+    if (result.error) {
+      logger.error(`[Guoba] 插件安装失败：${result.error}`);
+      return {status: 'error', message: `插件 ${name} 安装失败\n${result.error}`};
+    }
+
+    if (autoNpmInstall && await Bot.fsStat(`${pluginPath}/package.json`)) {
+      result = await Bot.exec(`cd ${pluginPath} && pnpm install`);
       if (result.error) {
         logger.error(`[Guoba] 插件安装失败：${result.error}`);
-        return {status: 'error', message: `插件 ${name} 安装失败\n${result.error}`};
-      } else {
-        if (autoNpmInstall && await Bot.fsStat(`${pluginPath}/package.json`)) {
-          let result = await Bot.exec(`cd ${pluginPath} && pnpm install`);
-          if (result.error) {
-            logger.error(`[Guoba] 插件安装失败：${result.error}`);
-            return {status: 'error', message: `插件安装失败：${result.error}`};
-          }
-        }
-        if (autoRestart) {
-          BotActions.doRestart()
-        }
-        return {status: 'success', message: `插件 ${name} 安装成功`};
+        return {status: 'error', message: `插件安装失败：${result.error}`};
       }
     }
+
+    if (autoRestart) {
+      BotActions.doRestart();
+    }
+
+    return {status: 'success', message: `插件 ${name} 安装成功`};
   }
 
   async uninstallPlugin(name, autoRestart = true) {
