@@ -3,15 +3,15 @@ import fs from 'fs'
 import path from 'path'
 import lodash from 'lodash'
 import fetch from 'node-fetch'
-import {exec} from 'child_process'
-import {Service} from '#guoba.framework';
-import {Constant, GuobaSupportMap, PluginsMap} from "#guoba.platform";
-import {BotActions} from '#guoba.utils'
-import {parsePluginsIndexByLocal, parseReadmeLink} from '../../helper/pluginsIndex.js'
-import {getPluginIconPath, parseShowInMenu} from '../../utils/pluginUtils.js'
+import { exec } from 'child_process'
+import { Service } from '#guoba.framework'
+import { Constant, GuobaSupportMap, PluginsMap, cfg } from '#guoba.platform'
+import { BotActions } from '#guoba.utils'
+import { parsePluginsIndexByLocal, parseReadmeLink } from '../../helper/pluginsIndex.js'
+import { getPluginIconPath, parseShowInMenu } from '../../utils/pluginUtils.js'
 
 export default class IPluginService extends Service {
-  constructor(app) {
+  constructor (app) {
     super(app)
     // 获取插件列表，填充GuobaSupportMap
     this.loadPlugining = this.getPlugins()
@@ -22,24 +22,31 @@ export default class IPluginService extends Service {
    * @param force 是否清空缓存强制刷新
    * @return {Promise<*>}
    */
-  async getPlugins(force = false) {
+  async getPlugins (force = false) {
     let remotePlugins = await this.getRemotePlugins(force)
     let localPlugins = await this.readLocalPlugins(this.pluginsPath)
     for (let rp of remotePlugins) {
-      let idx = localPlugins.findIndex(({name}) => lodash.toLower(name) === lodash.toLower(rp.name))
+      let idx = localPlugins.findIndex(({ name }) => lodash.toLower(name) === lodash.toLower(rp.name))
       if (idx > -1) {
         let lp = localPlugins[idx]
-        Object.assign(rp, lp, {installed: true})
+        Object.assign(rp, lp, { installed: true })
         localPlugins.splice(idx, 1)
       }
     }
     if (localPlugins.length > 0) {
       for (let plugin of localPlugins) {
         remotePlugins.push({
-          isV2: false, isV3: false, isDeleted: false,
-          title: plugin.name, name: plugin.name,
-          link: '', author: '未知', authorLink: '', description: '',
-          installed: true, ...plugin,
+          isV2: false,
+          isV3: false,
+          isDeleted: false,
+          title: plugin.name,
+          name: plugin.name,
+          link: '',
+          author: '未知',
+          authorLink: '',
+          description: '',
+          installed: true,
+          ...plugin
         })
       }
     }
@@ -53,7 +60,7 @@ export default class IPluginService extends Service {
         continue
       }
       // 判断是否支持配置项
-      let {configInfo} = supportObject
+      let { configInfo } = supportObject
       if (configInfo && configInfo.schemas && typeof configInfo.getConfigData === 'function') {
         plugin.hasConfig = true
         plugin.schemas = configInfo.schemas
@@ -77,7 +84,7 @@ export default class IPluginService extends Service {
    * @param pluginsPath
    * @return {object[]}
    */
-  async readLocalPlugins(pluginsPath) {
+  async readLocalPlugins (pluginsPath) {
     let files = fs.readdirSync(pluginsPath)
     let plugins = []
     for (let name of files) {
@@ -90,7 +97,7 @@ export default class IPluginService extends Service {
         let jsPath = path.join(filePath, 'index.js')
         if (fs.existsSync(jsPath) || fs.existsSync(path.join(filePath, '.git/'))) {
           let plugin = {
-            name: name.toLowerCase(),
+            name: name.toLowerCase()
           }
           jsPath = path.join(filePath, 'guoba.support.js')
           // 判断是否支持锅巴
@@ -100,7 +107,7 @@ export default class IPluginService extends Service {
               if (os.platform() === 'win32') {
                 jsPath = 'file:///' + jsPath
               }
-              let {supportGuoba} = await import(jsPath + '?' + Date.now())
+              let { supportGuoba } = await import(jsPath + '?' + Date.now())
               if (typeof supportGuoba === 'function') {
                 // TODO 传什么参数？待定
                 let supportObject = supportGuoba()
@@ -129,7 +136,7 @@ export default class IPluginService extends Service {
    * @param force 是否清空缓存强制刷新
    * @return {Promise<*>}
    */
-  async getRemotePlugins(force = false) {
+  async getRemotePlugins (force = false) {
     let redisKey = Constant.REDIS_PREFIX + 'plugins'
     let remotePlugins = null
     if (!force) {
@@ -143,7 +150,7 @@ export default class IPluginService extends Service {
       if (!remotesMap) {
         return []
       }
-      const {topPlugins = [], plugins = [], gamePlugins = []} = remotesMap;
+      const { topPlugins = [], plugins = [], gamePlugins = [] } = remotesMap
       remotePlugins = [...topPlugins, ...plugins, ...gamePlugins]
     } catch (e) {
       logger.error(e)
@@ -152,11 +159,11 @@ export default class IPluginService extends Service {
     if (!remotePlugins || remotePlugins.length === 0) {
       return []
     }
-    redis.set(redisKey, JSON.stringify(remotePlugins), {EX: 3600 * 6})
+    redis.set(redisKey, JSON.stringify(remotePlugins), { EX: 3600 * 6 })
     return remotePlugins
   }
 
-  async getReadmeText(link, force = false) {
+  async getReadmeText (link, force = false) {
     let redisKey = Constant.REDIS_PREFIX + 'plugin:readme:' + link
     let text = null
     if (!force) {
@@ -187,7 +194,7 @@ export default class IPluginService extends Service {
       }
       if (text) {
         text = parseReadmeLink(text, baseUrl)
-        redis.set(redisKey, text, {EX: 3600 * 12})
+        redis.set(redisKey, text, { EX: 3600 * 12 })
         return text
       }
     }
@@ -201,50 +208,67 @@ export default class IPluginService extends Service {
    * @param autoNpmInstall 是否自动安装依赖
    * @return {Promise<{message: string, status: string}>}
    */
-  async installPlugin(link, autoRestart, autoNpmInstall) {
-    await this.initBotMethods();
-    const name = link.split('/').pop().replace(/\.git$/, '');
-    const pluginPath = `plugins/${name}`;
+  async installPlugin (link, autoRestart, autoNpmInstall) {
+    const githubReverseProxy = cfg.get('base.githubReverseProxy')
+    let githubProxyUrl = cfg.get('base.githubProxyUrl')
+
+    if (githubProxyUrl && !githubProxyUrl.endsWith('/')) {
+      githubProxyUrl += '/'
+    }
+
+    await this.initBotMethods()
+    const name = link.split('/').pop().replace(/\.git$/, '')
+    const pluginPath = `plugins/${name}`
+
     if (await Bot.fsStat(pluginPath)) {
-      return {status: 'error', message: `插件 ${name} 已安装`};
-    } else {
-      let result = await Bot.exec(`git clone --depth 1 --single-branch ${link} "${pluginPath}"`);
+      return { status: 'error', message: `插件 ${name} 已安装` }
+    }
+
+    const isGithubRepo = /github\.com/.test(link)
+
+    const cloneUrl = isGithubRepo && githubReverseProxy && githubProxyUrl
+      ? `${githubProxyUrl}${link}`
+      : link
+
+    let result = await Bot.exec(`git clone --depth 1 --single-branch ${cloneUrl} "${pluginPath}"`)
+
+    if (result.error) {
+      logger.error(`[Guoba] 插件安装失败：${result.error}`)
+      return { status: 'error', message: `插件 ${name} 安装失败\n${result.error}` }
+    }
+
+    if (autoNpmInstall && await Bot.fsStat(`${pluginPath}/package.json`)) {
+      result = await Bot.exec(`cd ${pluginPath} && pnpm install`)
       if (result.error) {
-        logger.error(`[Guoba] 插件安装失败：${result.error}`);
-        return {status: 'error', message: `插件 ${name} 安装失败\n${result.error}`};
-      } else {
-        if (autoNpmInstall && await Bot.fsStat(`${pluginPath}/package.json`)) {
-          let result = await Bot.exec(`cd ${pluginPath} && pnpm install`);
-          if (result.error) {
-            logger.error(`[Guoba] 插件安装失败：${result.error}`);
-            return {status: 'error', message: `插件安装失败：${result.error}`};
-          }
-        }
-        if (autoRestart) {
-          BotActions.doRestart()
-        }
-        return {status: 'success', message: `插件 ${name} 安装成功`};
+        logger.error(`[Guoba] 插件安装失败：${result.error}`)
+        return { status: 'error', message: `插件安装失败：${result.error}` }
       }
     }
+
+    if (autoRestart) {
+      BotActions.doRestart()
+    }
+
+    return { status: 'success', message: `插件 ${name} 安装成功` }
   }
 
-  async uninstallPlugin(name, autoRestart = true) {
-    await this.initBotMethods();
-    const pluginPath = `plugins/${name}`;
+  async uninstallPlugin (name, autoRestart = true) {
+    await this.initBotMethods()
+    const pluginPath = `plugins/${name}`
     if (await Bot.fsStat(pluginPath)) {
       let result = await Bot.rm(pluginPath)
       if (!result) {
-        logger.error(`[Guoba] 插件卸载失败`);
-        return {status: 'error', message: `插件 ${name} 卸载失败`};
+        logger.error('[Guoba] 插件卸载失败')
+        return { status: 'error', message: `插件 ${name} 卸载失败` }
       } else {
         if (autoRestart) {
           BotActions.doRestart()
         }
-        logger.info(`[Guoba] 插件 ${name} 卸载成功`);
-        return {status: 'success', message: `插件 ${name} 卸载成功`};
+        logger.info(`[Guoba] 插件 ${name} 卸载成功`)
+        return { status: 'success', message: `插件 ${name} 卸载成功` }
       }
     } else {
-      return {status: 'error', message: `插件 ${name} 不存在`};
+      return { status: 'error', message: `插件 ${name} 不存在` }
     }
   }
 
@@ -252,62 +276,62 @@ export default class IPluginService extends Service {
    * 批量卸载插件
    * @param {string[]} nameArr
    */
-  async uninstallPluginBatch(nameArr) {
+  async uninstallPluginBatch (nameArr) {
     let texts = []
     for (let i = 0; i < nameArr.length; i++) {
       const name = nameArr[i]
       // 最后一个插件卸载时自动重启
       const autoRestart = i === nameArr.length - 1
-      let {message} = await this.uninstallPlugin(name, autoRestart)
+      let { message } = await this.uninstallPlugin(name, autoRestart)
       texts.push(message)
     }
-    return {status: 'success', message: texts.join('\n')}
+    return { status: 'success', message: texts.join('\n') }
   }
 
-  async initBotMethods() {
+  async initBotMethods () {
     Bot.fsStat = Bot.fsStat || ((path) => {
       return new Promise((resolve) => {
         fs.stat(path, (err, stats) => {
           if (err) {
-            logger.trace(`[Guoba] 获取${path}状态错误：${err}`);
-            resolve(false);
+            logger.trace(`[Guoba] 获取${path}状态错误：${err}`)
+            resolve(false)
           } else {
-            resolve(stats);
+            resolve(stats)
           }
-        });
-      });
-    });
+        })
+      })
+    })
 
     Bot.exec = Bot.exec || ((cmd, opts = {}) => {
       return new Promise((resolve) => {
         if (!opts.quiet) {
-          logger.info(`[Guoba] 执行命令：${logger.blue(cmd)}`);
+          logger.info(`[Guoba] 执行命令：${logger.blue(cmd)}`)
         }
-        opts.windowsHide = opts.windowsHide ?? true;
+        opts.windowsHide = opts.windowsHide ?? true
         exec(cmd, opts, (error, stdout, stderr) => {
-          resolve({error, stdout, stderr});
+          resolve({ error, stdout, stderr })
           if (opts.quiet) {
             return
           }
-          logger.mark(`[Guoba] 执行命令完成：${logger.blue(cmd)}${stdout ? `\n${String(stdout).trim()}` : ""}${stderr ? logger.red(`\n${String(stderr).trim()}`) : ""}`);
+          logger.mark(`[Guoba] 执行命令完成：${logger.blue(cmd)}${stdout ? `\n${String(stdout).trim()}` : ''}${stderr ? logger.red(`\n${String(stderr).trim()}`) : ''}`)
           if (error) {
-            logger.mark(`[Guoba] 执行命令错误：${logger.blue(cmd)}\n${logger.red((error?.message || error)?.trim?.() ?? '未知错误')}`);
+            logger.mark(`[Guoba] 执行命令错误：${logger.blue(cmd)}\n${logger.red((error?.message || error)?.trim?.() ?? '未知错误')}`)
           }
-        });
-      });
-    });
+        })
+      })
+    })
 
     Bot.rm = Bot.rm || ((file) => {
       return new Promise((resolve) => {
-        fs.rm(file, {force: true, recursive: true}, (err) => {
+        fs.rm(file, { force: true, recursive: true }, (err) => {
           if (err) {
-            logger.trace(`[Guoba] 删除${file}错误：${err}`);
-            resolve(false);
+            logger.trace(`[Guoba] 删除${file}错误：${err}`)
+            resolve(false)
           } else {
-            resolve(true);
+            resolve(true)
           }
-        });
-      });
-    });
+        })
+      })
+    })
   }
 }

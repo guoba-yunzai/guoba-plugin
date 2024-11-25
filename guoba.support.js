@@ -1,9 +1,9 @@
 import path from 'path'
 import lodash from 'lodash'
-import {_paths, cfg} from "#guoba.platform";
+import { _paths, cfg } from '#guoba.platform'
 
 // 支持锅巴
-export function supportGuoba() {
+export function supportGuoba () {
   return {
     // 插件信息，将会显示在前端页面
     // 如果你的插件没有在插件库里，那么需要填上补充信息
@@ -18,12 +18,12 @@ export function supportGuoba() {
       // 作者可以为字符串也可以为数组，当有多个作者时建议使用数组
       author: [
         '@zolay-poi',
-        '@Guoba-Yunzai',
+        '@Guoba-Yunzai'
       ],
       // 作者主页地址。若author为数组，则authorLink也需要为数组，且需要与author一一对应
       authorLink: [
         'https://github.com/zolay-poi',
-        'https://github.com/guoba-yunzai',
+        'https://github.com/guoba-yunzai'
       ],
       // 仓库地址
       link: 'https://github.com/guoba-yunzai/guoba-plugin',
@@ -38,7 +38,7 @@ export function supportGuoba() {
       // 图标颜色，例：#FF0000 或 rgb(255, 0, 0)
       iconColor: '#d19f56',
       // 如果想要显示成图片，也可以填写图标路径（绝对路径）
-      iconPath: path.join(_paths.pluginRoot, 'resources/images/icon.png'),
+      iconPath: path.join(_paths.pluginRoot, 'resources/images/icon.png')
     },
     // 配置项信息
     configInfo: {
@@ -55,7 +55,22 @@ export function supportGuoba() {
           field: 'base.loginInGroup',
           label: '允许群聊登录',
           bottomHelpMessage: '允许在群聊里使用`#锅巴登录`，有一定风险，酌情开启',
-          component: 'Switch',
+          component: 'Switch'
+        },
+        {
+          field: 'base.githubReverseProxy',
+          label: 'Github反代',
+          bottomHelpMessage: '安装插件时是否使用Github反代',
+          component: 'Switch'
+        },
+        {
+          field: 'base.githubProxyUrl',
+          label: 'Github反代地址',
+          bottomHelpMessage: 'Github反代地址，例如：https://ghproxy.com',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入Github反代地址'
+          }
         },
         // {
         //   field: 'base.city',
@@ -72,7 +87,7 @@ export function supportGuoba() {
         // },
         {
           label: '服务器配置',
-          component: 'Divider',
+          component: 'Divider'
         },
         {
           field: 'server.host',
@@ -81,8 +96,8 @@ export function supportGuoba() {
           component: 'Input',
           required: true,
           componentProps: {
-            placeholder: '请输入服务器地址',
-          },
+            placeholder: '请输入服务器地址'
+          }
         },
         {
           field: 'server.port',
@@ -94,14 +109,14 @@ export function supportGuoba() {
           componentProps: {
             min: 1,
             max: 65535,
-            placeholder: '请输入监听端口号',
-          },
+            placeholder: '请输入监听端口号'
+          }
         },
         {
           field: 'server.splicePort',
           label: '拼接端口号',
           bottomHelpMessage: '是否需要在服务器地址后拼接端口号',
-          component: 'Switch',
+          component: 'Switch'
         },
         // {
         //   field: 'server.showAllIp',
@@ -116,12 +131,12 @@ export function supportGuoba() {
           bottomHelpMessage: '填写你的域名ICP备案号，会显示在页面底部',
           component: 'Input',
           componentProps: {
-            placeholder: '请输入ICP备案号',
-          },
-        },
+            placeholder: '请输入ICP备案号'
+          }
+        }
       ],
       // 获取配置数据方法（用于前端填充显示数据）
-      getConfigData() {
+      getConfigData () {
         let config = lodash.omit(cfg.merged, 'jwt')
         let host = lodash.get(config, 'server.host')
         if (Array.isArray(host)) {
@@ -130,7 +145,7 @@ export function supportGuoba() {
         return config
       },
       // 设置配置的方法（前端点确定后调用的方法）
-      setConfigData(data, {Result}) {
+      setConfigData (data, { Result }) {
         let config = {}
         for (let [keyPath, value] of Object.entries(data)) {
           // 特殊处理 server.host
@@ -146,7 +161,7 @@ export function supportGuoba() {
         config = lodash.merge({}, cfg.merged, config)
         cfg.config.reader.setData(config)
         return Result.ok({}, '保存成功~')
-      },
-    },
+      }
+    }
   }
 }
