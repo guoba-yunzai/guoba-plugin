@@ -1,4 +1,5 @@
-import {YamlReader} from "#guoba.framework";
+import lodash from 'lodash'
+import {YamlReader} from "#guoba.framework"
 
 // 创建可使用相对路径的import方法
 const {GI, GID} = Guoba.createImport(import.meta.url)
@@ -72,7 +73,12 @@ export default class ConfigServiceImpl extends IConfigService {
             value = value.filter(str => str != null && str !== '')
           }
         }
-        newData[field] = value
+
+        if (action === 'get') {
+          newData[field] = value
+        } else {
+          lodash.set(newData, field, value)
+        }
       }
       return newData
     }

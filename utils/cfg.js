@@ -81,7 +81,7 @@ class GuobaConfig {
   get serverPort() {
     const {port, helloTRSS} = this.get('server')
     if (isTRSS && helloTRSS) {
-      return this.trssCfg.bot.port
+      return this.trssCfg.server.port
     }
     return port
   }

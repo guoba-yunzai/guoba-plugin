@@ -75,21 +75,22 @@ const baseConfig = {
           component: 'Switch',
         },
         {
-          field: 'url',
-          label: '服务器地址',
+          field: 'log_align',
+          label: '日志ID',
+          bottomHelpMessage: '日志ID对齐',
           component: 'Input',
           componentProps: {
-            placeholder: '请输入服务器地址',
+            placeholder: '请输入日志ID',
           },
         },
         {
-          field: 'port',
-          label: '服务器端口',
+          field: 'plugin_load_timeout',
+          label: '插件加载超时',
+          bottomHelpMessage: '超时后不再等待插件加载',
           component: 'InputNumber',
           componentProps: {
-            placeholder: '0-65535',
-            min: 0,
-            max: 65535,
+            min: 1,
+            placeholder: '（秒）',
           },
         },
         {
@@ -289,6 +290,73 @@ const baseConfig = {
         },
       ],
     },
+    ...(isTRSS && [{
+      key: 'system.server',
+      title: '服务器配置',
+      desc: '对服务器进行相关配置',
+      schemas: [
+        {
+          field: 'url',
+          label: '服务器地址',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入服务器地址',
+          },
+        },
+        {
+          field: 'port',
+          label: '服务器端口',
+          component: 'InputNumber',
+          componentProps: {
+            placeholder: '0-65535',
+            min: 0,
+            max: 65535,
+          },
+        },
+        {
+          field: 'redirect',
+          label: '服务器缺省跳转地址',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入地址',
+          },
+        },
+        {
+          field: 'https.url',
+          label: 'HTTPS 服务器地址',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入服务器地址',
+          },
+        },
+        {
+          field: 'https.port',
+          label: 'HTTPS 服务器端口',
+          component: 'InputNumber',
+          componentProps: {
+            placeholder: '0-65535',
+            min: 0,
+            max: 65535,
+          },
+        },
+        {
+          field: 'https.key',
+          label: 'HTTPS 服务器私钥',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入服务器私钥文件路径',
+          },
+        },
+        {
+          field: 'https.cert',
+          label: 'HTTPS 服务器证书',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入服务器证书文件路径',
+          },
+        },
+      ],
+    }]),
     {
       key: 'system.redis',
       title: 'Redis配置',
@@ -807,6 +875,7 @@ export const configFile = {
   'system.group': '/config/config/group.yaml',
   'system.redis': '/config/config/redis.yaml',
   'system.other': '/config/config/other.yaml',
+  'system.server': '/config/config/server.yaml',
 
   'genshin.gacha': '/plugins/genshin/config/gacha.set.yaml',
   'genshin.mys.pubCk': '/plugins/genshin/config/mys.pubCk.yaml',

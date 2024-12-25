@@ -1,5 +1,5 @@
 import fs from 'fs'
-import YAML from 'yaml'
+import YAML, { YAMLMap } from 'yaml'
 import lodash from 'lodash'
 import chokidar from 'chokidar'
 
@@ -81,6 +81,9 @@ export default class YamlReader {
     if (Array.isArray(data)) {
       this.document.setIn(this.mapParentKeys(parentKeys), data)
     } else if (typeof data === 'object' && data !== null) {
+      if (!(this.document.getIn(parentKeys) instanceof YAMLMap)) {
+        this.document.setIn(parentKeys, new YAMLMap())
+      }
       for (const [key, value] of Object.entries(data)) {
         this.setDataRecursion(value, parentKeys.concat([key]))
       }

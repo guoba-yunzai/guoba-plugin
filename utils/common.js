@@ -71,12 +71,19 @@ async function replyPrivate(userId, msg) {
  * 获取所有web地址，包括内网、外网
  */
 export async function getAllWebAddress() {
-  const {splicePort} = cfg.get('server')
+  const {splicePort,helloTRSS} = cfg.get('server')
   let host = cfg.serverHost
   let port = cfg.serverPort
   port = splicePort ? Number.parseInt(port) : null
   port = port === 80 ? null : port
   let custom = []
+  if (helloTRSS) {
+    const server = (await import('../../../lib/config/config.js')).default.server
+    if (server.url)
+      custom.push(server.url)
+    if (server.https?.url)
+      custom.push(server.https.url)
+  }
   let local = getAutoIps(port, true)
   let remote = await getRemoteIps()
   if (remote && remote.length > 0) {
