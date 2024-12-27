@@ -133,6 +133,8 @@ export function supportGuoba() {
           component: 'Input',
           componentProps: {
             placeholder: '请输入ICP备案号',
+            // 是否去除首尾空格，默认为 true，传 false 则保留首尾空格
+            trimValue: false,
           },
         },
       ],
