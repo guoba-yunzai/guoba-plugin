@@ -81,6 +81,7 @@ const baseConfig = {
           component: 'Input',
           componentProps: {
             placeholder: '请输入日志ID',
+            trimValue: false,
           },
         },
         {
