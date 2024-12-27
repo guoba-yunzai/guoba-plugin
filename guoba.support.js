@@ -44,17 +44,13 @@ export function supportGuoba() {
     configInfo: {
       // 配置项 schemas
       schemas: [
-        // {
-        //   field: 'base.checkUpdate',
-        //   label: '检查更新',
-        //   helpMessage: '启动时和每天凌晨4点自动检查更新，并发送消息提醒（每个版本只提醒一次）',
-        //   bottomHelpMessage: '是否自动检查更新，并发送消息提醒',
-        //   component: 'Switch',
-        // },
         {
           field: 'base.loginInGroup',
           label: '允许群聊登录',
           bottomHelpMessage: '允许在群聊里使用`#锅巴登录`，有一定风险，酌情开启',
+          // 【组件类型】，可参考
+          // https://doc.vvbin.cn/components/introduction.html
+          // https://3x.antdv.com/components/overview-cn/
           component: 'Switch',
         },
         {
@@ -77,13 +73,18 @@ export function supportGuoba() {
         //   label: '天气城市',
         //   helpMessage: '修改后需要刷新页面才能生效',
         //   bottomHelpMessage: '配置首页天气显示的城市',
-        //   // 组件类型，可参考 https://vvbin.cn/doc-next/components/introduction.html
-        //   // https://antdv.com/components/overview-cn/
         //   component: 'Input',
         //   required: true,
         //   componentProps: {
         //     placeholder: '请输入天气城市',
         //   },
+        // },
+        // {
+        //   field: 'base.checkUpdate',
+        //   label: '检查更新',
+        //   helpMessage: '启动时和每天凌晨4点自动检查更新，并发送消息提醒（每个版本只提醒一次）',
+        //   bottomHelpMessage: '是否自动检查更新，并发送消息提醒',
+        //   component: 'Switch',
         // },
         {
           label: '服务器配置',
