@@ -5,7 +5,7 @@ import moment from 'moment'
 import lodash from 'lodash'
 import fetch from 'node-fetch'
 import {cfg, Constant} from "#guoba.platform"
-import {isV3, isV4} from '#guoba.adapter'
+import {isV3, isV4, isTRSS} from '#guoba.adapter'
 
 /**
  * 随机生成指定长度的字符串
@@ -71,13 +71,13 @@ async function replyPrivate(userId, msg) {
  * 获取所有web地址，包括内网、外网
  */
 export async function getAllWebAddress() {
-  const {splicePort,helloTRSS} = cfg.get('server')
+  const {splicePort, helloTRSS} = cfg.get('server')
   let host = cfg.serverHost
   let port = cfg.serverPort
   port = splicePort ? Number.parseInt(port) : null
   port = port === 80 ? null : port
   let custom = []
-  if (helloTRSS) {
+  if (isTRSS && helloTRSS) {
     const server = (await import('../../../lib/config/config.js')).default.server
     if (server.url)
       custom.push(server.url)

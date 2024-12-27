@@ -291,7 +291,7 @@ const baseConfig = {
         },
       ],
     },
-    ...(isTRSS && [{
+    ...(isTRSS ? [{
       key: 'system.server',
       title: '服务器配置',
       desc: '对服务器进行相关配置',
@@ -357,7 +357,7 @@ const baseConfig = {
           },
         },
       ],
-    }]),
+    }] : []),
     {
       key: 'system.redis',
       title: 'Redis配置',
