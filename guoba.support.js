@@ -45,6 +45,11 @@ export function supportGuoba() {
       // 配置项 schemas
       schemas: [
         {
+          label: '基础配置',
+          // 第一个分组标记开始，无需标记结束
+          component: 'SOFT_GROUP_BEGIN',
+        },
+        {
           field: 'base.loginInGroup',
           label: '允许群聊登录',
           bottomHelpMessage: '允许在群聊里使用`#锅巴登录`，有一定风险，酌情开启',
@@ -88,7 +93,8 @@ export function supportGuoba() {
         // },
         {
           label: '服务器配置',
-          component: 'Divider',
+          // 第二个分组标记开始
+          component: 'SOFT_GROUP_BEGIN',
         },
         {
           field: 'server.host',
