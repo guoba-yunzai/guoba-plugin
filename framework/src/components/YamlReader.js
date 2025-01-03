@@ -95,8 +95,9 @@ export default class YamlReader {
     if (Array.isArray(data)) {
       this.document.setIn(this.mapParentKeys(parentKeys), data)
     } else if (typeof data === 'object' && data !== null) {
-      if (!(this.document.getIn(parentKeys) instanceof YAMLMap)) {
-        this.document.setIn(parentKeys, new YAMLMap())
+      const checkKeys = this.mapParentKeys(parentKeys)
+      if (!(this.document.getIn(checkKeys) instanceof YAMLMap)) {
+        this.document.setIn(checkKeys, new YAMLMap())
       }
       for (const [key, value] of Object.entries(data)) {
         this.setDataRecursion(value, parentKeys.concat([key]))
