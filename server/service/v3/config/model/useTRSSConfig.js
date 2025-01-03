@@ -57,6 +57,12 @@ export const baseConfig = {
       },
     },
     {
+      field: 'file_watch',
+      label: '监听文件变化',
+      bottomHelpMessage: '是否监听配置文件、插件文件的变化',
+      component: 'Switch',
+    },
+    {
       field: 'update_time',
       label: '自动更新时间',
       bottomHelpMessage: '启动超过指定时间后更新',
@@ -176,6 +182,36 @@ export const baseConfig = {
           component: 'Input',
           componentProps: {
             placeholder: '请输入地址',
+          },
+        },
+        {
+          field: 'auth',
+          label: '服务器鉴权',
+          component: 'GSubForm',
+          componentProps: {
+            multiple: true,
+            modalProps: {
+              title: '服务器鉴权配置',
+            },
+            schemas: [
+              {
+                field: 'key',
+                label: '鉴权标识',
+                bottomHelpMessage: '不能重复、不能包含空格',
+                component: 'Input',
+                required: true,
+                rules: [
+                  {pattern: '^[^\\s]*$', message: '不能包含空格'},
+                ],
+              },
+              {
+                field: 'value',
+                label: '鉴权值',
+                bottomHelpMessage: '',
+                component: 'Input',
+                required: true
+              }
+            ]
           },
         },
         {

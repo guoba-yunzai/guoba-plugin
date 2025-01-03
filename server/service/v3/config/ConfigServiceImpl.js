@@ -1,5 +1,6 @@
 import lodash from 'lodash'
 import {YamlReader} from "#guoba.framework"
+import {isTRSS} from '#guoba.adapter'
 
 // 创建可使用相对路径的import方法
 const {GI, GID} = Guoba.createImport(import.meta.url)
@@ -7,6 +8,13 @@ const {GI, GID} = Guoba.createImport(import.meta.url)
 const IConfigService = await GID('#/service/interface/IConfigService.js')
 const {getConfigReader} = await GI('./utils/ConfigUtils.js')
 const {getConfigTabs, configFile} = await GI('./model/useConfig.js')
+
+const CfgUtilsAdapter = await (async () => {
+  if (isTRSS) {
+    return await GI('./utils/TRSSConfigUtils.js')
+  }
+  return await GI('./utils/MiaoConfigUtils.js')
+})()
 
 export default class ConfigServiceImpl extends IConfigService {
 
@@ -73,6 +81,11 @@ export default class ConfigServiceImpl extends IConfigService {
             value = value.filter(str => str != null && str !== '')
           }
         }
+
+        // 特殊处理
+        const handleRes = CfgUtilsAdapter.handleConfigData(action, key, field, value)
+        field = handleRes.field
+        value = handleRes.value
 
         if (action === 'get') {
           newData[field] = value
