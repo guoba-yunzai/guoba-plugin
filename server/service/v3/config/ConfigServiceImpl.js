@@ -98,6 +98,7 @@ export default class ConfigServiceImpl extends IConfigService {
 
     if (key === 'system.group') {
       let obj = handler(data)
+      obj = CfgUtilsAdapter.handleGroupConfig(action, obj)
       for (let [oKey, oVal] of Object.entries(obj)) {
         obj[oKey] = handler(oVal)
       }

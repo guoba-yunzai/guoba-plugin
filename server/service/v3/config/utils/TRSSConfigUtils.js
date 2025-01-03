@@ -47,3 +47,40 @@ function handleAuth(action, field, value) {
     return {field, value: null}
   }
 }
+
+/**
+ * 处理 group 配置
+ */
+export function handleGroupConfig(action, data) {
+  for (const key of Object.keys(data)) {
+    if (action === 'get') {
+      // 判断是否带 :
+      let groupId = key
+      let keySplit = []
+      if (typeof groupId === 'string') {
+        if (groupId.includes(':')) {
+          keySplit = groupId.split(':')
+          groupId = keySplit.pop()
+        }
+        if (groupId.startsWith(YamlReader.CONFIG_INTEGER_KEY)) {
+          groupId = groupId.replace(YamlReader.CONFIG_INTEGER_KEY, '')
+        }
+      }
+      if (!groupId) {
+        continue
+      }
+      if (groupId === 'default') {
+        continue
+      }
+      groupId = Number(groupId) || String(groupId)
+      const groupName = Bot.pickGroup(groupId)?.group_name
+      if (!groupName) {
+        continue
+      }
+      data[key]['__GROUP_TIP_TEXT__'] = `${groupName} (${[...keySplit, groupId].join(':')})`
+    } else {
+      delete data[key]['__GROUP_TIP_TEXT__']
+    }
+  }
+  return data
+}

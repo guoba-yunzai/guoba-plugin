@@ -168,7 +168,7 @@ const groupConfig = () => {
         key: 'system.group',
         type: 'keyFormCard',
         // 标题表达式
-        title: `{{form.key === 'default' ? '默认配置' : '群：' + form.key}}`,
+        title: `{{ form.key === 'default' ? '默认配置' : '群：' + (form?.values?.__GROUP_TIP_TEXT__ ?? form.key) }}`,
         desc: '默认配置对所有群聊生效',
         // 允许添加新的配置
         allowAdd: true,
