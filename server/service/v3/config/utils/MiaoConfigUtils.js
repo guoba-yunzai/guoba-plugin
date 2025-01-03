@@ -1,4 +1,4 @@
-import YamlReader from '../../../../../framework/src/components/YamlReader.js'
+import {YamlReader} from "#guoba.framework"
 
 export function handleConfigData(action, key, field, value) {
   return {field, value};
