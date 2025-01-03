@@ -1,1 +1,1 @@
-var a="/guoba-plugin-mock-root/assets/header.jpg";export{a as h};
+const headerImg="/guoba-plugin-mock-root/assets/header.jpg";export{headerImg as h};

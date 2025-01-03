@@ -1,1 +1,1 @@
-const t="https://github.com/guoba-yunzai/Guoba-Plugin",a="https://gitee.com/guoba-yunzai/Guoba-Plugin",n="https://vvbin.cn/doc-next/",o="https://vvbin.cn/next/";export{n as D,t as G,o as S,a};
+const GITHUB_URL="https://github.com/guoba-yunzai/Guoba-Plugin",GITEE_URL="https://gitee.com/guoba-yunzai/Guoba-Plugin",DOC_URL="https://vvbin.cn/doc-next/",SITE_URL="https://vvbin.cn/next/";export{DOC_URL as D,GITHUB_URL as G,SITE_URL as S,GITEE_URL as a};

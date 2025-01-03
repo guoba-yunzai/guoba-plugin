@@ -1,1 +1,1 @@
-import{cK as n,cI as r}from"./index.js";function t(t,e){return t&&t.length?n(t,r(e)):[]}export{t as u};
+import{dK as baseUniq,dH as baseIteratee}from"./index.js";function uniqBy(array,iteratee){return array&&array.length?baseUniq(array,baseIteratee(iteratee)):[]}export{uniqBy as u};

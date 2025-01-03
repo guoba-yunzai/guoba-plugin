@@ -1,1 +1,1 @@
-import{a,b as r,o as e,f as n}from"./index.js";var s=a(r({name:"FrameBlank"}),[["render",function(a,r,s,o,t,d){return e(),n("div")}]]);export{s as default};
+import{d as defineComponent,b as _export_sfc,o as openBlock,e as createElementBlock}from"./index.js";const FrameBlank=_export_sfc(defineComponent({name:"FrameBlank"}),[["render",function(_ctx,_cache,$props,$setup,$data,$options){return openBlock(),createElementBlock("div")}]]);export{FrameBlank as default};
