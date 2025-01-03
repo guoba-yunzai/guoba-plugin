@@ -1,3 +1,5 @@
+import YamlReader from '../../../../../framework/src/components/YamlReader.js'
+
 export function handleConfigData(action, key, field, value) {
   return {field, value};
 }
@@ -13,12 +15,17 @@ export function handleGroupConfig(action, data) {
       if (groupId === 'default') {
         continue
       }
+      if (typeof groupId === 'string') {
+        if (groupId.startsWith(YamlReader.CONFIG_INTEGER_KEY)) {
+          groupId = groupId.replace(YamlReader.CONFIG_INTEGER_KEY, '')
+        }
+      }
       groupId = Number(groupId) || String(groupId)
       const groupName = Bot.pickGroup(groupId)?.info?.group_name
       if (!groupName) {
         continue
       }
-      data[key]['__GROUP_TIP_TEXT__'] = `${groupName} (${key})`
+      data[key]['__GROUP_TIP_TEXT__'] = `${groupName} (${groupId})`
     } else {
       delete data[key]['__GROUP_TIP_TEXT__']
     }
