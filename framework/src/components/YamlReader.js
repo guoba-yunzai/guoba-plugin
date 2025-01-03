@@ -8,6 +8,9 @@ export default class YamlReader {
   // 配置文件数字key
   static CONFIG_INTEGER_KEY = 'INTEGER__'
 
+  // 配置文件强制覆盖key
+  static CONFIG_FORCE_OVERLAY_KEY = 'FORCE_OVERLAY__'
+
   /**
    * 读写yaml文件
    *
@@ -75,9 +78,20 @@ export default class YamlReader {
   /**
    * 递归式设置数据，但不保存
    * @param data
-   * @param parentKeys
+   * @param {string[]} parentKeys
    */
   setDataRecursion(data, parentKeys) {
+    if (parentKeys.length > 0) {
+      let lastKey = parentKeys.pop()
+      if (typeof lastKey === 'string' && lastKey.startsWith(YamlReader.CONFIG_FORCE_OVERLAY_KEY)) {
+        lastKey = lastKey.replace(YamlReader.CONFIG_FORCE_OVERLAY_KEY, '')
+        this.document.setIn(this.mapParentKeys([...parentKeys, lastKey]), data)
+        // 强制覆盖，不再递归
+        return
+      }
+      parentKeys.push(lastKey)
+    }
+
     if (Array.isArray(data)) {
       this.document.setIn(this.mapParentKeys(parentKeys), data)
     } else if (typeof data === 'object' && data !== null) {
