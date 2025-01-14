@@ -7,6 +7,8 @@ base:
   checkUpdate: true
   # 是否允许群聊登录
   loginInGroup: false
+  # 是否只发送自定义地址
+  onlyCustomAddress: false
   # 是否启用Github反代
   githubReverseProxy: false
   # Github反代地址
