@@ -1,6 +1,7 @@
 import os from 'os'
 import path from 'path'
 import lodash from 'lodash'
+import {fileURLToPath} from 'url'
 import {_paths} from '#guoba.platform'
 
 let instanceVersion = ''
@@ -53,6 +54,10 @@ export async function GI(u, relative, version = instanceVersion) {
   } else {
     url = replacePrefix(url)
   }
+  // 判断是否是windows系统
+  if (os.platform() === 'win32' && !url.startsWith('file:///')) {
+    url = 'file:///' + url
+  }
   if (url) {
     // console.log('[GI]', url)
     return await import(url + '?' + version)
@@ -77,6 +82,7 @@ export async function GID(u, relative, version) {
 }
 
 export function createImport(metaUrl) {
+  metaUrl = fileURLToPath(metaUrl)
   metaUrl = path.dirname(metaUrl)
   return {
     GI: (u, version) => GI(u, metaUrl, version),
@@ -94,10 +100,6 @@ function replacePrefix(url) {
         return prefix.replace(url)
       }
       url = url.replace(prefix.reg, prefix.real + '/')
-      // 判断是否是windows系统
-      if (os.platform() === 'win32') {
-        url = 'file:///' + url
-      }
       break
     }
   }
