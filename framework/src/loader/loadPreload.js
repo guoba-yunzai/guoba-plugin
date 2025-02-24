@@ -3,17 +3,12 @@ import path from 'path'
 import chalk from 'chalk'
 import {Preload} from "../../index.js";
 import {loadClass} from "../utils/common.js";
-import bodyParser from 'body-parser';  // 添加 body-parser 导入
 
 /**
  * 依次创建页面预加载
  * @param {GuobaApplication} guobaApp
  */
 export async function usePreload(guobaApp) {
-  // 添加 body-parser 配置
-  guobaApp.app.use(bodyParser.json({limit: '50mb'}));
-  guobaApp.app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-
   const {_args: {preloads}} = guobaApp
   for (const item of preloads) {
     await hookAppPreloads(guobaApp, item)
