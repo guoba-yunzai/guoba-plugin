@@ -26,6 +26,9 @@ export default class PluginController extends ApiController {
     this.get('/s/:pluginName/config', this.getPluginConfig)
     // 设置plugin配置数据
     this.put('/s/:pluginName/config', this.setPluginConfig)
+
+    // 执行操作
+    this.post('/do/:pluginName/action', this.doAction)
   }
 
   /**
@@ -119,6 +122,26 @@ export default class PluginController extends ApiController {
       return flag
     }
     return Result.ok(flag)
+  }
+
+  // 执行插件的 action
+  async doAction(req) {
+    const {pluginName} = req.params
+    const body = req.body
+    const supportObject = this.getSupport(pluginName)
+    const {configInfo} = supportObject
+    const actions = configInfo?.actions
+    if (!actions) {
+      return Result.error('没有配置 actions')
+    }
+    const action = actions[body.action]
+    if (!action) {
+      return Result.error(`action "${body.action}" 不存在`)
+    }
+    if (typeof action !== 'function') {
+      return Result.error(`action "${body.action}" 不是一个方法`)
+    }
+    return action(body.args, {Result})
   }
 
 }
