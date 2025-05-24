@@ -1,6 +1,6 @@
 {
   "name": "guoba-plugin",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Yunzai-Bot插件。兼容Miao-Yunzai（V3、V4）、TRSS-Yunzai",
   "type": "module",
   "module": "index.js",
