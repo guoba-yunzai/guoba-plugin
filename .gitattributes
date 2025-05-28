@@ -1,0 +1,9 @@
+# 忽略所有图片文件的差异对比
+*.png binary -diff
+*.jpg binary -diff
+*.jpeg binary -diff
+*.ico binary -diff
+*.gif binary -diff
+*.webp binary -diff
+
+server/static/** linguist-generated=true binary -diff eol=lf
