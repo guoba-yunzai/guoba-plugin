@@ -123,6 +123,12 @@ export const baseConfig = {
       },
     },
     {
+      field: 'cache_group_member',
+      label: '缓存群成员列表',
+      bottomHelpMessage: '群成员数量越多，内存占用越多，关闭后部分插件群成员信息不完整',
+      component: 'Switch',
+    },
+    {
       field: 'file_to_url_time',
       label: '文件保存时间',
       component: 'InputNumber',
