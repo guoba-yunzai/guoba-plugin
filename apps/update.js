@@ -222,10 +222,11 @@ export class GuobaUpdate extends plugin {
    */
   doGitPull(isForce = false) {
     return new Promise((resolve) => {
-      let command = 'git pull'
+      // 普通更新：添加 --rebase 策略，防止高版本 Git 报错
+      let command = 'git pull --rebase'
       if (isForce) {
-        command = 'git checkout . && git pull'
-      } else {
+        // 强制更新：获取远程最新记录，并将本地强制重置为远程上游分支，彻底丢弃本地所有更改和分叉
+        command = 'git fetch --all && git reset --hard @{u}'
       }
       exec(command, {cwd: _paths.pluginRoot}, function (error, stdout, stderr) {
         if (error) {
