@@ -11,6 +11,7 @@ export default class GitTools {
   static STATUS = {
     ERROR: -1,
     OK: 0,
+    AUTH_ERROR: -2,
   }
 
   static CHECK_STATUS = {
@@ -44,6 +45,8 @@ export default class GitTools {
       strictMode: false,
       // 是否在初始化时立即克隆
       immediateClone: false,
+      // 备用链接
+      fallbackUrl: null 
     }, options)
 
     if (this.options.immediateClone) {
@@ -56,12 +59,10 @@ export default class GitTools {
 
     const checkRes = await this.checkRepo()
     if (checkRes === GitTools.CHECK_STATUS.NOT_EXIST) {
-      // console.log('仓库不存在，开始克隆')
       const res = await this.cloneRepo()
-      if (res.status === GitTools.STATUS.ERROR) {
+      if (res.status !== GitTools.STATUS.OK) {
         logger.error(`[Guoba] 执行 "${this.name}" 仓库的clone操作时出现错误；stderr: ${res.stderr}`)
       }
-      // console.log('克隆完成，耗时：' + res.timeMs + 'ms')
     } else if (checkRes === GitTools.CHECK_STATUS.NOT_MATCH) {
       if (this.options.strictMode) {
         logger.warn(`[Guoba] 检测到 "${this.name}" 仓库损坏，执行删除并重新克隆操作`)
@@ -72,7 +73,9 @@ export default class GitTools {
       }
     } else if (checkRes === GitTools.STATUS.OK) {
       const res = await this.pull()
-      if (res.status === GitTools.STATUS.ERROR) {
+      if (res.status === GitTools.STATUS.AUTH_ERROR) {
+        logger.warn(`[Guoba] "${this.name}" 仓库更新被跳过(需账号验证且无备用链接)，直接保留并使用本地现有缓存。`)
+      } else if (res.status === GitTools.STATUS.ERROR) {
         if (this.options.strictMode) {
           logger.warn(`[Guoba] 检测到 "${this.name}" 仓库损坏，执行删除并重新克隆操作`)
           await this.forceReClone()
@@ -85,9 +88,9 @@ export default class GitTools {
 
   async forceReClone() {
     const rmSync = fs.rmSync || fs.rmdirSync
-    rmSync(this.directory, {recursive: true})
+    rmSync(this.directory, {recursive: true, force: true})
     const res = await this.cloneRepo()
-    if (res.status !== GitTools.STATUS.ERROR) {
+    if (res.status === GitTools.STATUS.OK) {
       this.repoIsError = false
     } else {
       logger.warn(`[Guoba] 执行 "${this.name}" 仓库的强制重新Clone操作时出现错误，请手动删除 "${this.directory}" 目录并重启；stderr: ${res.stderr}`)
@@ -117,7 +120,8 @@ export default class GitTools {
     return GitTools.CHECK_STATUS.NOT_MATCH
   }
 
-  async cloneRepo() {
+  // 内部辅助方法：处理代理拼接
+  _getProxyUrl(repoUrl) {
     const githubReverseProxy = cfg.get('base.githubReverseProxy');
     let githubProxyUrl = cfg.get('base.githubProxyUrl');
 
@@ -125,21 +129,48 @@ export default class GitTools {
       githubProxyUrl += '/';
     }
 
-    const isGithubRepo = /github\.com/.test(this.repository);
+    const isGithubRepo = /github\.com/.test(repoUrl);
+    return isGithubRepo && githubReverseProxy && githubProxyUrl
+      ? `${githubProxyUrl}${repoUrl}`
+      : repoUrl;
+  }
 
-    const repositoryUrl = isGithubRepo && githubReverseProxy && githubProxyUrl
-      ? `${githubProxyUrl}${this.repository}`
-      : this.repository;
+  async cloneRepo() {
+    let repositoryUrl = this._getProxyUrl(this.repository);
 
-    const res = await this.execSingle(
+    let res = await this.execSingle(
       'cloneRepo',
       `git clone --single-branch --depth=1 "${repositoryUrl}" "${this.directory}"`
     );
 
-    return {
-      ...res,
-      status: res.error ? GitTools.STATUS.ERROR : GitTools.STATUS.OK,
-    };
+    let status = res.error 
+      ? (res.stderr?.includes('[因需要账号验证已自动跳过]') ? GitTools.STATUS.AUTH_ERROR : GitTools.STATUS.ERROR) 
+      : GitTools.STATUS.OK;
+
+    // 失败自动切换备用链接 (Fallback)
+    if (status === GitTools.STATUS.AUTH_ERROR && this.options.fallbackUrl && this.repository !== this.options.fallbackUrl) {
+      if (typeof logger !== 'undefined') logger.warn(`[Guoba] "${this.name}" 仓库克隆受限，正在尝试切换至备用链接 (GitHub)...`);
+      
+      this.repository = this.options.fallbackUrl;
+      repositoryUrl = this._getProxyUrl(this.repository);
+
+      // 清理可能克隆到一半的残留空文件夹
+      const rmSync = fs.rmSync || fs.rmdirSync;
+      if (fs.existsSync(this.directory)) {
+        try { rmSync(this.directory, { recursive: true, force: true }) } catch(e) {}
+      }
+
+      res = await this.execSingle(
+        'cloneRepo_fallback',
+        `git clone --single-branch --depth=1 "${repositoryUrl}" "${this.directory}"`
+      );
+      
+      status = res.error 
+        ? (res.stderr?.includes('[因需要账号验证已自动跳过]') ? GitTools.STATUS.AUTH_ERROR : GitTools.STATUS.ERROR) 
+        : GitTools.STATUS.OK;
+    }
+
+    return { ...res, status };
   }
 
   /**
@@ -160,17 +191,32 @@ export default class GitTools {
   }
 
   async pull() {
-    const res = await this.execSingle('pull', `git -C "${this.directory}" pull`)
+    let res = await this.execSingle('pull', `git -C "${this.directory}" pull`)
+    let status = GitTools.PULL_STATUS.UP_TO_DATE;
+
     if (res.error) {
-      return {
-        ...res,
-        status: GitTools.STATUS.ERROR,
+      status = res.stderr?.includes('[因需要账号验证已自动跳过]') ? GitTools.STATUS.AUTH_ERROR : GitTools.STATUS.ERROR;
+    }
+
+    // 失败自动切换备用链接 (Fallback)
+    if (status === GitTools.STATUS.AUTH_ERROR && this.options.fallbackUrl && this.repository !== this.options.fallbackUrl) {
+      if (typeof logger !== 'undefined') logger.warn(`[Guoba] "${this.name}" 仓库更新受限，正在尝试切换至备用链接 (GitHub)...`);
+      
+      this.repository = this.options.fallbackUrl;
+      
+      // 修改本地仓库的 remote url 指向 GitHub
+      await this.exec(`git -C "${this.directory}" remote set-url origin "${this.repository}"`);
+      
+      res = await this.execSingle('pull_fallback', `git -C "${this.directory}" pull`);
+      
+      if (res.error) {
+        status = res.stderr?.includes('[因需要账号验证已自动跳过]') ? GitTools.STATUS.AUTH_ERROR : GitTools.STATUS.ERROR;
+      } else {
+        status = GitTools.PULL_STATUS.UP_TO_DATE;
       }
     }
-    return {
-      ...res,
-      status: GitTools.PULL_STATUS.UP_TO_DATE,
-    }
+
+    return { ...res, status };
   }
 
   /**
@@ -195,8 +241,27 @@ export default class GitTools {
     return new Promise((resolve) => {
       exec(`${cmd}`, {
         windowsHide: true,
+        // 添加 env 环境变量，强制 Git 不要弹出账号密码输入提示
+        env: {
+          ...process.env,
+          GIT_TERMINAL_PROMPT: '0', // 禁用终端提示
+          GIT_ASKPASS: 'echo'       // 即使尝试弹窗也会直接返回空并报错
+        }
       }, (error, stdout, stderr) => {
         const timeMs = Date.now() - beginTime
+        
+        // 检测 stderr 中是否包含因缺少账号密码而导致的报错
+        if (stderr && (stderr.includes('could not read Username') || stderr.includes('Authentication failed') || stderr.includes('terminal prompts disabled'))) {
+          const warnStr = `[Guoba][GitTools] 仓库 "${this.name}" 访问受限！[目标地址]：${this.repository} [原因]：该仓库需要账号密码验证（可能是私有仓库或链接已失效）。系统将尝试干预处理。`;
+          if (typeof logger !== 'undefined') {
+            logger.warn(warnStr);
+          } else {
+            console.error(warnStr);
+          }
+          // 在 stderr 前面加上明确的标识，方便上层方法的 catch / log 也能清楚原因
+          stderr = `[因需要账号验证已自动跳过] ${stderr}`;
+        }
+
         resolve({error, stdout, stderr, timeMs});
       });
     });
