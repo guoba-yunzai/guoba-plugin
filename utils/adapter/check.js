@@ -25,8 +25,8 @@ export function packageTips(error, pkgName) {
   logger.mark('---- 锅巴启动失败 ----')
   let pack = pkgName
   if (!pack) {
-    let match = error.stack.match(/Cannot find package '(.+?)'/)
-    pack = match ? match[1] : error.stack.match(/'(.+?)'/g)?.[0]?.replace(/'/g, '')
+    let match = error.stack.match(/Cannot find (?:package|module) '(.+?)'/)
+    pack = match ? match[1] : null
   }
   pack = pack || 'unknown'
   logger.mark(`缺少依赖：${chalk.red(pack)}`)
