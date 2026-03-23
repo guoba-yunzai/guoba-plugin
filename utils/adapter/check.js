@@ -14,16 +14,21 @@ export async function checkPackage() {
     try {
       await import(pkgName)
     } catch (e) {
-      packageTips(e)
+      packageTips(e, pkgName)
       return false
     }
   }
   return true
 }
 
-export function packageTips(error) {
+export function packageTips(error, pkgName) {
   logger.mark('---- 锅巴启动失败 ----')
-  let pack = error.stack.match(/'(.+?)'/g)[0].replace(/'/g, '')
+  let pack = pkgName
+  if (!pack) {
+    let match = error.stack.match(/Cannot find package '(.+?)'/)
+    pack = match ? match[1] : error.stack.match(/'(.+?)'/g)?.[0]?.replace(/'/g, '')
+  }
+  pack = pack || 'unknown'
   logger.mark(`缺少依赖：${chalk.red(pack)}`)
   let cmd = (isV3 || isV4) ? 'pnpm add $s -w' : 'npm install $s'
   logger.mark(`请执行安装依赖命令：${chalk.red(cmd.replace('$s', pack))}`)
