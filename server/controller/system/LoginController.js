@@ -51,7 +51,7 @@ export class LoginController extends ApiController {
       )
       logger.info('#'.repeat(54))
       logger.info('# ' + chalk.green('[Guoba] 验证码登录请求') + '                             #')
-      logger.info('# 您的登录验证码为：' + chalk.yellow(code) + '                 #')
+      logger.info('# 您的登录验证码为: ' + chalk.yellow(code) + '                 #')
       logger.info('# 验证码五分钟内有效且失效前不会再次打印，请尽快输入 #')
       logger.info('# ' + chalk.red('若非本人操作请忽略并考虑是否泄露了登录地址') + '         #')
       logger.info('#'.repeat(54))
@@ -62,6 +62,7 @@ export class LoginController extends ApiController {
 
   async codeLoginCheck(req) {
     let {code} = req.body
+    code = typeof code === 'string' ? code.trim() : code
     const token = await this.loginService.codeLoginCheck(code)
     if (token) {
       logger.mark('[Guoba] 验证码登录成功')
