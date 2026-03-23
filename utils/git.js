@@ -4,9 +4,15 @@ import {_paths, GitRepoMap} from '#guoba.platform'
 import {mkdirSync} from './common.js'
 
 const repos = [
-  {name: 'PluginsIndex', url: 'https://gitee.com/yhArcadia/Yunzai-Bot-plugins-index.git'},
-  {name: 'GuobaResources', url: 'https://gitee.com/guoba-yunzai/resources.git'},
-
+  {
+    name: 'PluginsIndex', 
+    url: 'https://gitee.com/yhArcadia/Yunzai-Bot-plugins-index.git', 
+    fallbackUrl: 'https://github.com/yhArcadia/Yunzai-Bot-plugins-index.git'
+  },
+  {
+    name: 'GuobaResources', 
+    url: 'https://gitee.com/guoba-yunzai/resources.git',
+  },
   // {name: 'GuobaTest', url: 'https://gitee.com/guoba-yunzai/test.git'},
 ]
 
@@ -14,11 +20,12 @@ export const repoPath = path.join(_paths.pluginRoot, 'data/repo')
 
 export function initRepos() {
   mkdirSync(repoPath)
-  for (let {name, url} of repos) {
+  for (let {name, url, fallbackUrl} of repos) {
     const directory = path.join(repoPath, name)
     const tools = new GitTools(directory, url, {
       strictMode: true,
       immediateClone: true,
+      fallbackUrl: fallbackUrl
     })
     GitRepoMap.set(name, tools)
   }
