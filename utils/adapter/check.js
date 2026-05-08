@@ -4,7 +4,6 @@ import {isV3, isV4} from '#guoba.adapter'
 export const needPackage = [
   'yaml',
   'express',
-  'body-parser',
   'multer',
   'jsonwebtoken',
 ]

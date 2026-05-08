@@ -7,7 +7,7 @@ export default class ErrorController extends RestController {
   }
 
   registerRouters() {
-    this.all('*', this.handle404)
+    this.all('*splat', this.handle404)
   }
 
   handle404(req, res) {

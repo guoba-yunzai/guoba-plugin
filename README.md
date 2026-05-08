@@ -58,7 +58,7 @@ pnpm install --filter=guoba-plugin
 如果是使用`npm`或`cnpm`等其他依赖安装工具，需要手动安装以下依赖：
 
 ```bash
-npm install express multer body-parser jsonwebtoken
+npm install express multer jsonwebtoken
 ```
 
 如果以上命令执行失败，可尝试使用`cnpm`进行安装，只需将开头的`npm`替换成`cnpm`即可。
