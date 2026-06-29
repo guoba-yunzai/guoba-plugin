@@ -1,5 +1,6 @@
 import {autowired, Result} from '#guoba.framework'
 import {ApiController, cfg} from '#guoba.platform'
+import net from 'net'
 
 const RedisDecorator = await Guoba.GID('#/decorator/RedisDecorator.js')
 
@@ -50,7 +51,7 @@ export default class HelperController extends ApiController {
   }
 
   tryReleasePort(req) {
-    if (req.hostname !== 'localhost') {
+    if (!isLoopbackAddress(req.socket?.remoteAddress)) {
       return Result.noAuth()
     }
     logger.mark('[Guoba] 服务已在另一处启动，正在尝试停止当前服务……')
@@ -66,4 +67,22 @@ export default class HelperController extends ApiController {
     }, 10)
     return Result.ok()
   }
+}
+
+function isLoopbackAddress(address) {
+  if (typeof address !== 'string' || address.length === 0) {
+    return false
+  }
+
+  const normalized = address.replace(/^\[|\]$/g, '').toLowerCase()
+  if (normalized === '::1' || normalized === '0:0:0:0:0:0:0:1') {
+    return true
+  }
+  if (normalized.startsWith('::ffff:')) {
+    return isLoopbackAddress(normalized.substring(7))
+  }
+  if (!net.isIPv4(normalized)) {
+    return false
+  }
+  return normalized.split('.')[0] === '127'
 }
