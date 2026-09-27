@@ -9,7 +9,14 @@ export class OicqService extends Service {
   /** 获取一个QQ用户信息 */
   async pickUser(userId) {
     userId = Number(userId) || userId
-    const user = Bot.pickUser(userId)
+    let user = null
+    try {
+      user = Bot.pickUser(userId)
+    } catch (e) {
+      // 非 QQ 适配器（如微信个人号）可能不支持 pickUser，安全降级
+      logger.warn?.(`[Guoba] 当前适配器不支持 pickUser: ${e?.message || e}`)
+      return { userId, simpleInfo: null }
+    }
     return {
       userId,
       simpleInfo: user.info || await user.getInfo?.() || await user.getSimpleInfo?.(),
@@ -19,7 +26,14 @@ export class OicqService extends Service {
   /** 获取一个QQ群组信息 */
   async pickGroup(groupId) {
     groupId = Number(groupId) || groupId
-    const group = Bot.pickGroup(groupId)
+    let group = null
+    try {
+      group = Bot.pickGroup(groupId)
+    } catch (e) {
+      // 非 QQ 适配器（如微信个人号）可能不支持 pickGroup，安全降级
+      logger.warn?.(`[Guoba] 当前适配器不支持 pickGroup: ${e?.message || e}`)
+      return { groupId, info: null }
+    }
     return {
       groupId,
       info: group.info || await group.getInfo?.(),
