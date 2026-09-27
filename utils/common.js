@@ -61,9 +61,14 @@ async function replyPrivate(userId, msg) {
   let friend = Bot.fl.get(userId)
   if (friend) {
     logger.mark(`发送好友消息[${friend.nickname}](${userId})`)
-    return await Bot.pickUser(userId).sendMsg(msg).catch((err) => {
-      logger.mark(err)
-    })
+    try {
+      return await Bot.pickUser(userId).sendMsg(msg).catch((err) => {
+        logger.mark(err)
+      })
+    } catch (e) {
+      // 非 QQ 适配器（如微信个人号）可能不支持 pickUser，跳过私聊发送
+      logger.warn?.(`[Guoba] 当前适配器不支持 pickUser，跳过私聊消息发送: ${e?.message || e}`)
+    }
   }
 }
 

@@ -21,7 +21,13 @@ export function handleGroupConfig(action, data) {
         }
       }
       groupId = Number(groupId) || String(groupId)
-      const groupName = Bot.pickGroup(groupId)?.info?.group_name
+      let groupName
+      try {
+        groupName = Bot.pickGroup(groupId)?.info?.group_name
+      } catch (e) {
+        // 非 QQ 适配器（如微信个人号）可能不支持 pickGroup，跳过群名提示
+        continue
+      }
       if (!groupName) {
         continue
       }
