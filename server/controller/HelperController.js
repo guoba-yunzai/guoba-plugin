@@ -1,32 +1,31 @@
-import {autowired, Result} from '#guoba.framework'
-import {ApiController, cfg} from '#guoba.platform'
-import net from 'net'
+import { autowired, Result } from "#guoba.framework"
+import { ApiController, cfg, _paths } from "#guoba.platform"
+import { releasePath, verifyLocalRelease } from "../helper/localRelease.js"
 
-const RedisDecorator = await Guoba.GID('#/decorator/RedisDecorator.js')
+const RedisDecorator = await Guoba.GID("#/decorator/RedisDecorator.js")
 
 /**
  * 工具类Controller
  */
 export default class HelperController extends ApiController {
-
-  helperService = autowired('helperService')
+  helperService = autowired("helperService")
 
   constructor(guobaApp) {
-    super('/helper', guobaApp)
+    super("/helper", guobaApp)
   }
 
   registerRouters() {
     // 中转请求，绕过跨域和防盗链
-    this.all('/transit', this.transitRequest)
+    this.all("/transit", this.transitRequest)
     // 获取天气信息（缓存6小时）
-    this.get('/city_weather', this.getCityWeather, [
-      new RedisDecorator('city_weather:${config.getCity()}', {EX: 60 * 60 * 6, getCity: this.getCity}),
+    this.get("/city_weather", this.getCityWeather, [
+      new RedisDecorator("city_weather:${config.getCity()}", {
+        EX: 60 * 60 * 6,
+        getCity: this.getCity,
+      }),
     ])
-    // 本地尝试释放端口
-    // 假设用户关闭yunzai时，没有关干净，导致端口号被异常占用
-    // 此时另一方启动的锅巴可以尝试调用此接口，来关闭当前的端口占用
-    // 安全性：仅限 localhost 访问
-    this.delete('/release_port', this.tryReleasePort)
+    // 仅允许持有本地共享密钥的新实例交接端口。
+    this.delete("/release_port", this.tryReleasePort)
   }
 
   transitRequest(req, res) {
@@ -34,7 +33,7 @@ export default class HelperController extends ApiController {
   }
 
   getCity() {
-    return cfg.get('base.city')
+    return cfg.get("base.city")
   }
 
   async getCityWeather() {
@@ -45,44 +44,28 @@ export default class HelperController extends ApiController {
       })
     } catch (e) {
       logger.error(e)
-      let msg = e.message || e
-      return Result.error(msg)
+      return Result.error(e.message || e)
     }
   }
 
   tryReleasePort(req) {
-    if (!isLoopbackAddress(req.socket?.remoteAddress)) {
-      return Result.noAuth()
+    const path = releasePath(_paths.server.realMountPrefix)
+    if (!verifyLocalRelease(req, cfg.getJwtSecret(), path)) return Result.noAuth()
+    const server = Guoba.server
+    if (typeof server?.close !== "function") {
+      return Result.error("当前服务尚未就绪，无法释放端口", 503)
     }
-    logger.mark('[Guoba] 服务已在另一处启动，正在尝试停止当前服务……')
+    logger.mark("[Guoba] 服务已在另一处启动，正在尝试停止当前服务……")
     setTimeout(() => {
-      Guoba.server.close(err => {
-        if (err) {
-          logger.mark('[Guoba] 服务停止失败')
-          logger.error(err)
+      server.close(error => {
+        if (error) {
+          logger.mark("[Guoba] 服务停止失败")
+          logger.error(error)
         } else {
-          logger.mark('[Guoba] 已停止当前服务，您如果想要多开锅巴，请更改不同的端口号~')
+          logger.mark("[Guoba] 已停止当前服务，您如果想要多开锅巴，请更改不同的端口号~")
         }
       })
     }, 10)
     return Result.ok()
   }
-}
-
-function isLoopbackAddress(address) {
-  if (typeof address !== 'string' || address.length === 0) {
-    return false
-  }
-
-  const normalized = address.replace(/^\[|\]$/g, '').toLowerCase()
-  if (normalized === '::1' || normalized === '0:0:0:0:0:0:0:1') {
-    return true
-  }
-  if (normalized.startsWith('::ffff:')) {
-    return isLoopbackAddress(normalized.substring(7))
-  }
-  if (!net.isIPv4(normalized)) {
-    return false
-  }
-  return normalized.split('.')[0] === '127'
 }

@@ -1,20 +1,16 @@
-import os from 'os'
-import fs from 'fs'
-import path from 'path'
-import {Service, GuobaError} from '#guoba.framework';
-import {mkdirSync} from '#guoba.utils'
-import {diskInfo} from '#guoba.libs'
-import {liteToken} from './model/tokens.js'
+import os from "os"
+import fs from "fs"
+import path from "path"
+import { Service, GuobaError } from "#guoba.framework"
+import { mkdirSync } from "#guoba.utils"
+import { diskInfo } from "#guoba.libs"
+import { liteToken } from "./model/tokens.js"
+import { resolvePathWithinRoot, validatePathSegment } from "../../../utils/safePath.js"
 
-const {GI} = Guoba.createImport(import.meta.url)
-const {useMenuList} = await GI('./model/menus/index.js')
+const { GI } = Guoba.createImport(import.meta.url)
+const { useMenuList } = await GI("./model/menus/index.js")
 
 export class SystemService extends Service {
-
-  constructor(app) {
-    super(app)
-  }
-
   async queryMenus() {
     return await useMenuList()
   }
@@ -29,9 +25,15 @@ export class SystemService extends Service {
    * @param dirName
    */
   createDir(parentPath, dirName) {
-    let joinPath = path.join(parentPath, dirName)
+    validatePathSegment(dirName)
+    if (typeof parentPath !== "string" || !parentPath || !fs.statSync(parentPath).isDirectory()) {
+      throw new GuobaError("父目录不存在！")
+    }
+    // 管理员可选择项目外目录和目录链接，但新目录不能脱离选定的父目录。
+    parentPath = fs.realpathSync(parentPath)
+    let joinPath = resolvePathWithinRoot(parentPath, dirName)
     if (fs.existsSync(joinPath)) {
-      throw new GuobaError('目录已存在！')
+      throw new GuobaError("目录已存在！")
     }
     return mkdirSync(joinPath)
   }
@@ -41,23 +43,15 @@ export class SystemService extends Service {
    * @returns {Promise}
    */
   async getFsTreeRoot() {
-    let platform = os.platform().toLowerCase()
-    if (platform === 'linux') {
-      return [
-        {title: '/', path: '/', isLeaf: false, children: null},
-      ]
-    } else {
-      let drives = await diskInfo.getDrives()
-      return drives.map(drive => {
-        let title = drive.volumeName ? `${drive.volumeName}（${drive.mounted}）` : drive.mounted
-        return {
-          title: title,
-          path: drive.mounted + '\\',
-          isLeaf: false,
-          children: null,
-        }
-      })
+    if (os.platform().toLowerCase() === "linux") {
+      return [{ title: "/", path: "/", isLeaf: false, children: null }]
     }
+    return (await diskInfo.getDrives()).map(drive => ({
+      title: drive.volumeName ? `${drive.volumeName}（${drive.mounted}）` : drive.mounted,
+      path: drive.mounted + "\\",
+      isLeaf: false,
+      children: null,
+    }))
   }
 
   /**
@@ -68,11 +62,10 @@ export class SystemService extends Service {
    */
   async getFsTreeChildren(parentPath, onlyDir = true) {
     if (!fs.existsSync(parentPath)) {
-      throw new GuobaError('目录不存在！')
+      throw new GuobaError("目录不存在！")
     }
     let children = []
-    let childNames = fs.readdirSync(parentPath)
-    for (let childName of childNames) {
+    for (const childName of fs.readdirSync(parentPath)) {
       let child = {
         title: childName,
         path: path.join(parentPath, childName),
@@ -82,15 +75,12 @@ export class SystemService extends Service {
       let stat
       try {
         stat = fs.statSync(child.path)
-      } catch (e) {
+      } catch {
         // 无权限的直接跳过
-        // console.error(e.message || e)
         continue
       }
       if (stat.isFile()) {
-        if (onlyDir) {
-          continue
-        }
+        if (onlyDir) continue
         child.isFile = true
         child.isLeaf = true
       }
@@ -98,5 +88,4 @@ export class SystemService extends Service {
     }
     return children
   }
-
 }

@@ -1,11 +1,12 @@
-import os from 'os'
-import fs from 'fs'
-import path from 'path'
-import moment from 'moment'
-import lodash from 'lodash'
-import fetch from 'node-fetch'
-import {cfg, Constant} from "#guoba.platform"
-import {isV3, isV4, isTRSS} from '#guoba.adapter'
+import os from "os"
+import { randomInt } from "node:crypto"
+import fs from "fs"
+import path from "path"
+import moment from "moment"
+import lodash from "lodash"
+import fetch from "node-fetch"
+import { cfg, Constant } from "#guoba.platform"
+import { isV3, isV4, isTRSS } from "#guoba.adapter"
 
 /**
  * 随机生成指定长度的字符串
@@ -13,9 +14,9 @@ import {isV3, isV4, isTRSS} from '#guoba.adapter'
  * @return {string}
  */
 export function randomString(length = 8) {
-  let str = ''
+  let str = ""
   for (let i = 0; i < length; i++) {
-    str += lodash.random(36).toString(36)
+    str += randomInt(36).toString(36)
   }
   return str.substr(0, length)
 }
@@ -31,7 +32,7 @@ export function toPairsMap(arg) {
 
 async function getMasterQQ() {
   if (isV3 || isV4) {
-    return (await import( '../../../lib/config/config.js')).default.masterQQ
+    return (await import("../../../lib/config/config.js")).default.masterQQ
   } else {
     return BotConfig.masterQQ
   }
@@ -61,9 +62,11 @@ async function replyPrivate(userId, msg) {
   let friend = Bot.fl.get(userId)
   if (friend) {
     logger.mark(`发送好友消息[${friend.nickname}](${userId})`)
-    return await Bot.pickUser(userId).sendMsg(msg).catch((err) => {
-      logger.mark(err)
-    })
+    return await Bot.pickUser(userId)
+      .sendMsg(msg)
+      .catch(err => {
+        logger.mark(err)
+      })
   }
 }
 
@@ -71,48 +74,46 @@ async function replyPrivate(userId, msg) {
  * 获取所有web地址，包括内网、外网
  */
 export async function getAllWebAddress() {
-  const {splicePort, helloTRSS} = cfg.get('server')
+  const { splicePort, helloTRSS } = cfg.get("server")
   let host = cfg.serverHost
   let port = cfg.serverPort
   port = splicePort ? Number.parseInt(port) : null
   port = port === 80 ? null : port
   let custom = []
   if (isTRSS && helloTRSS) {
-    const server = (await import('../../../lib/config/config.js')).default.server
-    if (server.url)
-      custom.push(server.url)
-    if (server.https?.url)
-      custom.push(server.https.url)
+    const server = (await import("../../../lib/config/config.js")).default.server
+    if (server.url) custom.push(server.url)
+    if (server.https?.url) custom.push(server.https.url)
   }
   let local = getAutoIps(port, true)
   let remote = await getRemoteIps()
   if (remote && remote.length > 0) {
-    remote = remote.map((i) => joinHttpPort(i, port))
+    remote = remote.map(i => joinHttpPort(i, port))
   }
   if (host) {
     if (!Array.isArray(host)) {
       host = [host]
     }
     for (let h of host) {
-      if (h && h !== 'auto') {
+      if (h && h !== "auto") {
         custom.push(joinHttpPort(h, port))
       }
     }
   }
   let mountRoot = cfg.serverMountPath.mountRoot
-  mountRoot = mountRoot === '/' ? '' : mountRoot
+  mountRoot = mountRoot === "/" ? "" : mountRoot
   if (mountRoot) {
-    custom = custom.map((i) => i + mountRoot)
-    local = local.map((i) => i + mountRoot)
-    remote = remote.map((i) => i + mountRoot)
+    custom = custom.map(i => i + mountRoot)
+    local = local.map(i => i + mountRoot)
+    remote = remote.map(i => i + mountRoot)
   }
-  return {custom, local, remote}
+  return { custom, local, remote }
 }
 
 // 拼接端口号和http前缀
 function joinHttpPort(ip, port) {
-  ip = /^http/.test(ip) ? ip : 'http://' + ip
-  return `${ip}${port ? ':' + port : ''}`
+  ip = /^http/.test(ip) ? ip : "http://" + ip
+  return `${ip}${port ? ":" + port : ""}`
 }
 
 /**
@@ -120,31 +121,31 @@ function joinHttpPort(ip, port) {
  * @param allIp 是否展示全部IP
  */
 export function getWebAddress(allIp = false) {
-  const {splicePort} = cfg.get('server')
+  const { splicePort } = cfg.get("server")
   let host = cfg.serverHost
   let port = cfg.serverPort
   port = splicePort ? Number.parseInt(port) : null
   port = port === 80 ? null : port
   let hosts = []
-  if (host === 'auto') {
+  if (host === "auto") {
     hosts.push(...getAutoIps(port, allIp))
   } else {
     if (!Array.isArray(host)) {
       host = [host]
     }
     for (let item of host) {
-      if (item === 'auto') {
+      if (item === "auto") {
         hosts.push(...getAutoIps(port, allIp))
       } else {
-        item = /^http/.test(item) ? item : 'http://' + item
-        hosts.push(`${item}${port ? ':' + port : ''}`)
+        item = /^http/.test(item) ? item : "http://" + item
+        hosts.push(`${item}${port ? ":" + port : ""}`)
       }
     }
   }
   let mountRoot = cfg.serverMountPath.mountRoot
-  mountRoot = mountRoot === '/' ? '' : mountRoot
+  mountRoot = mountRoot === "/" ? "" : mountRoot
   if (mountRoot) {
-    hosts = hosts.map((i) => i + mountRoot)
+    hosts = hosts.map(i => i + mountRoot)
   }
   return hosts
 }
@@ -152,7 +153,7 @@ export function getWebAddress(allIp = false) {
 function getAutoIps(port, allIp) {
   let ips = getLocalIps(port)
   if (ips.length === 0) {
-    ips.push(`localhost${port ? ':' + port : ''}`)
+    ips.push(`localhost${port ? ":" + port : ""}`)
   }
   if (allIp) {
     return ips.map(ip => `http://${ip}`)
@@ -170,7 +171,7 @@ function getAutoIps(port, allIp) {
  */
 export function getLocalIps(port) {
   let ips = []
-  port = port ? `:${port}` : ''
+  port = port ? `:${port}` : ""
   try {
     let networks = os.networkInterfaces()
     for (let [name, wlans] of Object.entries(networks)) {
@@ -187,12 +188,17 @@ export function getLocalIps(port) {
          * 放弃使用网段过滤，采取过滤fe、fc开头地址
          */
         // noinspection EqualityComparisonWithCoercionJS
-        if (name != 'lo' && name != 'docker0' && wlan.address.slice(0, 2) != 'fe' && wlan.address.slice(0, 2) != 'fc') {
+        if (
+          name != "lo" &&
+          name != "docker0" &&
+          wlan.address.slice(0, 2) != "fe" &&
+          wlan.address.slice(0, 2) != "fc"
+        ) {
           // 过滤本地回环地址
-          if (['127.0.0.1', '::1'].includes(wlan.address)) {
+          if (["127.0.0.1", "::1"].includes(wlan.address)) {
             continue
           }
-          if (wlan.family === 'IPv6') {
+          if (wlan.family === "IPv6") {
             ips.push(`[${wlan.address}]${port}`)
           } else {
             ips.push(`${wlan.address}${port}`)
@@ -202,16 +208,18 @@ export function getLocalIps(port) {
     }
   } catch (e) {
     let err = e?.stack || e?.message || e
-    err = err ? err.toString() : ''
+    err = err ? err.toString() : ""
     if (/Unknown system error 13/i.test(err)) {
-      logger.warn('[Guoba] 由于系统限制，无法获取到IP地址，仅显示本地回环地址。该问题目前暂无方案解决，但不影响Guoba使用，您可手动配置自定义地址。')
+      logger.warn(
+        "[Guoba] 由于系统限制，无法获取到IP地址，仅显示本地回环地址。该问题目前暂无方案解决，但不影响Guoba使用，您可手动配置自定义地址。",
+      )
       ips.push(`localhost${port}`)
     } else {
       logger.error(`错误：${logger.red(e)}`)
     }
   }
   if (ips.length === 0) {
-    logger.warn('[Guoba] 无法获取到IP地址，仅显示本地回环地址，详情请查看以上报错。')
+    logger.warn("[Guoba] 无法获取到IP地址，仅显示本地回环地址，详情请查看以上报错。")
     ips.push(`localhost${port}`)
   }
   return ips
@@ -222,7 +230,7 @@ export function getLocalIps(port) {
  * @author @吃吃吃个柚子皮
  */
 export async function getRemoteIps() {
-  let redisKey = Constant.REDIS_PREFIX + 'remote-ips:3'
+  let redisKey = Constant.REDIS_PREFIX + "remote-ips:3"
   let cacheData = await redis.get(redisKey)
   let ips
   if (cacheData) {
@@ -235,7 +243,7 @@ export async function getRemoteIps() {
   //API是免费，但不能商用。(废话)
   let apis = [
     // 返回IPv4地址
-    'http://v4.ip.zxinc.org/info.php?type=json',
+    "http://v4.ip.zxinc.org/info.php?type=json",
     // 返回IPv6地址（已失效）
     // 'http://v6.ip.zxinc.org/info.php?type=json'
   ]
@@ -247,7 +255,7 @@ export async function getRemoteIps() {
       continue
     }
     if (response.status === 200) {
-      let {code, data} = await response.json()
+      let { code, data } = await response.json()
       if (code === 0) {
         ips.push(data.myip)
       }
@@ -257,7 +265,7 @@ export async function getRemoteIps() {
   // 服务器上的外网IP一般不会变，如果经常变的话就推荐使用DDNS，
   // 而家用PC一般也用不到外网IP，仍然推荐使用DDNS内网穿透。
   if (ips.length > 0) {
-    redis.set(redisKey, JSON.stringify(ips), {EX: 3600 * 24})
+    redis.set(redisKey, JSON.stringify(ips), { EX: 3600 * 24 })
   }
   return ips
 }
@@ -271,7 +279,7 @@ export function sleep(ms = 1000) {
  * @param filePath
  */
 export function readJson(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, 'utf8'))
+  return JSON.parse(fs.readFileSync(filePath, "utf8"))
 }
 
 /**
@@ -282,13 +290,14 @@ export function readJson(filePath) {
  * @param dec 描述
  * @returns {Promise<boolean|*>}
  */
-export async function makeForwardMsg(e, msg = [], dec = '') {
+export async function makeForwardMsg(e, msg = [], dec = "") {
   const bot = e.bot || Bot
   let nickname = bot.nickname
-  if (e.isGroup && bot.getGroupMemberInfo) try {
-    const info = await bot.getGroupMemberInfo(e.group_id, bot.uin)
-    nickname = info.card || info.nickname
-	} catch {}
+  if (e.isGroup && bot.getGroupMemberInfo)
+    try {
+      const info = await bot.getGroupMemberInfo(e.group_id, bot.uin)
+      nickname = info.card || info.nickname
+    } catch {}
   let userInfo = {
     user_id: bot.uin,
     nickname,
@@ -312,19 +321,19 @@ export async function makeForwardMsg(e, msg = [], dec = '') {
   }
 
   if (dec) {
-      /** 处理描述 */
-      if (typeof (forwardMsg.data) === 'object') {
-        let detail = forwardMsg.data?.meta?.detail
-        if (detail) {
-          detail.news = [{ text: dec }]
-        }
-      } else {
-        forwardMsg.data = forwardMsg.data
-          .replace(/\n/g, '')
-          .replace(/<title color="#777777" size="26">(.+?)<\/title>/g, '___')
-          .replace(/___+/, `<title color="#777777" size="26">${dec}</title>`)
+    /** 处理描述 */
+    if (typeof forwardMsg.data === "object") {
+      let detail = forwardMsg.data?.meta?.detail
+      if (detail) {
+        detail.news = [{ text: dec }]
       }
+    } else {
+      forwardMsg.data = forwardMsg.data
+        .replace(/\n/g, "")
+        .replace(/<title color="#777777" size="26">(.+?)<\/title>/g, "___")
+        .replace(/___+/, `<title color="#777777" size="26">${dec}</title>`)
     }
+  }
 
   return forwardMsg
 }
@@ -373,7 +382,7 @@ export function dirIsEmpty(dirPath) {
 export function dateDiff(beginTime, endTime) {
   let diff = moment(endTime).diff(moment(beginTime))
   if (diff < 0) {
-    throw new Error('结束时间不能小于开始时间')
+    throw new Error("结束时间不能小于开始时间")
   }
   // 计算出相差天数
   let days = Math.floor(diff / (24 * 3600 * 1000))
@@ -386,5 +395,5 @@ export function dateDiff(beginTime, endTime) {
   // 计算相差秒数
   let leave3 = leave2 % (60 * 1000)
   let seconds = Math.round(leave3 / 1000)
-  return {days, hours, minutes, seconds}
+  return { days, hours, minutes, seconds }
 }
